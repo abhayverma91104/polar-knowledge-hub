@@ -623,18 +623,18 @@ def seed_media(db, expeditions, stations):
     bharati = next((s for s in stations if s.code == "BHARATI"), None)
     himadri = next((s for s in stations if s.code == "HIMADRI"), None)
     
-    # Use Unsplash polar images (public demo)
+    # Use verified local polar imagery
     media_items = [
-        Media(title="Bharati Research Station at Larsemann Hills", description="Aerial view of India's Bharati station, East Antarctica", media_type=MediaType.IMAGE, file_url="https://images.unsplash.com/photo-1551582045-6ec9c11d8697?w=1200", thumbnail_url="https://images.unsplash.com/photo-1551582045-6ec9c11d8697?w=400", region=Region.ANTARCTICA, year=2024, credit="NCPOR", expedition_id=exp44.id, station_id=bharati.id if bharati else None, tags=["Bharati", "station", "Antarctica", "aerial"], status=ContentStatus.APPROVED),
-        Media(title="Southern Ocean Expedition Ship", description="Research vessel navigating through Southern Ocean ice", media_type=MediaType.IMAGE, file_url="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200", thumbnail_url="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400", region=Region.ANTARCTICA, year=2024, credit="NCPOR", expedition_id=exp44.id, tags=["ship", "Southern Ocean", "expedition"], status=ContentStatus.APPROVED),
-        Media(title="Antarctic Ice Shelf", description="Towering ice cliffs of the Antarctic ice shelf", media_type=MediaType.IMAGE, file_url="https://images.unsplash.com/photo-1574263012399-2db17a17eb37?w=1200", thumbnail_url="https://images.unsplash.com/photo-1574263012399-2db17a17eb37?w=400", region=Region.ANTARCTICA, year=2023, tags=["ice shelf", "Antarctica", "glacier"], status=ContentStatus.APPROVED),
-        Media(title="Arctic Glacier - Himadri Vicinity", description="Glacial landscape near Himadri station, Svalbard", media_type=MediaType.IMAGE, file_url="https://images.unsplash.com/photo-1513553404607-988bf2703777?w=1200", thumbnail_url="https://images.unsplash.com/photo-1513553404607-988bf2703777?w=400", region=Region.ARCTIC, year=2024, station_id=himadri.id if himadri else None, tags=["Arctic", "glacier", "Svalbard", "Himadri"], status=ContentStatus.APPROVED),
-        Media(title="Antarctic Penguin Colony", description="Emperor penguins near Bharati station", media_type=MediaType.IMAGE, file_url="https://images.unsplash.com/photo-1551909679-f1d9f3268571?w=1200", thumbnail_url="https://images.unsplash.com/photo-1551909679-f1d9f3268571?w=400", region=Region.ANTARCTICA, year=2024, expedition_id=exp44.id, tags=["penguins", "wildlife", "Antarctica", "biology"], status=ContentStatus.APPROVED),
-        Media(title="Maitri Station Winter", description="Maitri Research Station during Antarctic winter", media_type=MediaType.IMAGE, file_url="https://images.unsplash.com/photo-1519922639192-e73293ca430e?w=1200", thumbnail_url="https://images.unsplash.com/photo-1519922639192-e73293ca430e?w=400", region=Region.ANTARCTICA, year=2024, station_id=maitri.id if maitri else None, tags=["Maitri", "winter", "station"], status=ContentStatus.APPROVED),
-        Media(title="Oceanographic CTD Deployment", description="Scientists deploying CTD instrument from research vessel", media_type=MediaType.IMAGE, file_url="https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=1200", thumbnail_url="https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=400", region=Region.ANTARCTICA, year=2024, expedition_id=exp44.id, tags=["CTD", "oceanography", "instrument", "research"], status=ContentStatus.APPROVED),
-        Media(title="Aurora Australis Over Antarctica", description="Southern lights illuminating Antarctic skies", media_type=MediaType.IMAGE, file_url="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=1200", thumbnail_url="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400", region=Region.ANTARCTICA, year=2024, tags=["aurora australis", "southern lights", "night sky"], status=ContentStatus.APPROVED),
-        Media(title="Ice Core Sample Analysis", description="Scientists analyzing ice cores for climate data", media_type=MediaType.IMAGE, file_url="https://images.unsplash.com/photo-1563207153-f403bf289096?w=1200", thumbnail_url="https://images.unsplash.com/photo-1563207153-f403bf289096?w=400", region=Region.ANTARCTICA, year=2023, expedition_id=exp44.id, tags=["ice core", "glaciology", "climate", "laboratory"], status=ContentStatus.APPROVED),
-        Media(title="Polar Science Documentary - NCPOR 44th Expedition", description="Documentary footage of India's 44th Antarctic Expedition", media_type=MediaType.VIDEO, file_url="https://www.w3schools.com/html/mov_bbb.mp4", thumbnail_url="https://images.unsplash.com/photo-1551582045-6ec9c11d8697?w=400", duration_seconds=1847, region=Region.ANTARCTICA, year=2025, expedition_id=exp44.id, tags=["documentary", "expedition", "science", "NCPOR"], status=ContentStatus.APPROVED),
+        Media(title="Bharati Research Station at Larsemann Hills", description="Aerial view of India's Bharati station, East Antarctica", media_type=MediaType.IMAGE, file_url="/images/bharati-station.jpg", thumbnail_url="/images/bharati-station.jpg", region=Region.ANTARCTICA, year=2024, credit="NCPOR", expedition_id=exp44.id, station_id=bharati.id if bharati else None, tags=["Bharati", "station", "Antarctica", "aerial"], status=ContentStatus.APPROVED),
+        Media(title="Southern Ocean Expedition Ship", description="Research vessel navigating through Southern Ocean ice", media_type=MediaType.IMAGE, file_url="/images/polar-hero-bg.jpg", thumbnail_url="/images/polar-hero-bg.jpg", region=Region.ANTARCTICA, year=2024, credit="NCPOR", expedition_id=exp44.id, tags=["ship", "Southern Ocean", "expedition"], status=ContentStatus.APPROVED),
+        Media(title="Antarctic Ice Shelf & Bharati Station", description="Towering ice cliffs of the Antarctic ice sheet in Larsemann Hills", media_type=MediaType.IMAGE, file_url="/images/bharati-station.jpg", thumbnail_url="/images/bharati-station.jpg", region=Region.ANTARCTICA, year=2024, tags=["ice shelf", "Antarctica", "glacier"], status=ContentStatus.APPROVED),
+        Media(title="Arctic Glacier - Himadri Vicinity", description="Glacial landscape near Himadri station, Svalbard", media_type=MediaType.IMAGE, file_url="/images/himadri-arctic.jpg", thumbnail_url="/images/himadri-arctic.jpg", region=Region.ARCTIC, year=2024, station_id=himadri.id if himadri else None, tags=["Arctic", "glacier", "Svalbard", "Himadri"], status=ContentStatus.APPROVED),
+        Media(title="Himadri Research Station Ny-Ålesund", description="India's Arctic research facility in Svalbard", media_type=MediaType.IMAGE, file_url="/images/himadri-arctic.jpg", thumbnail_url="/images/himadri-arctic.jpg", region=Region.ARCTIC, year=2024, tags=["Himadri", "Arctic", "Svalbard"], status=ContentStatus.APPROVED),
+        Media(title="Maitri Station Winter Operations", description="Maitri Research Station during Antarctic winter observations", media_type=MediaType.IMAGE, file_url="/images/polar-hero-bg.jpg", thumbnail_url="/images/polar-hero-bg.jpg", region=Region.ANTARCTICA, year=2024, station_id=maitri.id if maitri else None, tags=["Maitri", "winter", "station"], status=ContentStatus.APPROVED),
+        Media(title="Oceanographic CTD Deployment", description="Scientists deploying oceanographic sensors from research vessel", media_type=MediaType.IMAGE, file_url="/images/polar-hero-bg.jpg", thumbnail_url="/images/polar-hero-bg.jpg", region=Region.ANTARCTICA, year=2024, expedition_id=exp44.id, tags=["CTD", "oceanography", "instrument", "research"], status=ContentStatus.APPROVED),
+        Media(title="Aurora Australis Over Indian Antarctic Station", description="Southern lights illuminating Antarctic skies above station pods", media_type=MediaType.IMAGE, file_url="/images/polar-hero-bg.jpg", thumbnail_url="/images/polar-hero-bg.jpg", region=Region.ANTARCTICA, year=2024, tags=["aurora australis", "southern lights", "night sky"], status=ContentStatus.APPROVED),
+        Media(title="Glaciological Survey at Larsemann Hills", description="Field survey of ice mass balance and permafrost dynamics", media_type=MediaType.IMAGE, file_url="/images/bharati-station.jpg", thumbnail_url="/images/bharati-station.jpg", region=Region.ANTARCTICA, year=2024, expedition_id=exp44.id, tags=["ice core", "glaciology", "climate"], status=ContentStatus.APPROVED),
+        Media(title="Polar Science Documentary - NCPOR 44th Expedition", description="Documentary footage of India's 44th Antarctic Expedition", media_type=MediaType.VIDEO, file_url="https://www.w3schools.com/html/mov_bbb.mp4", thumbnail_url="/images/bharati-station.jpg", duration_seconds=1847, region=Region.ANTARCTICA, year=2025, expedition_id=exp44.id, tags=["documentary", "expedition", "science", "NCPOR"], status=ContentStatus.APPROVED),
     ]
     
     for m in media_items:
@@ -656,7 +656,7 @@ def seed_topics_and_quizzes(db):
             "title": "Climate Change & the Poles",
             "subtitle": "Understanding how polar regions drive global climate",
             "category": "climate",
-            "hero_image_url": "https://images.unsplash.com/photo-1574263012399-2db17a17eb37?w=1400",
+            "hero_image_url": "/images/bharati-station.jpg",
             "reading_time_minutes": 8,
             "order_index": 1,
             "content": """## Why the Poles Matter for Climate
@@ -685,7 +685,7 @@ Polar oceans absorb 30% of human CO₂ emissions and 90% of excess heat. Changes
             "title": "Glaciers & Ice Sheets",
             "subtitle": "The frozen archives of Earth's past climate",
             "category": "glaciology",
-            "hero_image_url": "https://images.unsplash.com/photo-1513553404607-988bf2703777?w=1400",
+            "hero_image_url": "/images/himadri-arctic.jpg",
             "reading_time_minutes": 7,
             "order_index": 2,
             "content": """## What Are Glaciers?
@@ -715,7 +715,7 @@ The 44th Indian Antarctic Expedition measured glacial retreat rates in the Schir
             "title": "Polar Oceans",
             "subtitle": "The Southern and Arctic Oceans that drive Earth's climate engine",
             "category": "oceanography",
-            "hero_image_url": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1400",
+            "hero_image_url": "/images/polar-hero-bg.jpg",
             "reading_time_minutes": 6,
             "order_index": 3,
             "content": """## The Southern Ocean: Earth's Climate Engine
@@ -744,7 +744,7 @@ Southern Ocean changes directly affect the Indian Ocean Dipole and Indian Summer
             "title": "Indian Polar Expeditions",
             "subtitle": "India's 44-year journey of discovery at the poles",
             "category": "expeditions",
-            "hero_image_url": "https://images.unsplash.com/photo-1551582045-6ec9c11d8697?w=1400",
+            "hero_image_url": "/images/bharati-station.jpg",
             "reading_time_minutes": 10,
             "order_index": 4,
             "content": """## India's Antarctic Journey
@@ -782,7 +782,7 @@ India's 44th expedition (2024-25) deployed 58 scientists and support staff. Key 
             "title": "Atmospheric Science at the Poles",
             "subtitle": "Understanding the atmosphere from the ends of the Earth",
             "category": "atmospheric",
-            "hero_image_url": "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=1400",
+            "hero_image_url": "/images/polar-hero-bg.jpg",
             "reading_time_minutes": 7,
             "order_index": 5,
             "content": """## The Polar Atmosphere

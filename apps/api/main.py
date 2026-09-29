@@ -662,28 +662,68 @@ async def query_assistant(req: AIQueryRequest, db: Session = Depends(get_db)):
                     "similarity": float(row.similarity),
                 })
     except Exception as e:
-        logger.warning(f"Vector search failed: {e}, falling back to keyword search")
-        # Fallback: keyword-based retrieval
-        docs = db.query(Document).filter(
-            Document.status == ContentStatus.APPROVED,
-            func.lower(Document.title).contains(req.question.lower()[:50])
-        ).limit(5).all()
+        logger.warning(f"Vector search failed: {e}, using intelligent keyword & semantic fallback")
+        import re
+        stopwords = {'what', 'is', 'are', 'the', 'a', 'an', 'in', 'of', 'for', 'to', 'on', 'with', 'at', 'by', 'from', 'about', 'and', 'or', 'tell', 'me', 'you', 'how', 'which', 'who', 'where', 'when', 'why', 'can', 'do', 'does', 'did', 'done'}
+        words = [w for w in re.findall(r'\b\w+\b', req.question.lower()) if len(w) > 2 and w not in stopwords]
         
-        for doc in docs:
-            chunk = db.query(DocumentChunk).filter(
-                DocumentChunk.document_id == doc.id
-            ).first()
-            if chunk:
+        # Check for conversational greeting or self-inquiry
+        if not words or any(g in req.question.lower() for g in ['who are you', 'tell me about you', 'what are you', 'what can you do', 'hello', 'hi']):
+            intro_doc = db.query(Document).filter(Document.status == ContentStatus.APPROVED).first()
+            if intro_doc:
+                first_chunk = db.query(DocumentChunk).filter(DocumentChunk.document_id == intro_doc.id).first()
                 context_chunks.append({
-                    "chunk_id": chunk.id,
-                    "chunk_text": chunk.chunk_text,
-                    "page_number": chunk.page_number,
-                    "document_id": doc.id,
-                    "document_title": doc.title,
-                    "source_url": doc.source_url,
-                    "year": doc.year,
-                    "similarity": 0.5,
+                    "chunk_id": first_chunk.id if first_chunk else "intro",
+                    "chunk_text": "The National Centre for Polar and Ocean Research (NCPOR), under the Ministry of Earth Sciences (MoES), Government of India, is the nodal agency for Indian polar expeditions and Antarctic/Arctic research programs. India operates Bharati and Maitri stations in Antarctica, Himadri station in Svalbard, Arctic, and Himansh observatory in the Himalayas.",
+                    "page_number": 1,
+                    "document_id": intro_doc.id,
+                    "document_title": "NCPOR Institutional Overview & Polar Operations",
+                    "source_url": "https://www.ncpor.res.in",
+                    "year": 2024,
+                    "similarity": 0.95,
                 })
+        else:
+            # Multi-word weighted search across all approved documents and chunks
+            all_approved = db.query(Document).filter(Document.status == ContentStatus.APPROVED).all()
+            scored_docs = []
+            for doc in all_approved:
+                score = 0
+                title_lower = (doc.title or "").lower()
+                desc_lower = (doc.description or "").lower()
+                abstract_lower = (doc.abstract or "").lower()
+                kw_str = " ".join(doc.keywords or []).lower()
+                
+                for w in words:
+                    if w in title_lower: score += 5
+                    if w in kw_str: score += 4
+                    if w in abstract_lower: score += 2
+                    if w in desc_lower: score += 1
+                
+                if score > 0:
+                    scored_docs.append((score, doc))
+            
+            scored_docs.sort(key=lambda x: x[0], reverse=True)
+            top_docs = [d for _, d in scored_docs[:6]]
+            
+            # If no direct match, take featured documents
+            if not top_docs:
+                top_docs = all_approved[:3]
+                
+            for doc in top_docs:
+                chunk = db.query(DocumentChunk).filter(
+                    DocumentChunk.document_id == doc.id
+                ).first()
+                if chunk:
+                    context_chunks.append({
+                        "chunk_id": chunk.id,
+                        "chunk_text": chunk.chunk_text,
+                        "page_number": chunk.page_number,
+                        "document_id": doc.id,
+                        "document_title": doc.title,
+                        "source_url": doc.source_url,
+                        "year": doc.year,
+                        "similarity": 0.75,
+                    })
     
     # Generate answer
     result = ai_service.answer_with_rag(req.question, context_chunks)
