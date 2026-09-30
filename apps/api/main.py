@@ -18,7 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
-from sqlalchemy import text, func, desc, or_
+from sqlalchemy import text, func, desc, or_, cast, String
 import logging
 
 logger = logging.getLogger(__name__)
@@ -497,18 +497,28 @@ async def search(req: SearchRequest, db: Session = Depends(get_db)):
     start_time = time.time()
     
     results = []
+    total = 0
     
     if req.search_type in ("keyword", "hybrid"):
-        # Keyword search across documents
-        q = req.query.lower()
-        query = db.query(Document).filter(
-            Document.status == ContentStatus.APPROVED,
-            or_(
+        q = (req.query or "").strip().lower()
+        if q:
+            words = [w for w in q.split() if len(w) > 2]
+            conditions = [
                 func.lower(Document.title).contains(q),
                 func.lower(Document.abstract).contains(q),
-                Document.keywords.cast(text("text")).ilike(f"%{q}%"),
+                cast(Document.keywords, String).ilike(f"%{q}%"),
+            ]
+            for w in words:
+                conditions.append(func.lower(Document.title).contains(w))
+                conditions.append(func.lower(Document.abstract).contains(w))
+                conditions.append(cast(Document.keywords, String).ilike(f"%{w}%"))
+                
+            query = db.query(Document).filter(
+                Document.status == ContentStatus.APPROVED,
+                or_(*conditions)
             )
-        )
+        else:
+            query = db.query(Document).filter(Document.status == ContentStatus.APPROVED)
         
         # Apply filters
         if req.filters:
@@ -523,7 +533,10 @@ async def search(req: SearchRequest, db: Session = Depends(get_db)):
                 except ValueError:
                     pass
             if req.filters.get("year"):
-                query = query.filter(Document.year == int(req.filters["year"]))
+                try:
+                    query = query.filter(Document.year == int(req.filters["year"]))
+                except (ValueError, TypeError):
+                    pass
             if req.filters.get("expedition_id"):
                 query = query.filter(Document.expedition_id == req.filters["expedition_id"])
         
@@ -554,7 +567,7 @@ async def search(req: SearchRequest, db: Session = Depends(get_db)):
     return {
         "query": req.query,
         "search_type": req.search_type,
-        "total": total if "total" in dir() else len(results),
+        "total": total,
         "page": req.page,
         "page_size": req.page_size,
         "results": results,

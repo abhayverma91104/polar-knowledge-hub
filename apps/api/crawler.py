@@ -205,7 +205,10 @@ class NCPORCrawler:
 
                     # Handle HTML page
                     if "html" in content_type_header or "text" in content_type_header:
-                        soup = BeautifulSoup(resp.text, "lxml")
+                        try:
+                            soup = BeautifulSoup(resp.text, "lxml")
+                        except Exception:
+                            soup = BeautifulSoup(resp.text, "html.parser")
                         
                         # Extract page resource
                         page_resource = self._extract_page_resource(current_url, soup, resp.text)

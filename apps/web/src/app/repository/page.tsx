@@ -110,16 +110,16 @@ function RepositoryContent() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
 
-  const doSearch = useCallback(async (q: string, p = 1) => {
-    if (!q.trim() && !filters.document_type && !filters.region) {
+  const doSearch = useCallback(async (q: string, p = 1, currentFilters = filters) => {
+    if (!q.trim() && !currentFilters.document_type && !currentFilters.region && !currentFilters.research_domain) {
       // Show all documents
       setLoading(true);
       try {
         const res = await documentsApi.list({
           page: p,
           page_size: 20,
-          document_type: filters.document_type || undefined,
-          region: filters.region || undefined,
+          document_type: currentFilters.document_type || undefined,
+          region: currentFilters.region || undefined,
         });
         setResults({
           total: res.data.total,
@@ -128,7 +128,7 @@ function RepositoryContent() {
           search_type: 'browse',
         });
       } catch (e) {
-        console.error(e);
+        console.error('List documents error:', e);
       } finally {
         setLoading(false);
       }
@@ -138,35 +138,37 @@ function RepositoryContent() {
     setLoading(true);
     try {
       const res = await searchApi.search(
-        q || 'polar research',
+        q || '',
         searchType,
         {
-          document_type: filters.document_type || undefined,
-          region: filters.region || undefined,
+          document_type: currentFilters.document_type || undefined,
+          region: currentFilters.region || undefined,
         },
         p
       );
       setResults(res.data);
     } catch (e) {
-      console.error(e);
+      console.error('Search error:', e);
     } finally {
       setLoading(false);
     }
   }, [filters, searchType]);
 
   useEffect(() => {
-    doSearch(query);
+    doSearch(query, 1, filters);
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setPage(1);
-    doSearch(query, 1);
+    doSearch(query, 1, filters);
   };
 
   const clearFilters = () => {
-    setFilters({ document_type: '', region: '', research_domain: '', year: '' });
-    setTimeout(() => doSearch(query), 0);
+    const empty = { document_type: '', region: '', research_domain: '', year: '' };
+    setFilters(empty);
+    setPage(1);
+    doSearch(query, 1, empty);
   };
 
   const activeFilterCount = Object.values(filters).filter(Boolean).length;
@@ -252,8 +254,10 @@ function RepositoryContent() {
                           value={type.value}
                           checked={filters.document_type === type.value}
                           onChange={(e) => {
-                            setFilters(f => ({ ...f, document_type: e.target.value }));
-                            setTimeout(() => doSearch(query), 100);
+                            const updated = { ...filters, document_type: e.target.value };
+                            setFilters(updated);
+                            setPage(1);
+                            doSearch(query, 1, updated);
                           }}
                           className="accent-polar-cyan"
                         />
@@ -279,8 +283,10 @@ function RepositoryContent() {
                           value={region.value}
                           checked={filters.region === region.value}
                           onChange={(e) => {
-                            setFilters(f => ({ ...f, region: e.target.value }));
-                            setTimeout(() => doSearch(query), 100);
+                            const updated = { ...filters, region: e.target.value };
+                            setFilters(updated);
+                            setPage(1);
+                            doSearch(query, 1, updated);
                           }}
                           className="accent-polar-cyan"
                         />
@@ -304,8 +310,10 @@ function RepositoryContent() {
                           type="checkbox"
                           checked={filters.research_domain === domain}
                           onChange={(e) => {
-                            setFilters(f => ({ ...f, research_domain: e.target.checked ? domain : '' }));
-                            setTimeout(() => doSearch(query), 100);
+                            const updated = { ...filters, research_domain: e.target.checked ? domain : '' };
+                            setFilters(updated);
+                            setPage(1);
+                            doSearch(query, 1, updated);
                           }}
                           className="accent-polar-cyan"
                         />
