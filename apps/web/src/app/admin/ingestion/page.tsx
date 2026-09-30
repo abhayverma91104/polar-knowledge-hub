@@ -62,6 +62,20 @@ export default function IngestionPage() {
     try {
       const res = await ingestionApi.listJobs();
       setJobs(res.data);
+      if (res.data && res.data.length > 0 && crawlLog.length === 0) {
+        const latest = res.data[0];
+        setCurrentJob(latest);
+        const initialLogs = [
+          `[Job: ${latest.id.slice(0, 8)}] Target: ${latest.start_url}`,
+          `Status: ${latest.status.toUpperCase()} · Scanned: ${latest.pages_scanned} pages · Discovered: ${latest.documents_discovered} docs`,
+        ];
+        if (latest.status === 'completed') {
+          initialLogs.push(`✅ Crawl completed successfully. ${latest.new_resources || 0} new resources indexed.`);
+        } else if (latest.error_log && latest.error_log.length > 0) {
+          latest.error_log.forEach((err: string) => initialLogs.push(`❌ ${err}`));
+        }
+        setCrawlLog(initialLogs);
+      }
     } catch (e) {
       console.error(e);
     } finally {
@@ -301,27 +315,40 @@ export default function IngestionPage() {
                   Crawl Log
                 </h3>
                 <div
-                  className="rounded-xl p-4 font-mono text-xs min-h-48 max-h-80 overflow-y-auto border border-slate-200"
-                  style={{ background: '#f8fafc', color: '#0f172a' }}
+                  className="rounded-xl p-4 font-mono text-xs min-h-56 max-h-96 overflow-y-auto"
+                  style={{
+                    backgroundColor: '#f1f5f9',
+                    border: '1.5px solid #cbd5e1',
+                    color: '#000000',
+                  }}
                 >
                   {crawlLog.length === 0 ? (
-                    <span className="text-slate-400">Ready to crawl. Enter URL and click Start Crawl.</span>
+                    <span style={{ color: '#64748b' }}>Ready to crawl. Enter URL and click Start Crawl.</span>
                   ) : (
-                    crawlLog.map((line, i) => (
-                      <div
-                        key={i}
-                        className={`mb-1.5 leading-relaxed ${
-                          line.includes('✅') ? 'text-emerald-700 font-semibold' :
-                          line.includes('❌') ? 'text-rose-700 font-semibold' :
-                          line.includes('Error') ? 'text-rose-600 font-medium' :
-                          line.includes('Pages:') ? 'text-slate-900' :
-                          'text-slate-900'
-                        }`}
-                        style={{ color: line.includes('✅') ? '#047857' : line.includes('❌') || line.includes('Error') ? '#b91c1c' : '#0f172a' }}
-                      >
-                        {line}
-                      </div>
-                    ))
+                    crawlLog.map((line, i) => {
+                      let textColor = '#000000';
+                      let fontWeight = 500;
+                      if (line.includes('✅')) {
+                        textColor = '#047857';
+                        fontWeight = 700;
+                      } else if (line.includes('❌') || line.includes('Error') || line.includes('failed')) {
+                        textColor = '#dc2626';
+                        fontWeight = 700;
+                      } else if (line.includes('Starting crawl') || line.includes('Crawl job started')) {
+                        textColor = '#0369a1';
+                        fontWeight = 600;
+                      }
+
+                      return (
+                        <div
+                          key={i}
+                          className="mb-1.5 leading-relaxed font-mono text-xs"
+                          style={{ color: textColor, fontWeight }}
+                        >
+                          {line}
+                        </div>
+                      );
+                    })
                   )}
                 </div>
               </div>
