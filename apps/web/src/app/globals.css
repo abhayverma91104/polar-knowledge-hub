@@ -1,21 +1,5 @@
 @import "tailwindcss";
 
-@theme {
-  --color-polar-navy: #0a1628;
-  --color-polar-navy-800: #0d1e36;
-  --color-polar-navy-700: #112545;
-  --color-polar-midnight: #060e1c;
-  --color-polar-ice: #e8f4fd;
-  --color-polar-frost: #f0f7ff;
-  --color-polar-cyan: #0ea5e9;
-  --color-polar-cyan-400: #38bdf8;
-  --color-polar-teal: #0d9488;
-  --color-polar-snow: #f8fafc;
-
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-display: 'Outfit', 'Inter', system-ui, sans-serif;
-}
-
 /* ─── CSS Custom Properties ─── */
 :root {
   --polar-navy: #0a1628;
@@ -378,8 +362,8 @@ img {
 }
 
 /* ─── Hero overlay text ─── */
-.text-glow {
-  filter: drop-shadow(0 0 25px rgba(14, 165, 233, 0.35));
+.text-shadow {
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
 }
 
 /* ─── Dividers ─── */
