@@ -31,7 +31,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 bg-gradient-to-br from-polar-cyan to-polar-teal rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+          <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg" style={{ background: '#0ea5e9' }}>
             <Snowflake size={28} className="text-white" />
           </div>
           <h1 className="font-display font-bold text-2xl text-white mb-1">Sign in</h1>

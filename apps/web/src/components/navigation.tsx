@@ -43,17 +43,19 @@ export function Navigation() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled || !isHeroPage
-          ? 'bg-polar-navy/98 backdrop-blur-md shadow-lg border-b border-white/5'
-          : 'bg-transparent'
-      }`}
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+      style={{
+        background: scrolled || !isHeroPage ? 'rgba(10,22,40,0.98)' : 'transparent',
+        backdropFilter: scrolled || !isHeroPage ? 'blur(12px)' : 'none',
+        boxShadow: scrolled || !isHeroPage ? '0 1px 0 rgba(255,255,255,0.05)' : 'none',
+        borderBottom: scrolled || !isHeroPage ? '1px solid rgba(255,255,255,0.05)' : 'none',
+      }}
     >
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-16 gap-6">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
-            <div className="w-8 h-8 bg-gradient-to-br from-polar-cyan to-polar-teal rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-glow-cyan transition-shadow">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center shadow-lg transition-shadow" style={{ background: '#0ea5e9' }}>
               <Snowflake className="w-4.5 h-4.5 text-white" size={18} />
             </div>
             <div className="hidden sm:block">
@@ -66,8 +68,7 @@ export function Navigation() {
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden xl:flex items-center gap-0.5 flex-1">
+          <nav className="hidden lg:flex items-center gap-0.5 flex-1">
             {NAV_LINKS.map((link) => {
               const active = link.href === '/'
                 ? pathname === '/'
@@ -76,15 +77,17 @@ export function Navigation() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`nav-link px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
-                    active
-                      ? 'text-polar-cyan-400 bg-white/5'
-                      : 'text-white/70 hover:text-white hover:bg-white/5'
-                  }`}
+                  className="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150"
+                  style={{
+                    color: active ? '#38bdf8' : 'rgba(255,255,255,0.7)',
+                    background: active ? 'rgba(255,255,255,0.05)' : 'transparent',
+                  }}
+                  onMouseEnter={e => { if (!active) { const el = e.currentTarget as HTMLElement; el.style.color='#fff'; el.style.background='rgba(255,255,255,0.05)'; }}}
+                  onMouseLeave={e => { if (!active) { const el = e.currentTarget as HTMLElement; el.style.color='rgba(255,255,255,0.7)'; el.style.background='transparent'; }}}
                 >
                   {link.label}
                   {link.label === 'Polar AI' && (
-                    <span className="ml-1.5 px-1.5 py-0.5 bg-polar-cyan/20 text-polar-cyan-300 text-[10px] font-bold rounded uppercase tracking-wider">
+                    <span style={{ marginLeft: '6px', padding: '1px 6px', background: 'rgba(14,165,233,0.2)', color: '#7dd3fc', fontSize: '10px', fontWeight: 700, borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                       AI
                     </span>
                   )}
@@ -176,7 +179,7 @@ export function Navigation() {
             {/* Mobile menu */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="xl:hidden p-2 text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+              className="lg:hidden p-2 text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all"
             >
               {mobileOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
@@ -186,7 +189,7 @@ export function Navigation() {
 
       {/* Mobile Navigation */}
       {mobileOpen && (
-        <div className="xl:hidden bg-polar-navy border-t border-white/8 px-4 py-3">
+        <div className="lg:hidden border-t" style={{ background: 'rgba(10,22,40,0.98)', borderColor: 'rgba(255,255,255,0.06)', padding: '0.75rem 1rem' }}>
           <nav className="flex flex-col gap-0.5">
             {NAV_LINKS.map((link) => {
               const active = link.href === '/'

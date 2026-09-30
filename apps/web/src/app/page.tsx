@@ -41,29 +41,23 @@ const EXPLORE_CARDS = [
     description: 'India has been conducting research in Antarctica since 1981, with two active stations — Maitri and Bharati.',
     href: '/explore?region=antarctica',
     icon: Mountain,
-    color: 'from-sky-900/80 to-polar-navy/90',
-    accent: 'text-sky-300',
-    image: 'https://images.unsplash.com/photo-1574263012399-2db17a17eb37?w=800&q=80',
+    image: '/images/antarctica-landscape.jpg',
   },
   {
     title: 'Arctic',
-    subtitle: 'India\'s Himadri Station, Svalbard',
+    subtitle: "India's Himadri Station, Svalbard",
     description: 'Established in 2008, Himadri monitors climate change, glaciology, and atmospheric science in the High Arctic.',
     href: '/explore?region=arctic',
     icon: Wind,
-    color: 'from-teal-900/80 to-polar-navy/90',
-    accent: 'text-teal-300',
-    image: 'https://images.unsplash.com/photo-1513553404607-988bf2703777?w=800&q=80',
+    image: '/images/himadri-arctic.jpg',
   },
   {
-    title: 'Indian Polar Expeditions',
+    title: 'Polar Expeditions',
     subtitle: '44 expeditions since 1981',
-    description: 'Explore the complete timeline of India\'s polar expeditions, their objectives, achievements, and scientific findings.',
+    description: "Explore the complete timeline of India's polar expeditions, their objectives, achievements, and scientific findings.",
     href: '/expeditions',
     icon: Globe,
-    color: 'from-indigo-900/80 to-polar-navy/90',
-    accent: 'text-indigo-300',
-    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&q=80',
+    image: '/images/expedition-ship.jpg',
   },
   {
     title: 'Research Stations',
@@ -71,9 +65,7 @@ const EXPLORE_CARDS = [
     description: 'Three world-class research stations at the poles conducting year-round multi-disciplinary science.',
     href: '/stations',
     icon: FlaskConical,
-    color: 'from-cyan-900/80 to-polar-navy/90',
-    accent: 'text-cyan-300',
-    image: 'https://images.unsplash.com/photo-1551582045-6ec9c11d8697?w=800&q=80',
+    image: '/images/bharati-station.jpg',
   },
 ];
 
@@ -83,48 +75,48 @@ const FEATURES = [
     title: 'Knowledge Repository',
     description: 'Thousands of expedition reports, publications, datasets, and research papers — all searchable and connected.',
     href: '/repository',
-    color: 'text-polar-cyan',
-    bg: 'bg-polar-cyan/10',
+    accent: '#0ea5e9',
+    bg: 'rgba(14,165,233,0.08)',
   },
   {
     icon: MessageSquare,
     title: 'Polar AI Assistant',
     description: 'Ask questions about Indian polar research. Get cited answers grounded in the NCPOR knowledge base.',
     href: '/assistant',
-    color: 'text-teal-400',
-    bg: 'bg-teal-400/10',
+    accent: '#0d9488',
+    bg: 'rgba(13,148,136,0.08)',
   },
   {
     icon: Map,
     title: 'Interactive Polar Map',
     description: 'Explore research stations, expedition routes, and scientific observation points on an interactive map.',
     href: '/explore',
-    color: 'text-indigo-400',
-    bg: 'bg-indigo-400/10',
+    accent: '#6366f1',
+    bg: 'rgba(99,102,241,0.08)',
   },
   {
     icon: BookOpen,
     title: 'Polar Classroom',
     description: 'Educational content, topic guides, and quizzes on glaciology, oceanography, and polar science.',
     href: '/classroom',
-    color: 'text-purple-400',
-    bg: 'bg-purple-400/10',
+    accent: '#7c3aed',
+    bg: 'rgba(124,58,237,0.08)',
   },
   {
     icon: Satellite,
     title: 'Automated Ingestion',
     description: 'Continuous import of NCPOR public resources through our web crawler and document processing pipeline.',
     href: '/admin/ingestion',
-    color: 'text-amber-400',
-    bg: 'bg-amber-400/10',
+    accent: '#d97706',
+    bg: 'rgba(217,119,6,0.08)',
   },
   {
     icon: Zap,
     title: 'Content Studio',
     description: 'Transform research papers into public articles, social posts, student explanations, and educational quizzes.',
     href: '/content-studio',
-    color: 'text-rose-400',
-    bg: 'bg-rose-400/10',
+    accent: '#e11d48',
+    bg: 'rgba(225,29,72,0.08)',
   },
 ];
 
@@ -152,7 +144,7 @@ function StatCounter({ value, label }: { value: number; label: string }) {
   return (
     <div className="text-center">
       <div className="stat-number">{count.toLocaleString()}+</div>
-      <div className="text-white/50 text-sm mt-1 font-medium">{label}</div>
+      <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.8rem', marginTop: '0.25rem', fontWeight: 500 }}>{label}</div>
     </div>
   );
 }
@@ -184,70 +176,115 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
+
       {/* ─── HERO ─── */}
-      <section className="relative min-h-screen flex items-center overflow-hidden bg-polar-midnight">
-        {/* Background image */}
-        <div className="absolute inset-0">
+      <section style={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'center', overflow: 'hidden', background: '#060e1c' }}>
+        {/* Background photo — low opacity overlay via solid dark bg */}
+        <div style={{ position: 'absolute', inset: 0 }}>
           <img
-            src="https://images.unsplash.com/photo-1551582045-6ec9c11d8697?w=2000&q=85"
+            src="/images/polar-hero-bg.jpg"
             alt="Antarctica"
-            className="w-full h-full object-cover object-center opacity-25"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.32 }}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-polar-midnight/60 via-polar-midnight/50 to-polar-midnight" />
-          <div className="absolute inset-0 aurora-bg" />
+          {/* Solid dark overlays — no gradients */}
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(6,14,28,0.40)' }} />
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '100px', background: 'rgba(6,14,28,0.65)' }} />
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '180px', background: 'rgba(6,14,28,0.80)' }} />
         </div>
 
-        {/* Floating elements */}
-        <div className="absolute top-1/4 right-1/4 w-64 h-64 rounded-full bg-polar-cyan/5 blur-3xl animate-drift" />
-        <div className="absolute bottom-1/3 left-1/5 w-48 h-48 rounded-full bg-teal-400/5 blur-3xl animate-drift" style={{ animationDelay: '-7s' }} />
-
-        <div className="relative z-10 max-w-screen-xl mx-auto px-6 lg:px-8 pt-24 pb-16">
-          <div className="max-w-3xl">
-            {/* Label */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-polar-cyan/15 border border-polar-cyan/25 rounded-full text-polar-cyan-300 text-sm font-semibold mb-8">
-              <Snowflake size={14} className="animate-pulse-slow" />
+        <div style={{ position: 'relative', zIndex: 10, maxWidth: '1280px', margin: '0 auto', padding: '6rem 2rem 4rem', width: '100%' }}>
+          <div style={{ maxWidth: '700px' }}>
+            {/* Institution label */}
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
+              padding: '6px 14px',
+              background: 'rgba(14,165,233,0.12)',
+              border: '1px solid rgba(14,165,233,0.2)',
+              borderRadius: '100px',
+              color: '#7dd3fc',
+              fontSize: '0.78rem', fontWeight: 700,
+              letterSpacing: '0.06em', textTransform: 'uppercase',
+              marginBottom: '2rem'
+            }}>
+              <Snowflake size={12} />
               National Centre for Polar and Ocean Research
             </div>
 
-            {/* Headline */}
-            <h1 className="font-display font-bold text-5xl sm:text-6xl lg:text-7xl text-white leading-[1.05] mb-6 text-shadow">
-              India&apos;s Polar
-              <br />
-              <span className="bg-gradient-to-r from-polar-cyan via-sky-400 to-teal-300 bg-clip-text text-transparent">
-                Knowledge,
-              </span>
-              <br />
+            {/* Headline — flat white, no gradient text */}
+            <h1 className="text-shadow" style={{
+              fontFamily: 'Outfit, Inter, sans-serif',
+              fontWeight: 800,
+              fontSize: 'clamp(2.8rem, 6vw, 5rem)',
+              lineHeight: 1.06,
+              color: '#fff',
+              marginBottom: '1.5rem',
+              letterSpacing: '-0.02em'
+            }}>
+              India&apos;s Polar<br />
+              <span style={{ color: '#38bdf8' }}>Knowledge,</span><br />
               Connected.
             </h1>
 
-            <p className="text-white/70 text-lg sm:text-xl leading-relaxed mb-10 max-w-2xl">
-              Explore expeditions, scientific discoveries, datasets, publications and stories from the Arctic and Antarctic — all in one intelligent platform.
+            <p style={{ color: 'rgba(255,255,255,0.62)', fontSize: '1.1rem', lineHeight: 1.7, marginBottom: '2.5rem', maxWidth: '560px' }}>
+              Explore expeditions, scientific discoveries, datasets, publications and
+              stories from the Arctic and Antarctic — all in one intelligent platform.
             </p>
 
-            <div className="flex flex-wrap gap-4">
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '2rem' }}>
               <Link
                 href="/repository"
-                className="inline-flex items-center gap-2.5 px-7 py-3.5 bg-polar-cyan hover:bg-sky-500 text-white rounded-xl font-bold text-base transition-all shadow-lg hover:shadow-glow-cyan hover:-translate-y-0.5"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '10px',
+                  padding: '12px 24px',
+                  background: '#0ea5e9',
+                  color: '#fff',
+                  borderRadius: '10px',
+                  fontWeight: 700, fontSize: '0.95rem',
+                  transition: 'background 0.18s, box-shadow 0.18s, transform 0.18s',
+                  boxShadow: '0 4px 16px rgba(14,165,233,0.3)'
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#0284c7'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#0ea5e9'; }}
               >
-                <Database size={18} />
+                <Database size={17} />
                 Explore Polar Knowledge
               </Link>
               <Link
                 href="/assistant"
-                className="inline-flex items-center gap-2.5 px-7 py-3.5 bg-white/10 hover:bg-white/15 border border-white/20 text-white rounded-xl font-bold text-base transition-all backdrop-blur-sm"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '10px',
+                  padding: '12px 24px',
+                  background: 'rgba(255,255,255,0.08)',
+                  border: '1.5px solid rgba(255,255,255,0.18)',
+                  color: '#fff',
+                  borderRadius: '10px',
+                  fontWeight: 700, fontSize: '0.95rem',
+                  transition: 'background 0.18s'
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.13)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.08)'; }}
               >
-                <MessageSquare size={18} />
+                <MessageSquare size={17} />
                 Ask the Polar AI
               </Link>
             </div>
 
             {/* Quick links */}
-            <div className="flex flex-wrap gap-3 mt-8">
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               {['44th Expedition', 'Bharati Station', 'Climate Data', 'Antarctic Map'].map(label => (
                 <Link
                   key={label}
                   href={`/repository?q=${encodeURIComponent(label)}`}
-                  className="px-3 py-1.5 bg-white/8 hover:bg-white/14 border border-white/12 text-white/70 hover:text-white rounded-full text-sm transition-all"
+                  style={{
+                    padding: '6px 14px',
+                    background: 'rgba(255,255,255,0.06)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    color: 'rgba(255,255,255,0.6)',
+                    borderRadius: '100px', fontSize: '0.8rem',
+                    transition: 'background 0.18s, color 0.18s'
+                  }}
+                  onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background='rgba(255,255,255,0.12)'; el.style.color='#fff'; }}
+                  onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background='rgba(255,255,255,0.06)'; el.style.color='rgba(255,255,255,0.6)'; }}
                 >
                   {label}
                 </Link>
@@ -257,18 +294,18 @@ export default function HomePage() {
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/30">
-          <div className="text-xs font-medium tracking-widest uppercase">Scroll to explore</div>
-          <div className="w-5 h-8 border border-white/20 rounded-full flex items-start justify-center pt-1.5">
-            <div className="w-1 h-2 bg-white/30 rounded-full animate-bounce" />
+        <div style={{ position: 'absolute', bottom: '2rem', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: 'rgba(255,255,255,0.25)' }}>
+          <div style={{ fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase' }}>Scroll</div>
+          <div style={{ width: '18px', height: '30px', border: '1px solid rgba(255,255,255,0.18)', borderRadius: '9px', display: 'flex', justifyContent: 'center', paddingTop: '6px' }}>
+            <div style={{ width: '3px', height: '6px', background: 'rgba(255,255,255,0.3)', borderRadius: '2px', animation: 'bounce 1.5s infinite' }} />
           </div>
         </div>
       </section>
 
       {/* ─── STATS ─── */}
-      <section id="stats-section" className="bg-polar-navy py-16 border-y border-white/5">
-        <div className="max-w-screen-xl mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-16">
+      <section id="stats-section" style={{ background: '#0a1628', padding: '4rem 0', borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '2rem' }}>
             {statsVisible && (
               <>
                 <StatCounter value={stats.expeditions} label="Indian Polar Expeditions" />
@@ -282,48 +319,50 @@ export default function HomePage() {
       </section>
 
       {/* ─── EXPLORE CARDS ─── */}
-      <section className="py-20 bg-polar-frost">
-        <div className="max-w-screen-xl mx-auto px-6 lg:px-8">
-          <div className="mb-12">
-            <div className="section-label mb-4">
-              <Globe size={12} />
-              Explore
+      <section style={{ padding: '5rem 0', background: '#f4f8fb' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
+          <div style={{ marginBottom: '3rem' }}>
+            <div className="section-label" style={{ marginBottom: '1rem' }}>
+              <Globe size={12} /> Explore
             </div>
-            <h2 className="font-display font-bold text-4xl text-polar-navy mb-4">
+            <h2 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: '2.25rem', color: '#0a1628', marginBottom: '0.75rem' }}>
               Discover the Polar World
             </h2>
-            <p className="text-slate-600 text-lg max-w-2xl">
+            <p style={{ color: '#475569', fontSize: '1.05rem', maxWidth: '560px' }}>
               From the frozen Antarctic continent to the Arctic archipelago — explore India&apos;s scientific presence at both poles.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
             {EXPLORE_CARDS.map((card) => {
               const Icon = card.icon;
               return (
                 <Link
                   key={card.title}
                   href={card.href}
-                  className="group relative overflow-hidden rounded-2xl aspect-[3/4] hover-lift block"
+                  style={{ display: 'block', position: 'relative', overflow: 'hidden', borderRadius: '16px', aspectRatio: '3/4' }}
+                  className="hover-lift group"
                 >
                   <img
                     src={card.image}
                     alt={card.title}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1.05)'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1)'; }}
                   />
-                  <div className={`absolute inset-0 bg-gradient-to-t ${card.color}`} />
-                  <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                    <Icon size={24} className={`mb-3 ${card.accent}`} />
-                    <div className={`text-xs font-bold uppercase tracking-widest mb-1.5 ${card.accent}`}>
+                  {/* Solid dark overlay at bottom — no gradient */}
+                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(6,14,28,0.52)' }} />
+                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '55%', background: 'rgba(6,14,28,0.78)' }} />
+                  <div style={{ position: 'absolute', inset: 0, padding: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+                    <Icon size={22} style={{ color: '#38bdf8', marginBottom: '10px' }} />
+                    <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7dd3fc', marginBottom: '6px' }}>
                       {card.subtitle}
                     </div>
-                    <h3 className="text-white font-display font-bold text-xl mb-2">{card.title}</h3>
-                    <p className="text-white/60 text-sm leading-snug hidden group-hover:block">
-                      {card.description}
-                    </p>
-                    <div className="mt-3 flex items-center gap-1 text-white/60 group-hover:text-white text-sm font-medium transition-colors">
-                      Explore
-                      <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    <h3 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: '1.15rem', color: '#fff', marginBottom: '6px' }}>
+                      {card.title}
+                    </h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'rgba(255,255,255,0.55)', fontSize: '0.82rem', fontWeight: 500, marginTop: '4px' }}>
+                      Explore <ArrowRight size={13} />
                     </div>
                   </div>
                 </Link>
@@ -335,72 +374,84 @@ export default function HomePage() {
 
       {/* ─── FEATURED EXPEDITION ─── */}
       {featured && (
-        <section className="py-20 bg-white">
-          <div className="max-w-screen-xl mx-auto px-6 lg:px-8">
-            <div className="bg-polar-navy rounded-3xl overflow-hidden">
-              <div className="grid grid-cols-1 lg:grid-cols-2">
-                {/* Content */}
-                <div className="p-10 lg:p-14">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-400/20 rounded-full text-amber-300 text-xs font-bold uppercase tracking-widest mb-6">
-                    <Award size={12} />
-                    Featured Expedition
-                  </div>
-                  <h2 className="font-display font-bold text-3xl lg:text-4xl text-white mb-4 leading-tight">
-                    {featured.title}
-                  </h2>
-                  <p className="text-white/60 text-base leading-relaxed mb-8">
-                    {featured.description?.slice(0, 280)}...
-                  </p>
+        <section style={{ padding: '5rem 0', background: '#fff' }}>
+          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
+            <div style={{ background: '#0a1628', borderRadius: '20px', overflow: 'hidden', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+              {/* Content */}
+              <div style={{ padding: '3.5rem' }}>
+                <div style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '6px',
+                  padding: '4px 12px',
+                  background: 'rgba(251,191,36,0.15)',
+                  borderRadius: '100px',
+                  color: '#fbbf24', fontSize: '0.7rem', fontWeight: 700,
+                  letterSpacing: '0.07em', textTransform: 'uppercase',
+                  marginBottom: '1.5rem'
+                }}>
+                  <Award size={11} /> Featured Expedition
+                </div>
+                <h2 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: '1.9rem', color: '#fff', marginBottom: '1rem', lineHeight: 1.25 }}>
+                  {featured.title}
+                </h2>
+                <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: '2rem' }}>
+                  {featured.description?.slice(0, 260)}...
+                </p>
 
-                  <div className="grid grid-cols-2 gap-4 mb-8">
-                    {[
-                      { label: 'Year', value: featured.year },
-                      { label: 'Region', value: featured.region === 'antarctica' ? 'Antarctica' : 'Arctic' },
-                      { label: 'Duration', value: `${featured.duration_days} days` },
-                      { label: 'Documents', value: `${featured.document_count || 0}+` },
-                    ].map(({ label, value }) => (
-                      <div key={label} className="bg-white/5 rounded-xl p-4">
-                        <div className="text-white/40 text-xs font-medium uppercase tracking-wider mb-1">{label}</div>
-                        <div className="text-white font-bold text-lg">{value}</div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="flex flex-wrap gap-2 mb-8">
-                    {featured.research_domains?.slice(0, 4).map((domain) => (
-                      <span key={domain} className="badge-cyan-dark badge text-xs">
-                        {domain}
-                      </span>
-                    ))}
-                  </div>
-
-                  <Link
-                    href={`/expeditions/${featured.id}`}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-polar-cyan text-white rounded-xl font-bold transition-all hover:bg-sky-500 hover:shadow-glow-cyan"
-                  >
-                    Explore Expedition
-                    <ArrowRight size={16} />
-                  </Link>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '2rem' }}>
+                  {[
+                    { label: 'Year', value: featured.year },
+                    { label: 'Region', value: featured.region === 'antarctica' ? 'Antarctica' : 'Arctic' },
+                    { label: 'Duration', value: `${featured.duration_days} days` },
+                    { label: 'Documents', value: `${featured.document_count || 0}+` },
+                  ].map(({ label, value }) => (
+                    <div key={label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '10px', padding: '14px 16px' }}>
+                      <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>{label}</div>
+                      <div style={{ color: '#fff', fontWeight: 700, fontSize: '1.05rem' }}>{value}</div>
+                    </div>
+                  ))}
                 </div>
 
-                {/* Image */}
-                <div className="relative hidden lg:block">
-                  <img
-                    src="https://images.unsplash.com/photo-1574263012399-2db17a17eb37?w=800&q=80"
-                    alt="Antarctic expedition"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-polar-navy/60 to-transparent" />
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '2rem' }}>
+                  {featured.research_domains?.slice(0, 4).map((domain) => (
+                    <span key={domain} className="badge badge-cyan-dark">{domain}</span>
+                  ))}
+                </div>
 
-                  {/* Floating stats */}
-                  <div className="absolute bottom-8 right-8 bg-polar-navy/80 backdrop-blur-sm border border-white/10 rounded-2xl p-5">
-                    <div className="flex items-center gap-3 text-white">
-                      <Users size={18} className="text-polar-cyan" />
-                      <div>
-                        <div className="text-xs text-white/50">Team size</div>
-                        <div className="font-bold">58 Scientists</div>
-                      </div>
-                    </div>
+                <Link
+                  href={`/expeditions`}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '8px',
+                    padding: '11px 22px',
+                    background: '#0ea5e9', color: '#fff',
+                    borderRadius: '10px', fontWeight: 700, fontSize: '0.9rem',
+                    transition: 'background 0.18s'
+                  }}
+                >
+                  Explore Expedition <ArrowRight size={15} />
+                </Link>
+              </div>
+
+              {/* Image panel */}
+              <div style={{ position: 'relative' }}>
+                <img
+                  src="/images/bharati-station.jpg"
+                  alt="Antarctic expedition"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+                {/* Solid left-edge dark panel */}
+                <div style={{ position: 'absolute', inset: '0', left: 0, width: '80px', background: '#0a1628' }} />
+                {/* Floating badge */}
+                <div style={{
+                  position: 'absolute', bottom: '2rem', right: '2rem',
+                  background: 'rgba(10,22,40,0.88)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '14px', padding: '16px 20px',
+                  display: 'flex', alignItems: 'center', gap: '12px'
+                }}>
+                  <Users size={17} style={{ color: '#0ea5e9' }} />
+                  <div>
+                    <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem' }}>Team size</div>
+                    <div style={{ color: '#fff', fontWeight: 700, fontSize: '0.95rem' }}>58 Scientists</div>
                   </div>
                 </div>
               </div>
@@ -410,37 +461,45 @@ export default function HomePage() {
       )}
 
       {/* ─── FEATURES ─── */}
-      <section className="py-20 bg-polar-frost">
-        <div className="max-w-screen-xl mx-auto px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <div className="section-label mb-4 mx-auto w-fit">
-              <Zap size={12} />
-              Platform Features
+      <section style={{ padding: '5rem 0', background: '#f4f8fb' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
+          <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+            <div className="section-label" style={{ marginBottom: '1rem', display: 'inline-flex' }}>
+              <Zap size={12} /> Platform Features
             </div>
-            <h2 className="font-display font-bold text-4xl text-polar-navy mb-4">
+            <h2 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: '2.25rem', color: '#0a1628', marginBottom: '0.75rem' }}>
               One Platform, Complete Polar Science
             </h2>
-            <p className="text-slate-600 text-lg max-w-2xl mx-auto">
+            <p style={{ color: '#64748b', fontSize: '1.05rem', maxWidth: '520px', margin: '0 auto' }}>
               From automated data ingestion to AI-powered research discovery and public outreach.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
             {FEATURES.map((f) => {
               const Icon = f.icon;
               return (
                 <Link
                   key={f.title}
                   href={f.href}
-                  className="card p-7 group hover:border-polar-cyan/20"
+                  className="card"
+                  style={{ padding: '1.75rem', display: 'block', textDecoration: 'none' }}
                 >
-                  <div className={`w-11 h-11 ${f.bg} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                    <Icon size={22} className={f.color} />
+                  <div style={{
+                    width: '44px', height: '44px',
+                    background: f.bg,
+                    borderRadius: '12px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    marginBottom: '1rem'
+                  }}>
+                    <Icon size={21} style={{ color: f.accent }} />
                   </div>
-                  <h3 className="font-display font-bold text-xl text-polar-navy mb-2">{f.title}</h3>
-                  <p className="text-slate-500 text-sm leading-relaxed">{f.description}</p>
-                  <div className="mt-4 flex items-center gap-1 text-polar-cyan text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
-                    Learn more <ChevronRight size={14} />
+                  <h3 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: '1.1rem', color: '#0a1628', marginBottom: '0.5rem' }}>
+                    {f.title}
+                  </h3>
+                  <p style={{ color: '#64748b', fontSize: '0.875rem', lineHeight: 1.65 }}>{f.description}</p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#0ea5e9', fontSize: '0.82rem', fontWeight: 600, marginTop: '1rem' }}>
+                    Learn more <ChevronRight size={13} />
                   </div>
                 </Link>
               );
@@ -450,24 +509,23 @@ export default function HomePage() {
       </section>
 
       {/* ─── AI TEASER ─── */}
-      <section className="py-20 bg-polar-navy relative overflow-hidden">
-        <div className="absolute inset-0 aurora-bg" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-polar-cyan/5 blur-3xl" />
+      <section style={{ padding: '5rem 0', background: '#0a1628', position: 'relative', overflow: 'hidden' }}>
+        {/* Subtle radial highlight — no gradient, just a soft circle */}
+        <div style={{ position: 'absolute', top: '-80px', left: '50%', transform: 'translateX(-50%)', width: '500px', height: '500px', background: 'rgba(14,165,233,0.04)', borderRadius: '50%', pointerEvents: 'none' }} />
 
-        <div className="relative z-10 max-w-screen-xl mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'center' }}>
             <div>
-              <div className="section-label-dark section-label mb-6">
-                <MessageSquare size={12} />
-                Polar AI
+              <div className="section-label section-label-dark" style={{ marginBottom: '1.5rem' }}>
+                <MessageSquare size={12} /> Polar AI
               </div>
-              <h2 className="font-display font-bold text-4xl text-white mb-5 leading-tight">
+              <h2 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: '2.1rem', color: '#fff', marginBottom: '1.25rem', lineHeight: 1.25 }}>
                 Ask Anything About Indian Polar Research
               </h2>
-              <p className="text-white/60 text-lg leading-relaxed mb-8">
+              <p style={{ color: 'rgba(255,255,255,0.52)', fontSize: '1rem', lineHeight: 1.7, marginBottom: '2rem' }}>
                 Our RAG-powered AI assistant searches thousands of NCPOR documents, expedition reports, and scientific publications to give you precise, cited answers.
               </p>
-              <div className="space-y-3 mb-8">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '2rem' }}>
                 {[
                   'What research was conducted during the 44th Indian Antarctic Expedition?',
                   'What is the purpose of Bharati Research Station?',
@@ -476,61 +534,79 @@ export default function HomePage() {
                   <Link
                     key={q}
                     href={`/assistant?q=${encodeURIComponent(q)}`}
-                    className="flex items-center gap-3 p-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-polar-cyan/30 rounded-xl text-white/70 hover:text-white text-sm transition-all group"
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '12px',
+                      padding: '13px 16px',
+                      background: 'rgba(255,255,255,0.04)',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                      borderRadius: '10px',
+                      color: 'rgba(255,255,255,0.65)', fontSize: '0.875rem',
+                      transition: 'background 0.18s, border-color 0.18s'
+                    }}
+                    onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background='rgba(255,255,255,0.08)'; el.style.borderColor='rgba(14,165,233,0.3)'; }}
+                    onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background='rgba(255,255,255,0.04)'; el.style.borderColor='rgba(255,255,255,0.08)'; }}
                   >
-                    <MessageSquare size={14} className="text-polar-cyan shrink-0" />
+                    <MessageSquare size={13} style={{ color: '#0ea5e9', flexShrink: 0 }} />
                     {q}
-                    <ArrowRight size={14} className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                    <ArrowRight size={13} style={{ marginLeft: 'auto', color: 'rgba(255,255,255,0.3)', flexShrink: 0 }} />
                   </Link>
                 ))}
               </div>
               <Link
                 href="/assistant"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-polar-cyan text-white rounded-xl font-bold hover:bg-sky-500 transition-all shadow-lg hover:shadow-glow-cyan"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '8px',
+                  padding: '12px 22px',
+                  background: '#0ea5e9', color: '#fff',
+                  borderRadius: '10px', fontWeight: 700, fontSize: '0.9rem',
+                  transition: 'background 0.18s'
+                }}
               >
-                <MessageSquare size={18} />
+                <MessageSquare size={17} />
                 Open Polar AI
               </Link>
             </div>
 
             {/* Chat preview */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
-              <div className="flex items-center gap-3 mb-5 pb-4 border-b border-white/8">
-                <div className="w-8 h-8 bg-polar-cyan rounded-lg flex items-center justify-center">
-                  <Snowflake size={16} className="text-white" />
+            <div style={{
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '16px', padding: '1.5rem'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.25rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+                <div style={{ width: '32px', height: '32px', background: '#0ea5e9', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Snowflake size={15} style={{ color: '#fff' }} />
                 </div>
                 <div>
-                  <div className="text-white font-semibold text-sm">Polar AI</div>
-                  <div className="flex items-center gap-1.5 text-xs text-green-400">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
+                  <div style={{ color: '#fff', fontWeight: 600, fontSize: '0.875rem' }}>Polar AI</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: '#4ade80' }}>
+                    <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4ade80' }} />
                     Online · RAG enabled
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <div className="chat-message-user text-sm ml-auto">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div className="chat-message-user" style={{ fontSize: '0.85rem', marginLeft: 'auto' }}>
                   What climate datasets are available from the 44th expedition?
                 </div>
-                <div className="chat-message-ai text-sm">
-                  <p className="text-slate-700">Based on the NCPOR knowledge repository, the 44th Indian Antarctic Expedition (2024-25) produced several key datasets <span className="text-polar-cyan font-bold">[1]</span>:</p>
-                  <ul className="mt-2 space-y-1 text-slate-600">
+                <div className="chat-message-ai" style={{ fontSize: '0.85rem' }}>
+                  <p style={{ color: '#374151' }}>Based on the NCPOR knowledge repository, the 44th Indian Antarctic Expedition (2024-25) produced several key datasets <span style={{ color: '#0ea5e9', fontWeight: 700 }}>[1]</span>:</p>
+                  <ul style={{ marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '4px', color: '#4b5563' }}>
                     <li>• <strong>Southern Ocean CTD Profiles</strong> — 15,420 records of temperature, salinity, depth</li>
                     <li>• <strong>Maitri Meteorological Data</strong> — Hourly atmospheric observations</li>
                     <li>• <strong>Prydz Bay Biodiversity Survey</strong> — 12,500 benthic species records</li>
                   </ul>
-                  <div className="mt-3 pt-3 border-t border-slate-100">
-                    <div className="text-xs text-slate-400 font-medium">Sources</div>
-                    <div className="text-xs text-polar-cyan mt-1 hover:underline cursor-pointer">
-                      [1] 44th Expedition Report — Page 42
-                    </div>
+                  <div style={{ marginTop: '12px', paddingTop: '10px', borderTop: '1px solid #f1f5f9' }}>
+                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600, marginBottom: '4px' }}>Sources</div>
+                    <div style={{ fontSize: '0.72rem', color: '#0ea5e9', cursor: 'pointer' }}>[1] 44th Expedition Report — Page 42</div>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-5 flex gap-2">
-                <div className="flex-1 input input-dark text-sm py-2.5">Ask about polar research...</div>
-                <button className="px-4 py-2.5 bg-polar-cyan text-white rounded-lg text-sm font-semibold hover:bg-sky-500 transition-colors">
+              <div style={{ marginTop: '1.25rem', display: 'flex', gap: '8px' }}>
+                <div className="input input-dark" style={{ fontSize: '0.85rem', padding: '10px 14px', flex: 1 }}>Ask about polar research...</div>
+                <button style={{ padding: '10px 16px', background: '#0ea5e9', color: '#fff', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600, border: 'none', cursor: 'pointer' }}>
                   Ask
                 </button>
               </div>
@@ -540,42 +616,41 @@ export default function HomePage() {
       </section>
 
       {/* ─── CLASSROOM TEASER ─── */}
-      <section className="py-20 bg-white">
-        <div className="max-w-screen-xl mx-auto px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row items-start justify-between gap-8 mb-12">
+      <section style={{ padding: '5rem 0', background: '#fff' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.5rem', marginBottom: '3rem' }}>
             <div>
-              <div className="section-label mb-4">
-                <BookOpen size={12} />
-                Polar Classroom
+              <div className="section-label" style={{ marginBottom: '1rem' }}>
+                <BookOpen size={12} /> Polar Classroom
               </div>
-              <h2 className="font-display font-bold text-4xl text-polar-navy">
+              <h2 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: '2.25rem', color: '#0a1628' }}>
                 Learn the Science of the Poles
               </h2>
             </div>
-            <Link
-              href="/classroom"
-              className="btn-secondary shrink-0"
-            >
+            <Link href="/classroom" className="btn-secondary" style={{ flexShrink: 0 }}>
               All Topics <ArrowRight size={14} />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
             {[
-              { title: 'Climate Change', icon: '🌡️', color: 'bg-rose-50 border-rose-100', href: '/classroom/climate-change' },
-              { title: 'Glaciers & Ice', icon: '🏔️', color: 'bg-sky-50 border-sky-100', href: '/classroom/glaciers' },
-              { title: 'Polar Oceans', icon: '🌊', color: 'bg-teal-50 border-teal-100', href: '/classroom/polar-oceans' },
-              { title: 'Indian Expeditions', icon: '🚢', color: 'bg-amber-50 border-amber-100', href: '/classroom/polar-expeditions' },
+              { title: 'Climate Change', icon: '🌡️', bg: '#fef2f2', border: '#fde8e8', href: '/classroom/climate-change' },
+              { title: 'Glaciers & Ice',  icon: '🏔️', bg: '#f0f9ff', border: '#e0f2fe', href: '/classroom/glaciers' },
+              { title: 'Polar Oceans',    icon: '🌊', bg: '#f0fdfa', border: '#d0faf4', href: '/classroom/polar-oceans' },
+              { title: 'Indian Expeditions', icon: '🚢', bg: '#fffbeb', border: '#fde68a', href: '/classroom/polar-expeditions' },
             ].map((topic) => (
               <Link
                 key={topic.title}
                 href={topic.href}
-                className={`card p-6 border ${topic.color} group hover-lift`}
+                className="card"
+                style={{ padding: '1.5rem', background: topic.bg, borderColor: topic.border, display: 'block' }}
               >
-                <div className="text-4xl mb-4">{topic.icon}</div>
-                <h3 className="font-display font-bold text-xl text-polar-navy mb-1">{topic.title}</h3>
-                <div className="flex items-center gap-1 text-polar-cyan text-sm font-semibold mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                  Learn <ChevronRight size={14} />
+                <div style={{ fontSize: '2.2rem', marginBottom: '1rem' }}>{topic.icon}</div>
+                <h3 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: '1.05rem', color: '#0a1628', marginBottom: '0.75rem' }}>
+                  {topic.title}
+                </h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#0ea5e9', fontSize: '0.8rem', fontWeight: 600 }}>
+                  Learn <ChevronRight size={13} />
                 </div>
               </Link>
             ))}
@@ -583,42 +658,44 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── LATEST MEDIA ─── */}
-      <section className="py-20 bg-polar-frost">
-        <div className="max-w-screen-xl mx-auto px-6 lg:px-8">
-          <div className="flex items-start justify-between mb-10">
+      {/* ─── MEDIA GALLERY ─── */}
+      <section style={{ padding: '5rem 0', background: '#f4f8fb' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
-              <div className="section-label mb-4">
-                <Play size={12} />
-                Media Gallery
+              <div className="section-label" style={{ marginBottom: '1rem' }}>
+                <Play size={12} /> Media Gallery
               </div>
-              <h2 className="font-display font-bold text-4xl text-polar-navy">
+              <h2 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: '2.25rem', color: '#0a1628' }}>
                 From the Field
               </h2>
             </div>
-            <Link href="/media" className="btn-secondary">
-              View All <ArrowRight size={14} />
-            </Link>
+            <Link href="/media" className="btn-secondary">View All <ArrowRight size={14} /></Link>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
             {[
-              'https://images.unsplash.com/photo-1551909679-f1d9f3268571?w=500&q=80',
-              'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=500&q=80',
-              'https://images.unsplash.com/photo-1563207153-f403bf289096?w=500&q=80',
-              'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=500&q=80',
+              '/images/aurora-maitri.jpg',
+              '/images/ice-core-science.jpg',
+              '/images/penguin-colony.jpg',
+              '/images/ocean-research.jpg',
             ].map((img, i) => (
               <Link
                 key={i}
                 href="/media"
-                className="group relative aspect-square rounded-xl overflow-hidden"
+                style={{ display: 'block', position: 'relative', aspectRatio: '1/1', borderRadius: '12px', overflow: 'hidden' }}
               >
                 <img
                   src={img}
                   alt={`Polar image ${i + 1}`}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1.07)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1)'; }}
                 />
-                <div className="absolute inset-0 bg-polar-navy/0 group-hover:bg-polar-navy/40 transition-all" />
+                <div style={{ position: 'absolute', inset: 0, background: 'rgba(10,22,40,0)', transition: 'background 0.3s' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(10,22,40,0.35)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(10,22,40,0)'; }}
+                />
               </Link>
             ))}
           </div>
@@ -626,32 +703,45 @@ export default function HomePage() {
       </section>
 
       {/* ─── CTA ─── */}
-      <section className="py-20 bg-polar-navy">
-        <div className="max-w-screen-xl mx-auto px-6 lg:px-8 text-center">
-          <h2 className="font-display font-bold text-4xl text-white mb-5">
+      <section style={{ padding: '5rem 0', background: '#0a1628' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem', textAlign: 'center' }}>
+          <h2 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: '2.25rem', color: '#fff', marginBottom: '1.25rem' }}>
             Ready to Explore India&apos;s Polar Legacy?
           </h2>
-          <p className="text-white/60 text-xl mb-10 max-w-2xl mx-auto">
+          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '1.1rem', marginBottom: '2.5rem', maxWidth: '500px', margin: '0 auto 2.5rem' }}>
             Search across decades of Indian polar science. Ask questions. Discover insights. Generate outreach content.
           </p>
-          <div className="flex flex-wrap gap-4 justify-center">
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link
               href="/repository"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-polar-cyan text-white rounded-xl font-bold text-lg hover:bg-sky-500 transition-all shadow-lg hover:shadow-glow-cyan"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '10px',
+                padding: '14px 28px',
+                background: '#0ea5e9', color: '#fff',
+                borderRadius: '10px', fontWeight: 700, fontSize: '1rem',
+                transition: 'background 0.18s'
+              }}
             >
-              <Search size={20} />
-              Search the Repository
+              <Search size={18} /> Search the Repository
             </Link>
             <Link
               href="/assistant"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-white/10 border border-white/20 text-white rounded-xl font-bold text-lg hover:bg-white/15 transition-all"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '10px',
+                padding: '14px 28px',
+                background: 'rgba(255,255,255,0.07)',
+                border: '1.5px solid rgba(255,255,255,0.15)',
+                color: '#fff',
+                borderRadius: '10px', fontWeight: 700, fontSize: '1rem',
+                transition: 'background 0.18s'
+              }}
             >
-              <MessageSquare size={20} />
-              Ask Polar AI
+              <MessageSquare size={18} /> Ask Polar AI
             </Link>
           </div>
         </div>
       </section>
+
     </div>
   );
 }
