@@ -1127,7 +1127,16 @@ async def _run_crawl_job(job_id: str, start_url: str, config: dict):
         job.started_at = datetime.utcnow()
         db.commit()
         
-        crawler = NCPORCrawler()
+        async def on_progress(data: dict):
+            try:
+                cur_job = db.query(CrawlJob).filter(CrawlJob.id == job_id).first()
+                if cur_job:
+                    cur_job.pages_scanned = data.get("pages_scanned", cur_job.pages_scanned)
+                    db.commit()
+            except Exception:
+                pass
+        
+        crawler = NCPORCrawler(progress_callback=on_progress)
         result = await crawler.crawl(start_url, config, job_id)
         
         if "error" in result:

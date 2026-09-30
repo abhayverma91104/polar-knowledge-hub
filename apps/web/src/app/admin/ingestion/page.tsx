@@ -300,17 +300,25 @@ export default function IngestionPage() {
                   <FileText size={16} className="text-slate-400" />
                   Crawl Log
                 </h3>
-                <div className="bg-polar-midnight rounded-xl p-4 font-mono text-xs min-h-48 max-h-80 overflow-y-auto">
+                <div
+                  className="rounded-xl p-4 font-mono text-xs min-h-48 max-h-80 overflow-y-auto border border-slate-200"
+                  style={{ background: '#f8fafc', color: '#0f172a' }}
+                >
                   {crawlLog.length === 0 ? (
-                    <span className="text-white/30">Ready to crawl. Enter URL and click Start Crawl.</span>
+                    <span className="text-slate-400">Ready to crawl. Enter URL and click Start Crawl.</span>
                   ) : (
                     crawlLog.map((line, i) => (
-                      <div key={i} className={`mb-1 ${
-                        line.includes('✅') ? 'text-green-400' :
-                        line.includes('❌') ? 'text-red-400' :
-                        line.includes('Error') ? 'text-red-300' :
-                        'text-white/70'
-                      }`}>
+                      <div
+                        key={i}
+                        className={`mb-1.5 leading-relaxed ${
+                          line.includes('✅') ? 'text-emerald-700 font-semibold' :
+                          line.includes('❌') ? 'text-rose-700 font-semibold' :
+                          line.includes('Error') ? 'text-rose-600 font-medium' :
+                          line.includes('Pages:') ? 'text-slate-900' :
+                          'text-slate-900'
+                        }`}
+                        style={{ color: line.includes('✅') ? '#047857' : line.includes('❌') || line.includes('Error') ? '#b91c1c' : '#0f172a' }}
+                      >
                         {line}
                       </div>
                     ))
