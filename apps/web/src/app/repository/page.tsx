@@ -174,41 +174,46 @@ function RepositoryContent() {
   return (
     <div className="min-h-screen bg-polar-frost pt-16">
       {/* Header */}
-      <div className="bg-polar-navy py-16">
+      <div className="py-16" style={{ background: '#0a1628' }}>
         <div className="max-w-screen-xl mx-auto px-6 lg:px-8">
-          <div className="section-label-dark section-label mb-4">
-            <Database size={12} />
-            Knowledge Repository
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 text-xs font-bold uppercase tracking-wider mb-4 border border-sky-500/30">
+            <Database size={13} />
+            <span>Knowledge Repository</span>
           </div>
-          <h1 className="font-display font-bold text-4xl text-white mb-3">
+          <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-white mb-3">
             Polar Knowledge Repository
           </h1>
-          <p className="text-white/60 text-xl mb-8">
-            Search across decades of Indian polar science.
+          <p className="text-slate-300 text-base sm:text-lg mb-8 max-w-2xl font-light">
+            Search across decades of Indian polar science publications, datasets, and expedition records.
           </p>
 
           {/* Search bar */}
-          <form onSubmit={handleSearch} className="flex gap-3 max-w-2xl">
+          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 max-w-2xl">
             <div className="flex-1 relative">
-              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40" />
+              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search reports, publications, datasets, expeditions..."
-                className="input input-dark w-full pl-12 py-3.5 text-base"
+                className="w-full pl-12 pr-4 py-3.5 text-sm sm:text-base rounded-xl border text-white placeholder-slate-400 focus:outline-none focus:border-sky-500"
+                style={{ background: '#070f1e', borderColor: 'rgba(255,255,255,0.15)' }}
               />
             </div>
             <select
               value={searchType}
               onChange={(e) => setSearchType(e.target.value)}
-              className="input input-dark py-3.5 w-40 text-sm"
+              className="py-3.5 px-3 sm:w-40 text-sm rounded-xl border text-white focus:outline-none focus:border-sky-500"
+              style={{ background: '#070f1e', borderColor: 'rgba(255,255,255,0.15)' }}
             >
               {SEARCH_TYPES.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
+                <option key={t.value} value={t.value} style={{ background: '#0a1628', color: '#fff' }}>{t.label}</option>
               ))}
             </select>
-            <button type="submit" className="btn-primary px-6 py-3.5 text-base">
+            <button
+              type="submit"
+              className="px-6 py-3.5 text-sm font-semibold rounded-xl bg-sky-500 hover:bg-sky-400 text-white transition-colors"
+            >
               Search
             </button>
           </form>

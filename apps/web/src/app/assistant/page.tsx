@@ -110,10 +110,10 @@ function AssistantContent() {
   return (
     <div className="min-h-screen bg-polar-frost flex flex-col pt-16">
       {/* Header */}
-      <div className="bg-polar-navy border-b border-white/8 py-8">
+      <div className="border-b border-white/10 py-8" style={{ background: '#0a1628' }}>
         <div className="max-w-4xl mx-auto px-6">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-polar-cyan to-teal-400 rounded-2xl flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg" style={{ background: '#0ea5e9' }}>
               <Snowflake size={24} className="text-white" />
             </div>
             <div>

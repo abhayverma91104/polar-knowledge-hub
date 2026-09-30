@@ -115,7 +115,7 @@ export default function IngestionPage() {
 
   return (
     <div className="min-h-screen bg-polar-frost pt-16">
-      <div className="bg-polar-navy py-12">
+      <div className="py-12" style={{ background: '#0a1628' }}>
         <div className="max-w-screen-xl mx-auto px-6 lg:px-8">
           <div className="flex items-center gap-2 text-polar-cyan text-sm font-semibold mb-2">
             <Globe size={14} />

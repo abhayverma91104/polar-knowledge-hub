@@ -33,13 +33,13 @@ const FOOTER_LINKS: Record<string, FooterLink[]> = {
 
 export function Footer() {
   return (
-    <footer className="bg-polar-navy border-t border-white/8">
+    <footer className="border-t border-white/10" style={{ background: '#0a1628' }}>
       <div className="max-w-screen-xl mx-auto px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-2.5 mb-5">
-              <div className="w-9 h-9 bg-gradient-to-br from-polar-cyan to-polar-teal rounded-xl flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-md" style={{ background: '#0ea5e9' }}>
                 <Snowflake size={18} className="text-white" />
               </div>
               <div>

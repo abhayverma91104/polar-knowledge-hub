@@ -116,7 +116,7 @@ export default function ContentStudioPage() {
   return (
     <div className="min-h-screen bg-polar-frost pt-16">
       {/* Header */}
-      <div className="bg-polar-navy py-16">
+      <div className="py-16" style={{ background: '#0a1628' }}>
         <div className="max-w-screen-xl mx-auto px-6 lg:px-8">
           <div className="section-label-dark section-label mb-4">
             <Sparkles size={12} />

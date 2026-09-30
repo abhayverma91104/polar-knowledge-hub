@@ -85,7 +85,7 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-polar-frost pt-16">
       {/* Header */}
-      <div className="bg-polar-navy py-12">
+      <div className="py-12" style={{ background: '#0a1628' }}>
         <div className="max-w-screen-xl mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>

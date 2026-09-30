@@ -1,5 +1,27 @@
 @import "tailwindcss";
 
+@theme {
+  --color-polar-navy: #0a1628;
+  --color-polar-navy-800: #0d1e36;
+  --color-polar-navy-700: #122040;
+  --color-polar-navy-600: #1a2f55;
+  --color-polar-cyan: #0ea5e9;
+  --color-polar-cyan-400: #38bdf8;
+  --color-polar-teal: #0d9488;
+  --color-polar-frost: #f4f8fb;
+  --color-polar-snow: #f9fafb;
+}
+
+/* Explicit fallback utilities */
+.bg-polar-navy { background-color: #0a1628 !important; }
+.bg-polar-navy-800 { background-color: #0d1e36 !important; }
+.bg-polar-navy-700 { background-color: #122040 !important; }
+.text-polar-navy { color: #0a1628 !important; }
+.bg-polar-frost { background-color: #f4f8fb !important; }
+.text-polar-cyan { color: #0ea5e9 !important; }
+.border-polar-cyan { border-color: #0ea5e9 !important; }
+.bg-polar-cyan { background-color: #0ea5e9 !important; }
+
 /* ─── Design Tokens ─── */
 :root {
   --navy:        #0a1628;
@@ -22,6 +44,7 @@
   --shadow-lg:   0 8px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.08);
   --shadow-cyan: 0 4px 16px rgba(14, 165, 233, 0.22);
 }
+
 
 /* ─── Reset ─── */
 *, *::before, *::after { box-sizing: border-box; }
