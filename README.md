@@ -92,10 +92,9 @@ chmod +x start.sh
 | **API Documentation** | `http://localhost:8000/docs` | Interactive Swagger UI |
 | **Admin Portal** | `http://localhost:3000/admin` | Ingestion & Editorial Dashboard |
 
-### Default Credentials:
-* **Admin Email:** `admin@ncpor.res.in`
-* **Password:** `PolarHub@2026`
-* **Editor Email:** `editor@ncpor.res.in` (Password: `PolarHub@2026`)
+### Authentication & Access:
+* Initial demo and administrative accounts are seeded automatically upon startup.
+* For local development credentials, refer to your local `CREDENTIALS.md` file (kept private and git-ignored).
 
 ---
 
