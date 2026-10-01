@@ -821,8 +821,20 @@ async def get_expedition(expedition_id: str, db: Session = Depends(get_db)):
 # ─────────────────────────────────────────────────────
 
 @app.get("/api/stations")
-async def list_stations(db: Session = Depends(get_db)):
-    stations = db.query(ResearchStation).filter(ResearchStation.is_active == True).all()
+async def list_stations(
+    include_historical: bool = True,
+    region: Optional[str] = None,
+    db: Session = Depends(get_db),
+):
+    query = db.query(ResearchStation)
+    if not include_historical:
+        query = query.filter(ResearchStation.is_active == True)
+    if region:
+        try:
+            query = query.filter(ResearchStation.region == Region(region))
+        except ValueError:
+            pass
+    stations = query.all()
     return [_station_summary(s) for s in stations]
 
 
