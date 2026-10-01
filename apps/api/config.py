@@ -45,7 +45,10 @@ class Settings(BaseSettings):
     demo_mode: bool = False
 
     class Config:
-        env_file = ".env"
+        import os
+        from pathlib import Path
+        _base = Path(__file__).resolve().parent
+        env_file = [str(_base / ".env"), ".env", str(_base.parent.parent / ".env")]
         extra = "ignore"
 
     @property
@@ -54,7 +57,8 @@ class Settings(BaseSettings):
 
     @property
     def use_real_ai(self) -> bool:
-        return bool(self.gemini_api_key) and not self.demo_mode
+        key = (self.gemini_api_key or "").strip()
+        return bool(key) and not self.demo_mode
 
     @property
     def use_supabase(self) -> bool:
@@ -64,3 +68,9 @@ class Settings(BaseSettings):
 @lru_cache()
 def get_settings() -> Settings:
     return Settings()
+
+
+def reload_settings() -> Settings:
+    """Clear lru_cache and reload settings from environment/.env"""
+    get_settings.cache_clear()
+    return get_settings()

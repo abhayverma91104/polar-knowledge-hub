@@ -151,6 +151,11 @@ class ApproveContentRequest(BaseModel):
     review_notes: Optional[str] = None
 
 
+class ExplainTopicRequest(BaseModel):
+    concept: Optional[str] = None
+    audience_level: str = "high_school"
+
+
 # ─────────────────────────────────────────────────────
 # Health
 # ─────────────────────────────────────────────────────
@@ -632,6 +637,12 @@ async def _semantic_search(query: str, filters: dict, limit: int, db: Session) -
 # AI Assistant (RAG)
 # ─────────────────────────────────────────────────────
 
+@app.get("/api/assistant/status")
+async def get_assistant_status():
+    ai_service = get_ai_service()
+    return ai_service.get_status()
+
+
 @app.post("/api/assistant/query")
 async def query_assistant(req: AIQueryRequest, db: Session = Depends(get_db)):
     start_time = time.time()
@@ -948,7 +959,44 @@ async def get_topic_quiz(slug: str, db: Session = Depends(get_db)):
     questions = db.query(QuizQuestion).filter(
         QuizQuestion.topic_id == topic.id
     ).order_by(QuizQuestion.order_index).all()
+    
+    if not questions:
+        ai_service = get_ai_service()
+        gen_quizzes = ai_service.generate_topic_quiz(topic.title, topic.description or "")
+        return [
+            {
+                "id": f"ai-quiz-{i}",
+                "topic_id": topic.id,
+                "question": q.get("question", ""),
+                "options": q.get("options", []),
+                "correct_index": q.get("correct_index", 0),
+                "explanation": q.get("explanation", ""),
+                "order_index": i,
+            }
+            for i, q in enumerate(gen_quizzes)
+        ]
     return [_quiz_question_dict(q) for q in questions]
+
+
+@app.post("/api/classroom/topics/{slug}/explain")
+async def explain_topic_concept(
+    slug: str,
+    req: ExplainTopicRequest,
+    db: Session = Depends(get_db),
+):
+    topic = db.query(Topic).filter(Topic.slug == slug).first()
+    if not topic:
+        raise HTTPException(status_code=404, detail="Topic not found")
+    ai_service = get_ai_service()
+    concept = req.concept or topic.title
+    explanation = ai_service.explain_concept(concept, req.audience_level)
+    return {
+        "topic": topic.title,
+        "concept": concept,
+        "explanation": explanation,
+        "audience_level": req.audience_level,
+        "model": ai_service.model_name if ai_service.use_real else "demo",
+    }
 
 
 # ─────────────────────────────────────────────────────
