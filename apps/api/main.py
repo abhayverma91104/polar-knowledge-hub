@@ -157,7 +157,8 @@ class SearchRequest(BaseModel):
 
 
 class AIQueryRequest(BaseModel):
-    question: str
+    question: Optional[str] = None
+    query: Optional[str] = None
     session_id: Optional[str] = None
 
 
@@ -676,67 +677,65 @@ async def query_assistant(req: AIQueryRequest, db: Session = Depends(get_db)):
     start_time = time.time()
     ai_service = get_ai_service()
     
-    # Get relevant chunks via semantic search
-    query_embedding = ai_service.get_query_embedding(req.question)
-    embedding_str = "[" + ",".join(str(x) for x in query_embedding) + "]"
+    user_question = (req.question or req.query or "").strip()
+    if not user_question:
+        return {
+            "answer": "Hello! I am Polar AI, the scientific assistant for NCPOR. You can ask me about Indian polar expeditions, research stations (Bharati, Maitri, Himadri), datasets, and Arctic/Antarctic science discoveries.",
+            "sources": [],
+            "chunks_used": 0,
+            "model": "assistant",
+            "latency_ms": 1,
+        }
     
     context_chunks = []
+    
+    # 1. Try vector similarity search
     try:
-        sql = text(f"""
-            SELECT
-                dc.id as chunk_id,
-                dc.chunk_text,
-                dc.page_number,
-                dc.document_id,
-                d.title as document_title,
-                d.source_url,
-                d.authors,
-                d.year,
-                1 - (dc.embedding <=> '{embedding_str}'::vector) AS similarity
-            FROM document_chunks dc
-            JOIN documents d ON dc.document_id = d.id
-            WHERE d.status = 'approved'
-            ORDER BY dc.embedding <=> '{embedding_str}'::vector
-            LIMIT 8
-        """)
-        rows = db.execute(sql).fetchall()
-        
-        for row in rows:
-            if row.similarity and row.similarity > 0.3:  # Relevance threshold
-                context_chunks.append({
-                    "chunk_id": row.chunk_id,
-                    "chunk_text": row.chunk_text,
-                    "page_number": row.page_number,
-                    "document_id": row.document_id,
-                    "document_title": row.document_title,
-                    "source_url": row.source_url,
-                    "year": row.year,
-                    "similarity": float(row.similarity),
-                })
+        query_embedding = ai_service.get_query_embedding(user_question)
+        if query_embedding:
+            embedding_str = "[" + ",".join(str(x) for x in query_embedding) + "]"
+            sql = text("""
+                SELECT
+                    dc.id as chunk_id,
+                    dc.chunk_text,
+                    dc.page_number,
+                    dc.document_id,
+                    d.title as document_title,
+                    d.source_url,
+                    d.year,
+                    1 - (dc.embedding <=> :embed::vector) AS similarity
+                FROM document_chunks dc
+                JOIN documents d ON dc.document_id = d.id
+                WHERE dc.embedding IS NOT NULL
+                  AND d.status::text ILIKE 'approved'
+                ORDER BY dc.embedding <=> :embed::vector
+                LIMIT 8
+            """)
+            rows = db.execute(sql, {"embed": embedding_str}).fetchall()
+            for row in rows:
+                if row.similarity is not None and row.similarity > 0.2:
+                    context_chunks.append({
+                        "chunk_id": row.chunk_id,
+                        "chunk_text": row.chunk_text,
+                        "page_number": row.page_number,
+                        "document_id": row.document_id,
+                        "document_title": row.document_title,
+                        "source_url": row.source_url,
+                        "year": row.year,
+                        "similarity": float(row.similarity),
+                    })
     except Exception as e:
-        logger.warning(f"Vector search failed: {e}, using intelligent keyword & semantic fallback")
-        import re
-        stopwords = {'what', 'is', 'are', 'the', 'a', 'an', 'in', 'of', 'for', 'to', 'on', 'with', 'at', 'by', 'from', 'about', 'and', 'or', 'tell', 'me', 'you', 'how', 'which', 'who', 'where', 'when', 'why', 'can', 'do', 'does', 'did', 'done'}
-        words = [w for w in re.findall(r'\b\w+\b', req.question.lower()) if len(w) > 2 and w not in stopwords]
-        
-        # Check for conversational greeting or self-inquiry
-        if not words or any(g in req.question.lower() for g in ['who are you', 'tell me about you', 'what are you', 'what can you do', 'hello', 'hi']):
-            intro_doc = db.query(Document).filter(Document.status == ContentStatus.APPROVED).first()
-            if intro_doc:
-                first_chunk = db.query(DocumentChunk).filter(DocumentChunk.document_id == intro_doc.id).first()
-                context_chunks.append({
-                    "chunk_id": first_chunk.id if first_chunk else "intro",
-                    "chunk_text": "The National Centre for Polar and Ocean Research (NCPOR), under the Ministry of Earth Sciences (MoES), Government of India, is the nodal agency for Indian polar expeditions and Antarctic/Arctic research programs. India operates Bharati and Maitri stations in Antarctica, Himadri station in Svalbard, Arctic, and Himansh observatory in the Himalayas.",
-                    "page_number": 1,
-                    "document_id": intro_doc.id,
-                    "document_title": "NCPOR Institutional Overview & Polar Operations",
-                    "source_url": "https://www.ncpor.res.in",
-                    "year": 2024,
-                    "similarity": 0.95,
-                })
-        else:
-            # Multi-word weighted search across all approved documents and chunks
-            all_approved = db.query(Document).filter(Document.status == ContentStatus.APPROVED).all()
+        logger.warning(f"Vector search failed: {e}")
+        db.rollback()
+    
+    # 2. Intelligent keyword fallback if vector search yielded no chunks
+    if not context_chunks:
+        try:
+            import re
+            stopwords = {'what', 'is', 'are', 'the', 'a', 'an', 'in', 'of', 'for', 'to', 'on', 'with', 'at', 'by', 'from', 'about', 'and', 'or', 'tell', 'me', 'you', 'how', 'which', 'who', 'where', 'when', 'why', 'can', 'do', 'does', 'did', 'done'}
+            words = [w for w in re.findall(r'\b\w+\b', user_question.lower()) if len(w) > 2 and w not in stopwords]
+            
+            all_approved = db.query(Document).all()
             scored_docs = []
             for doc in all_approved:
                 score = 0
@@ -755,16 +754,10 @@ async def query_assistant(req: AIQueryRequest, db: Session = Depends(get_db)):
                     scored_docs.append((score, doc))
             
             scored_docs.sort(key=lambda x: x[0], reverse=True)
-            top_docs = [d for _, d in scored_docs[:6]]
+            top_docs = [d for _, d in scored_docs[:6]] or all_approved[:3]
             
-            # If no direct match, take featured documents
-            if not top_docs:
-                top_docs = all_approved[:3]
-                
             for doc in top_docs:
-                chunk = db.query(DocumentChunk).filter(
-                    DocumentChunk.document_id == doc.id
-                ).first()
+                chunk = db.query(DocumentChunk).filter(DocumentChunk.document_id == doc.id).first()
                 if chunk:
                     context_chunks.append({
                         "chunk_id": chunk.id,
@@ -776,18 +769,29 @@ async def query_assistant(req: AIQueryRequest, db: Session = Depends(get_db)):
                         "year": doc.year,
                         "similarity": 0.75,
                     })
+        except Exception as kw_err:
+            logger.warning(f"Keyword search failed: {kw_err}")
+            db.rollback()
     
-    # Generate answer
-    result = ai_service.answer_with_rag(req.question, context_chunks)
+    # 3. Generate grounded answer
+    try:
+        result = ai_service.answer_with_rag(user_question, context_chunks)
+    except Exception as ai_err:
+        logger.error(f"Error in answer_with_rag: {ai_err}")
+        result = {
+            "answer": ai_service._demo_rag_answer(user_question, context_chunks),
+            "sources": [],
+            "model": "fallback",
+        }
     
     elapsed = int((time.time() - start_time) * 1000)
     
-    # Log query
+    # 4. Save query log
     try:
         log = AIQueryLog(
-            question=req.question,
+            question=user_question,
             answer=result["answer"],
-            sources_used=[c.get("document_id") for c in context_chunks],
+            sources_used=[c.get("document_id") for c in context_chunks if c.get("document_id")],
             chunks_retrieved=len(context_chunks),
             model_used=result.get("model"),
             latency_ms=elapsed,
@@ -796,11 +800,11 @@ async def query_assistant(req: AIQueryRequest, db: Session = Depends(get_db)):
         db.add(log)
         db.commit()
     except Exception:
-        pass
+        db.rollback()
     
     return {
         "answer": result["answer"],
-        "sources": result["sources"],
+        "sources": result.get("sources", []),
         "chunks_used": len(context_chunks),
         "model": result.get("model"),
         "latency_ms": elapsed,
