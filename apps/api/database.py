@@ -23,7 +23,7 @@ if IS_SQLITE:
     engine = create_engine(
         db_url,
         connect_args={"check_same_thread": False},
-        echo=settings.app_debug,
+        echo=False,
     )
 else:
     engine = create_engine(
@@ -31,7 +31,7 @@ else:
         pool_size=5,
         max_overflow=10,
         pool_pre_ping=True,
-        echo=settings.app_debug,
+        echo=False,
     )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
