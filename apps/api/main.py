@@ -63,11 +63,6 @@ async def lifespan(app: FastAPI):
             if station_count == 0:
                 logger.info("Fresh database detected (0 stations). Auto-seeding authentic NCPOR records...")
                 try:
-                    import sys
-                    from pathlib import Path
-                    scripts_dir = Path(__file__).resolve().parent.parent.parent / "scripts"
-                    if scripts_dir.exists() and str(scripts_dir) not in sys.path:
-                        sys.path.insert(0, str(scripts_dir))
                     import seed_database
                     seed_database.seed_all()
                     logger.info("Auto-seed completed successfully!")
@@ -1477,6 +1472,25 @@ async def admin_stats(
         "total_crawl_jobs": total_crawl_jobs,
         "recent_queries": [{"query": q.query, "created_at": q.created_at.isoformat()} for q in recent_queries],
     }
+
+
+@app.post("/api/admin/seed")
+@app.get("/api/admin/seed")
+async def trigger_seed(
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+):
+    """Seed or update authentic NCPOR stations, expeditions, documents, datasets and media"""
+    try:
+        import seed_database
+        background_tasks.add_task(seed_database.seed_all)
+        return {
+            "status": "started",
+            "message": "Authentic NCPOR database seeding initiated. Stations, 40+ expeditions, documents, and media are being populated.",
+        }
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
 
 
 # ─────────────────────────────────────────────────────
