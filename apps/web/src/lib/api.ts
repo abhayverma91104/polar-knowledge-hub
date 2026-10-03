@@ -4,7 +4,11 @@
  */
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+let rawUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+if (rawUrl && !rawUrl.startsWith('http://') && !rawUrl.startsWith('https://')) {
+  rawUrl = `https://${rawUrl}`;
+}
+const API_URL = rawUrl.replace(/\/+$/, '');
 
 export const api = axios.create({
   baseURL: API_URL,
