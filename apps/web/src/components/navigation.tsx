@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Search, Menu, X, Globe, User, ChevronDown,
-  Snowflake, LogIn, LogOut, Shield
+  Snowflake, LogIn, LogOut, Shield, Sparkles
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-store';
 
@@ -17,6 +17,7 @@ const NAV_LINKS = [
   { href: '/stations', label: 'Stations' },
   { href: '/classroom', label: 'Polar Classroom' },
   { href: '/assistant', label: 'Polar AI' },
+  { href: '/content-studio', label: 'Content Studio' },
   { href: '/media', label: 'Media' },
   { href: '/about', label: 'About NCPOR' },
 ];
@@ -77,7 +78,7 @@ export function Navigation() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150"
+                  className="px-2 xl:px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-all duration-150 whitespace-nowrap"
                   style={{
                     color: active ? '#38bdf8' : 'rgba(255,255,255,0.7)',
                     background: active ? 'rgba(255,255,255,0.05)' : 'transparent',
@@ -87,7 +88,12 @@ export function Navigation() {
                 >
                   {link.label}
                   {link.label === 'Polar AI' && (
-                    <span style={{ marginLeft: '6px', padding: '1px 6px', background: 'rgba(14,165,233,0.2)', color: '#7dd3fc', fontSize: '10px', fontWeight: 700, borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    <span style={{ marginLeft: '5px', padding: '1px 5px', background: 'rgba(14,165,233,0.2)', color: '#7dd3fc', fontSize: '9px', fontWeight: 700, borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      AI
+                    </span>
+                  )}
+                  {link.label === 'Content Studio' && (
+                    <span style={{ marginLeft: '5px', padding: '1px 5px', background: 'rgba(16,185,129,0.2)', color: '#6ee7b7', fontSize: '9px', fontWeight: 700, borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                       AI
                     </span>
                   )}
@@ -146,14 +152,24 @@ export function Navigation() {
                         </span>
                       </div>
                       {(user.role === 'admin' || user.role === 'editor') && (
-                        <Link
-                          href="/admin"
-                          className="flex items-center gap-2.5 px-4 py-2.5 text-white/80 hover:text-white hover:bg-white/5 transition-colors text-sm"
-                          onClick={() => setUserMenuOpen(false)}
-                        >
-                          <Shield size={15} />
-                          Admin Dashboard
-                        </Link>
+                        <>
+                          <Link
+                            href="/admin"
+                            className="flex items-center gap-2.5 px-4 py-2.5 text-white/80 hover:text-white hover:bg-white/5 transition-colors text-sm"
+                            onClick={() => setUserMenuOpen(false)}
+                          >
+                            <Shield size={15} />
+                            Admin Dashboard
+                          </Link>
+                          <Link
+                            href="/content-studio"
+                            className="flex items-center gap-2.5 px-4 py-2.5 text-white/80 hover:text-white hover:bg-white/5 transition-colors text-sm"
+                            onClick={() => setUserMenuOpen(false)}
+                          >
+                            <Sparkles size={15} />
+                            Content Studio
+                          </Link>
+                        </>
                       )}
                       <button
                         onClick={() => { logout(); setUserMenuOpen(false); }}
@@ -199,13 +215,23 @@ export function Navigation() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-between ${
                     active
                       ? 'text-polar-cyan-400 bg-white/8'
                       : 'text-white/70 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  {link.label}
+                  <span>{link.label}</span>
+                  {link.label === 'Polar AI' && (
+                    <span className="px-1.5 py-0.5 bg-sky-500/20 text-sky-300 text-[10px] font-bold rounded uppercase tracking-wider">
+                      AI
+                    </span>
+                  )}
+                  {link.label === 'Content Studio' && (
+                    <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 text-[10px] font-bold rounded uppercase tracking-wider">
+                      AI
+                    </span>
+                  )}
                 </Link>
               );
             })}
