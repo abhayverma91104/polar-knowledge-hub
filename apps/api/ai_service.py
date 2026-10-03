@@ -50,9 +50,18 @@ class _ModelProxy:
 
 class AIService:
     def __init__(self):
-        self.model_name = "gemini-2.0-flash"
-        self.fallback_model_name = "gemini-1.5-flash"
-        self.embed_model = "text-embedding-004"
+        self.candidate_models = [
+            "gemini-flash-lite-latest",
+            "gemini-3.5-flash-lite",
+            "gemini-flash-latest",
+            "gemini-3.8-flash",
+        ]
+        self.model_name = self.candidate_models[0]
+        self.candidate_embed_models = [
+            "gemini-embedding-001",
+            "gemini-embedding-2",
+        ]
+        self.embed_model = self.candidate_embed_models[0]
         self.client = None
         self.legacy_model = None
         self.sdk_type = "none"
@@ -153,13 +162,17 @@ class AIService:
 
     def get_status(self) -> dict:
         """Return operational status of Gemini AI service"""
-        self._ensure_client()
+        has_key = bool(self._get_active_api_key())
+        is_ready = self._ensure_client()
+        active = is_ready and has_key
         return {
-            "ai_active": self.use_real,
+            "ai_active": active,
+            "has_key": has_key,
+            "status": "connected" if active else "demo_mode",
             "sdk_type": self.sdk_type,
-            "model": self.model_name if self.use_real else "demo",
-            "embed_model": self.embed_model if self.use_real else "mock-sha256",
-            "has_key": bool(self._get_active_api_key()),
+            "model": self.model_name if active else "demo",
+            "embed_model": self.embed_model if active else "mock-sha256",
+            "provider": "Google Gemini" if active else "Demo Synthesizer",
         }
 
     # ─────────────────────────────────────────────────────
@@ -167,7 +180,7 @@ class AIService:
     # ─────────────────────────────────────────────────────
 
     def get_embedding(self, text: str) -> list[float]:
-        """Generate 768-dim embedding vector for document chunk"""
+        """Generate embedding vector for document chunk"""
         clean_text = (text or "").strip()[:3000]
         if not clean_text:
             return self._mock_embedding("empty")
@@ -175,27 +188,31 @@ class AIService:
         if self._ensure_client():
             # 1. Modern SDK
             if self.sdk_type == "google-genai" and self.client:
-                try:
-                    res = self.client.models.embed_content(
-                        model=self.embed_model,
-                        contents=clean_text,
-                    )
-                    if hasattr(res, "embeddings") and res.embeddings:
-                        return list(res.embeddings[0].values)
-                except Exception as e:
-                    logger.warning(f"google-genai embed error: {e}, falling back to mock")
+                for em in self.candidate_embed_models:
+                    try:
+                        res = self.client.models.embed_content(
+                            model=em,
+                            contents=clean_text,
+                        )
+                        if hasattr(res, "embeddings") and res.embeddings:
+                            self.embed_model = em
+                            return list(res.embeddings[0].values)
+                    except Exception as e:
+                        logger.warning(f"google-genai embed with {em} error: {e}")
 
             # 2. Legacy SDK
             if self.sdk_type == "google-generativeai" and genai_legacy:
-                try:
-                    res = genai_legacy.embed_content(
-                        model=f"models/{self.embed_model}",
-                        content=clean_text,
-                    )
-                    if "embedding" in res:
-                        return list(res["embedding"])
-                except Exception as e:
-                    logger.warning(f"legacy genai embed error: {e}, falling back to mock")
+                for em in self.candidate_embed_models:
+                    try:
+                        res = genai_legacy.embed_content(
+                            model=f"models/{em}",
+                            content=clean_text,
+                        )
+                        if "embedding" in res:
+                            self.embed_model = em
+                            return list(res["embedding"])
+                    except Exception as e:
+                        logger.warning(f"legacy genai embed with {em} error: {e}")
 
         return self._mock_embedding(clean_text)
 
@@ -275,7 +292,7 @@ Provide a comprehensive, authoritative, and well-cited response."""
         if has_real_ai:
             # Try modern google-genai
             if self.sdk_type == "google-genai" and self.client:
-                for try_model in [self.model_name, self.fallback_model_name]:
+                for try_model in self.candidate_models:
                     try:
                         config = None
                         if genai_types:
@@ -292,13 +309,14 @@ Provide a comprehensive, authoritative, and well-cited response."""
                         if resp and resp.text:
                             answer = resp.text.strip()
                             model_used = try_model
+                            self.model_name = try_model
                             break
                     except Exception as e:
                         logger.warning(f"Gemini {try_model} generation error: {e}")
 
             # Try legacy SDK if modern didn't succeed
             if not answer and self.sdk_type == "google-generativeai":
-                for try_model in [self.model_name, self.fallback_model_name]:
+                for try_model in self.candidate_models:
                     try:
                         model = genai_legacy.GenerativeModel(
                             try_model,
@@ -308,6 +326,7 @@ Provide a comprehensive, authoritative, and well-cited response."""
                         if resp and resp.text:
                             answer = resp.text.strip()
                             model_used = try_model
+                            self.model_name = try_model
                             break
                     except Exception as e:
                         logger.warning(f"Legacy Gemini {try_model} error: {e}")
@@ -393,31 +412,37 @@ Respond ONLY with the JSON object. No explanation."""
         if has_real_ai:
             raw_json = ""
             if self.sdk_type == "google-genai" and self.client:
-                try:
-                    config = None
-                    if genai_types:
-                        config = genai_types.GenerateContentConfig(
-                            temperature=0.1,
-                            response_mime_type="application/json",
+                for try_model in self.candidate_models:
+                    try:
+                        config = None
+                        if genai_types:
+                            config = genai_types.GenerateContentConfig(
+                                temperature=0.1,
+                                response_mime_type="application/json",
+                            )
+                        resp = self.client.models.generate_content(
+                            model=try_model,
+                            contents=prompt,
+                            config=config,
                         )
-                    resp = self.client.models.generate_content(
-                        model=self.model_name,
-                        contents=prompt,
-                        config=config,
-                    )
-                    if resp and resp.text:
-                        raw_json = resp.text.strip()
-                except Exception as e:
-                    logger.warning(f"google-genai metadata extraction error: {e}")
+                        if resp and resp.text:
+                            raw_json = resp.text.strip()
+                            self.model_name = try_model
+                            break
+                    except Exception as e:
+                        logger.warning(f"google-genai metadata extraction with {try_model} error: {e}")
 
             if not raw_json and self.sdk_type == "google-generativeai":
-                try:
-                    model = genai_legacy.GenerativeModel(self.model_name)
-                    resp = model.generate_content(prompt)
-                    if resp and resp.text:
-                        raw_json = resp.text.strip()
-                except Exception as e:
-                    logger.warning(f"legacy genai metadata extraction error: {e}")
+                for try_model in self.candidate_models:
+                    try:
+                        model = genai_legacy.GenerativeModel(try_model)
+                        resp = model.generate_content(prompt)
+                        if resp and resp.text:
+                            raw_json = resp.text.strip()
+                            self.model_name = try_model
+                            break
+                    except Exception as e:
+                        logger.warning(f"legacy genai metadata extraction with {try_model} error: {e}")
 
             if raw_json:
                 try:
@@ -629,7 +654,7 @@ SOURCE MATERIAL:
             result_text = ""
             # Modern SDK
             if self.sdk_type == "google-genai" and self.client:
-                for try_model in [self.model_name, self.fallback_model_name]:
+                for try_model in self.candidate_models:
                     try:
                         config = None
                         if content_type == "quiz" and genai_types:
@@ -644,18 +669,20 @@ SOURCE MATERIAL:
                         )
                         if resp and resp.text:
                             result_text = resp.text.strip()
+                            self.model_name = try_model
                             break
                     except Exception as e:
                         logger.warning(f"Content generation error with {try_model}: {e}")
 
             # Legacy SDK
             if not result_text and self.sdk_type == "google-generativeai":
-                for try_model in [self.model_name, self.fallback_model_name]:
+                for try_model in self.candidate_models:
                     try:
                         model = genai_legacy.GenerativeModel(try_model)
                         resp = model.generate_content(prompt)
                         if resp and resp.text:
                             result_text = resp.text.strip()
+                            self.model_name = try_model
                             break
                     except Exception as e:
                         logger.warning(f"Legacy content generation error with {try_model}: {e}")
@@ -793,16 +820,30 @@ Include:
 
 Keep it engaging and under 300 words."""
 
-        if has_real_ai and self.client and self.sdk_type == "google-genai":
-            try:
-                resp = self.client.models.generate_content(
-                    model=self.model_name,
-                    contents=prompt,
-                )
-                if resp and resp.text:
-                    return resp.text.strip()
-            except Exception as e:
-                logger.warning(f"explain_concept error: {e}")
+        if has_real_ai:
+            if self.sdk_type == "google-genai" and self.client:
+                for try_model in self.candidate_models:
+                    try:
+                        resp = self.client.models.generate_content(
+                            model=try_model,
+                            contents=prompt,
+                        )
+                        if resp and resp.text:
+                            self.model_name = try_model
+                            return resp.text.strip()
+                    except Exception as e:
+                        logger.warning(f"explain_concept error with {try_model}: {e}")
+
+            if self.sdk_type == "google-generativeai":
+                for try_model in self.candidate_models:
+                    try:
+                        model = genai_legacy.GenerativeModel(try_model)
+                        resp = model.generate_content(prompt)
+                        if resp and resp.text:
+                            self.model_name = try_model
+                            return resp.text.strip()
+                    except Exception as e:
+                        logger.warning(f"explain_concept legacy error with {try_model}: {e}")
 
         return (
             f"### Understanding {concept} in Polar Science\n\n"
@@ -828,27 +869,45 @@ Return ONLY a JSON array formatted as:
   }}
 ]"""
 
-        if has_real_ai and self.client and self.sdk_type == "google-genai":
-            try:
-                config = None
-                if genai_types:
-                    config = genai_types.GenerateContentConfig(
-                        temperature=0.2,
-                        response_mime_type="application/json",
-                    )
-                resp = self.client.models.generate_content(
-                    model=self.model_name,
-                    contents=prompt,
-                    config=config,
-                )
-                if resp and resp.text:
-                    clean = resp.text.strip()
-                    if clean.startswith("```"):
-                        clean = re.sub(r"^```(?:json)?\s*", "", clean)
-                        clean = re.sub(r"\s*```$", "", clean)
-                    return json.loads(clean.strip())
-            except Exception as e:
-                logger.warning(f"generate_topic_quiz error: {e}")
+        if has_real_ai:
+            if self.sdk_type == "google-genai" and self.client:
+                for try_model in self.candidate_models:
+                    try:
+                        config = None
+                        if genai_types:
+                            config = genai_types.GenerateContentConfig(
+                                temperature=0.2,
+                                response_mime_type="application/json",
+                            )
+                        resp = self.client.models.generate_content(
+                            model=try_model,
+                            contents=prompt,
+                            config=config,
+                        )
+                        if resp and resp.text:
+                            clean = resp.text.strip()
+                            if clean.startswith("```"):
+                                clean = re.sub(r"^```(?:json)?\s*", "", clean)
+                                clean = re.sub(r"\s*```$", "", clean)
+                            self.model_name = try_model
+                            return json.loads(clean.strip())
+                    except Exception as e:
+                        logger.warning(f"generate_topic_quiz error with {try_model}: {e}")
+
+            if self.sdk_type == "google-generativeai":
+                for try_model in self.candidate_models:
+                    try:
+                        model = genai_legacy.GenerativeModel(try_model)
+                        resp = model.generate_content(prompt)
+                        if resp and resp.text:
+                            clean = resp.text.strip()
+                            if clean.startswith("```"):
+                                clean = re.sub(r"^```(?:json)?\s*", "", clean)
+                                clean = re.sub(r"\s*```$", "", clean)
+                            self.model_name = try_model
+                            return json.loads(clean.strip())
+                    except Exception as e:
+                        logger.warning(f"generate_topic_quiz legacy error with {try_model}: {e}")
 
         return [
             {

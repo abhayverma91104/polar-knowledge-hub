@@ -5,9 +5,10 @@ import Link from 'next/link';
 import {
   FileText, Database, Image, Video, Globe, Users,
   Clock, Activity, TrendingUp, RefreshCw, Search,
-  Shield, ChevronRight, AlertCircle, CheckCircle, Loader2
+  Shield, ChevronRight, AlertCircle, CheckCircle, Loader2,
+  Cpu, Sparkles
 } from 'lucide-react';
-import { adminApi } from '@/lib/api';
+import { adminApi, assistantApi } from '@/lib/api';
 
 interface AdminStats {
   total_documents: number;
@@ -21,6 +22,15 @@ interface AdminStats {
   recent_queries: Array<{ query: string; created_at: string }>;
 }
 
+interface AIStatus {
+  ai_active: boolean;
+  has_key: boolean;
+  status: string;
+  model?: string;
+  embed_model?: string;
+  provider?: string;
+}
+
 const ADMIN_LINKS = [
   { href: '/admin/ingestion', label: 'Knowledge Ingestion', icon: Globe, description: 'Crawl NCPOR website, upload documents, manage sources', color: 'text-blue-500 bg-blue-50' },
   { href: '/admin/review', label: 'Content Review', icon: CheckCircle, description: 'Approve or reject ingested resources and AI content', color: 'text-green-500 bg-green-50' },
@@ -30,20 +40,32 @@ const ADMIN_LINKS = [
 
 export default function AdminPage() {
   const [stats, setStats] = useState<AdminStats | null>(null);
+  const [aiStatus, setAiStatus] = useState<AIStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    adminApi.getStats()
-      .then(r => setStats(r.data))
-      .catch(err => {
+    Promise.allSettled([
+      adminApi.getStats(),
+      assistantApi.status(),
+    ]).then(([statsRes, aiRes]) => {
+      if (statsRes.status === 'fulfilled') {
+        setStats(statsRes.value.data);
+      } else {
+        const err = statsRes.reason as { response?: { status?: number } };
         if (err.response?.status === 401 || err.response?.status === 403) {
           setError('Admin access required. Please log in with an admin account.');
         } else {
           setError('Failed to load admin stats. Is the API server running?');
         }
-      })
-      .finally(() => setLoading(false));
+      }
+
+      if (aiRes.status === 'fulfilled') {
+        setAiStatus(aiRes.value.data);
+      } else {
+        setAiStatus({ ai_active: false, has_key: false, status: 'disconnected', provider: 'Google Gemini' });
+      }
+    }).finally(() => setLoading(false));
   }, []);
 
   if (loading) {
@@ -87,7 +109,7 @@ export default function AdminPage() {
       {/* Header */}
       <div className="py-12" style={{ background: '#0a1628' }}>
         <div className="max-w-screen-xl mx-auto px-6 lg:px-8">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <div className="flex items-center gap-2 text-polar-cyan text-sm font-semibold mb-2">
                 <Shield size={14} />
@@ -97,7 +119,18 @@ export default function AdminPage() {
                 Platform Overview
               </h1>
             </div>
-            <div className="flex gap-3">
+            <div className="flex items-center gap-3">
+              {aiStatus?.has_key ? (
+                <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 bg-emerald-400/10 border border-emerald-400/25 px-3 py-2 rounded-xl">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  Gemini AI Live ({aiStatus.model || 'gemini-flash-lite'})
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-xs font-medium text-amber-300 bg-amber-400/10 border border-amber-400/25 px-3 py-2 rounded-xl">
+                  <span className="w-2 h-2 rounded-full bg-amber-400" />
+                  Gemini API Key Required
+                </div>
+              )}
               <Link href="/admin/ingestion" className="btn-primary">
                 <Globe size={16} />
                 Knowledge Ingestion
@@ -170,27 +203,97 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {/* Recent Queries */}
-          <div>
-            <h2 className="font-display font-bold text-xl text-polar-navy mb-4">Recent Searches</h2>
-            <div className="card divide-y divide-slate-100">
-              {stats?.recent_queries && stats.recent_queries.length > 0 ? (
-                stats.recent_queries.map((q, i) => (
-                  <div key={i} className="flex items-center gap-3 px-4 py-3">
-                    <Search size={13} className="text-slate-400 shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm text-slate-700 font-medium truncate">{q.query}</div>
-                      <div className="text-xs text-slate-400">
-                        {new Date(q.created_at).toLocaleDateString()}
-                      </div>
+          {/* Right Column: AI Engine Status & Recent Searches */}
+          <div className="space-y-6">
+            <div>
+              <h2 className="font-display font-bold text-xl text-polar-navy mb-4 flex items-center justify-between">
+                <span>AI & Retrieval Engine</span>
+                <span className="text-xs font-normal text-slate-400">Google Gemini</span>
+              </h2>
+              <div className="card p-5">
+                <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-polar-navy flex items-center justify-center text-polar-cyan">
+                      <Cpu size={16} />
+                    </div>
+                    <div>
+                      <div className="font-bold text-sm text-polar-navy">Gemini AI Pipeline</div>
+                      <div className="text-xs text-slate-400">RAG & Synthesis Engine</div>
                     </div>
                   </div>
-                ))
-              ) : (
-                <div className="px-4 py-8 text-center text-slate-400 text-sm">
-                  No searches yet
+                  {aiStatus?.has_key ? (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      Connected
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                      Key Required
+                    </span>
+                  )}
                 </div>
-              )}
+
+                <div className="space-y-2.5 pt-4 text-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-500">Generation Model:</span>
+                    <span className="font-mono text-polar-navy font-medium bg-slate-50 px-2 py-0.5 rounded border border-slate-200/60">
+                      {aiStatus?.model || (aiStatus?.has_key ? 'gemini-flash-lite-latest' : 'demo-mock')}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-500">Embedding Model:</span>
+                    <span className="font-mono text-polar-navy font-medium bg-slate-50 px-2 py-0.5 rounded border border-slate-200/60">
+                      {aiStatus?.embed_model || (aiStatus?.has_key ? 'gemini-embedding-001' : '384-dim mock')}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-500">Provider & Protocol:</span>
+                    <span className="text-slate-700 font-medium">
+                      Google GenAI SDK (v1)
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                  <Link
+                    href="/assistant"
+                    className="text-xs font-semibold text-polar-cyan hover:underline flex items-center gap-1"
+                  >
+                    <Sparkles size={12} /> Test Polar Assistant
+                  </Link>
+                  <Link
+                    href="/content-studio"
+                    className="text-xs text-slate-500 hover:text-polar-navy"
+                  >
+                    Open Content Studio →
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Recent Queries */}
+            <div>
+              <h2 className="font-display font-bold text-xl text-polar-navy mb-4">Recent Searches</h2>
+              <div className="card divide-y divide-slate-100">
+                {stats?.recent_queries && stats.recent_queries.length > 0 ? (
+                  stats.recent_queries.map((q, i) => (
+                    <div key={i} className="flex items-center gap-3 px-4 py-3">
+                      <Search size={13} className="text-slate-400 shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm text-slate-700 font-medium truncate">{q.query}</div>
+                        <div className="text-xs text-slate-400">
+                          {new Date(q.created_at).toLocaleDateString()}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="px-4 py-8 text-center text-slate-400 text-sm">
+                    No searches yet
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

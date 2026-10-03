@@ -7,7 +7,7 @@ import {
   MessageCircle, BookOpen, HelpCircle, Loader2, Check, Edit3,
   AlertCircle, Sparkles, ChevronDown, Database, Globe
 } from 'lucide-react';
-import { documentsApi, expeditionsApi, contentApi } from '@/lib/api';
+import { documentsApi, expeditionsApi, contentApi, assistantApi } from '@/lib/api';
 
 const CONTENT_TYPES = [
   { id: 'summary', label: 'Scientific Summary', icon: FileText, description: '150-200 word summary', color: 'text-blue-500 bg-blue-50' },
@@ -34,6 +34,15 @@ interface Expedition {
   year: number;
 }
 
+interface AIStatus {
+  ai_active: boolean;
+  has_key: boolean;
+  status: string;
+  model?: string;
+  embed_model?: string;
+  provider?: string;
+}
+
 export default function ContentStudioPage() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [expeditions, setExpeditions] = useState<Expedition[]>([]);
@@ -44,10 +53,16 @@ export default function ContentStudioPage() {
   const [generating, setGenerating] = useState(false);
   const [results, setResults] = useState<Record<string, { content: string; id: string; status: string }>>({});
   const [error, setError] = useState('');
+  const [aiStatus, setAiStatus] = useState<AIStatus | null>(null);
+  const [statusLoading, setStatusLoading] = useState(true);
 
   useEffect(() => {
     documentsApi.list({ status: 'approved', page_size: 50 }).then(r => setDocuments(r.data.items)).catch(() => {});
     expeditionsApi.list().then(r => setExpeditions(r.data)).catch(() => {});
+    assistantApi.status()
+      .then(r => setAiStatus(r.data))
+      .catch(() => setAiStatus({ ai_active: false, has_key: false, status: 'disconnected' }))
+      .finally(() => setStatusLoading(false));
   }, []);
 
   const handleGenerate = async () => {
@@ -118,16 +133,45 @@ export default function ContentStudioPage() {
       {/* Header */}
       <div className="py-16" style={{ background: '#0a1628' }}>
         <div className="max-w-screen-xl mx-auto px-6 lg:px-8">
-          <div className="section-label-dark section-label mb-4">
-            <Sparkles size={12} />
-            AI Content Studio
+          <div className="flex items-start justify-between flex-wrap gap-4">
+            <div>
+              <div className="section-label-dark section-label mb-4">
+                <Sparkles size={12} />
+                AI Content Studio
+              </div>
+              <h1 className="font-display font-bold text-4xl text-white mb-3">
+                From Research to Outreach
+              </h1>
+              <p className="text-white/60 text-xl max-w-2xl">
+                Transform scientific knowledge into accessible public content — articles, social posts, student explanations, and quizzes.
+              </p>
+            </div>
+            {statusLoading ? (
+              <div className="flex items-center gap-2 text-xs text-white/50 bg-white/5 border border-white/10 px-3.5 py-1.5 rounded-full">
+                <Loader2 size={12} className="animate-spin text-white/50" />
+                Checking Gemini...
+              </div>
+            ) : aiStatus?.has_key ? (
+              <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 bg-emerald-400/10 border border-emerald-400/25 px-3.5 py-1.5 rounded-full shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                Gemini Connected ({aiStatus.model || 'gemini-flash-lite'})
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 text-xs font-medium text-amber-300 bg-amber-400/10 border border-amber-400/25 px-3.5 py-1.5 rounded-full">
+                <span className="w-2 h-2 rounded-full bg-amber-400" />
+                Gemini API Key Required · Demo Mode
+              </div>
+            )}
           </div>
-          <h1 className="font-display font-bold text-4xl text-white mb-3">
-            From Research to Outreach
-          </h1>
-          <p className="text-white/60 text-xl max-w-2xl">
-            Transform scientific knowledge into accessible public content — articles, social posts, student explanations, and quizzes.
-          </p>
+
+          {!statusLoading && aiStatus && !aiStatus.has_key && (
+            <div className="bg-amber-500/10 border border-amber-500/20 text-amber-200 text-xs px-4 py-2.5 rounded-lg flex items-center gap-2 mt-4">
+              <span className="text-amber-400">⚠️</span>
+              <span>
+                <strong>Gemini API Key Missing:</strong> Operating in offline demo mode. Add <code className="bg-black/30 px-1.5 py-0.5 rounded text-white">GEMINI_API_KEY</code> in <code className="bg-black/30 px-1.5 py-0.5 rounded text-white">apps/api/.env</code> to generate with live Google Gemini.
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -267,17 +311,27 @@ export default function ContentStudioPage() {
                 {generating ? (
                   <>
                     <Loader2 size={18} className="animate-spin" />
-                    Generating {selectedContentTypes.length} output{selectedContentTypes.length !== 1 ? 's' : ''}...
+                    Generating with {aiStatus?.has_key ? (aiStatus.model || 'Gemini') : 'Demo Engine'}...
                   </>
                 ) : (
                   <>
                     <Zap size={18} />
-                    Generate Content
+                    {aiStatus?.has_key ? 'Generate with Google Gemini' : 'Generate Content (Demo Mode)'}
                   </>
                 )}
               </button>
-              <p className="text-xs text-slate-400 text-center mt-2">
-                AI-generated content requires human review before publication
+              <p className="text-xs text-slate-400 text-center mt-2 flex items-center justify-center gap-1.5">
+                {aiStatus?.has_key ? (
+                  <>
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    Live Gemini synthesis · Human review recommended
+                  </>
+                ) : (
+                  <>
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                    Cached demo templates · Add API key for live generation
+                  </>
+                )}
               </p>
             </div>
           </div>

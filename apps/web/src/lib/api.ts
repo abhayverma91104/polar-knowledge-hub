@@ -74,6 +74,7 @@ export const searchApi = {
 export const assistantApi = {
   query: (question: string, session_id?: string) =>
     api.post('/api/assistant/query', { question, session_id }),
+  status: () => api.get('/api/assistant/status'),
 };
 
 // ─── Expeditions ───
@@ -85,7 +86,7 @@ export const expeditionsApi = {
 
 // ─── Stations ───
 export const stationsApi = {
-  list: () => api.get('/api/stations'),
+  list: (params?: Record<string, unknown>) => api.get('/api/stations', { params }),
   get: (id: string) => api.get(`/api/stations/${id}`),
 };
 

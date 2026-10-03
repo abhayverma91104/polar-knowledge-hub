@@ -516,8 +516,14 @@ export default function HomePage() {
         <div style={{ position: 'relative', zIndex: 1, maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'center' }}>
             <div>
-              <div className="section-label section-label-dark" style={{ marginBottom: '1.5rem' }}>
-                <MessageSquare size={12} /> Polar AI
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+                <div className="section-label section-label-dark" style={{ marginBottom: 0 }}>
+                  <MessageSquare size={12} /> Polar AI
+                </div>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', fontWeight: 600, color: '#34d399', background: 'rgba(52, 211, 153, 0.1)', border: '1px solid rgba(52, 211, 153, 0.25)', padding: '3px 10px', borderRadius: '9999px' }}>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#34d399' }} className="animate-pulse" />
+                  Powered by Google Gemini
+                </div>
               </div>
               <h2 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: '2.1rem', color: '#fff', marginBottom: '1.25rem', lineHeight: 1.25 }}>
                 Ask Anything About Indian Polar Research
@@ -580,8 +586,8 @@ export default function HomePage() {
                 <div>
                   <div style={{ color: '#fff', fontWeight: 600, fontSize: '0.875rem' }}>Polar AI</div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: '#4ade80' }}>
-                    <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4ade80' }} />
-                    Online · RAG enabled
+                    <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4ade80' }} className="animate-pulse" />
+                    Online · Powered by Google Gemini
                   </div>
                 </div>
               </div>

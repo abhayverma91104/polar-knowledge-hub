@@ -38,6 +38,15 @@ interface Message {
   timestamp: Date;
 }
 
+interface AIStatus {
+  ai_active: boolean;
+  has_key: boolean;
+  status: string;
+  model?: string;
+  embed_model?: string;
+  provider?: string;
+}
+
 function AssistantContent() {
   const searchParams = useSearchParams();
   const initialQ = searchParams.get('q') || '';
@@ -45,12 +54,21 @@ function AssistantContent() {
   const [input, setInput] = useState(initialQ);
   const [loading, setLoading] = useState(false);
   const [sessionId] = useState(() => Math.random().toString(36).slice(2));
+  const [aiStatus, setAiStatus] = useState<AIStatus | null>(null);
+  const [statusLoading, setStatusLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  useEffect(() => {
+    assistantApi.status()
+      .then((res) => setAiStatus(res.data))
+      .catch(() => setAiStatus({ ai_active: false, has_key: false, status: 'disconnected', provider: 'Google Gemini' }))
+      .finally(() => setStatusLoading(false));
+  }, []);
 
   useEffect(() => {
     if (initialQ) {
@@ -112,7 +130,7 @@ function AssistantContent() {
       {/* Header */}
       <div className="border-b border-white/10 py-8" style={{ background: '#0a1628' }}>
         <div className="max-w-4xl mx-auto px-6">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg" style={{ background: '#0ea5e9' }}>
               <Snowflake size={24} className="text-white" />
             </div>
@@ -123,14 +141,35 @@ function AssistantContent() {
               </div>
               <h1 className="font-display font-bold text-3xl text-white">Ask Polar AI</h1>
             </div>
-            <div className="ml-auto flex items-center gap-2 text-xs text-green-400 bg-green-400/10 border border-green-400/20 px-3 py-1.5 rounded-full">
-              <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-              AI Active
-            </div>
+            {statusLoading ? (
+              <div className="ml-auto flex items-center gap-2 text-xs text-white/50 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
+                <Loader2 size={12} className="animate-spin text-white/50" />
+                Checking Gemini...
+              </div>
+            ) : aiStatus?.has_key ? (
+              <div className="ml-auto flex items-center gap-2 text-xs font-semibold text-emerald-400 bg-emerald-400/10 border border-emerald-400/25 px-3 py-1.5 rounded-full shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                Gemini Connected ({aiStatus.model || 'gemini-flash-lite'})
+              </div>
+            ) : (
+              <div className="ml-auto flex items-center gap-2 text-xs font-medium text-amber-300 bg-amber-400/10 border border-amber-400/25 px-3 py-1.5 rounded-full">
+                <span className="w-2 h-2 rounded-full bg-amber-400" />
+                Gemini API Key Required · Demo Mode
+              </div>
+            )}
           </div>
           <p className="text-white/50 mt-3 max-w-2xl">
             Explore NCPOR&apos;s scientific knowledge using natural language. Answers are grounded in expedition reports, publications, and research papers.
           </p>
+
+          {!statusLoading && aiStatus && !aiStatus.has_key && (
+            <div className="bg-amber-500/10 border border-amber-500/20 text-amber-200 text-xs px-4 py-2.5 rounded-lg flex items-center gap-2 mt-4">
+              <span className="text-amber-400">⚠️</span>
+              <span>
+                <strong>Gemini API Key Missing:</strong> Operating in offline demo mode. To enable live Google Gemini responses, add <code className="bg-black/30 px-1.5 py-0.5 rounded text-white">GEMINI_API_KEY</code> in <code className="bg-black/30 px-1.5 py-0.5 rounded text-white">apps/api/.env</code>.
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -246,14 +285,19 @@ function AssistantContent() {
                           </div>
                         ))}
                       </div>
+                    </div>
+                  )}
 
-                      {msg.latency_ms && (
-                        <div className="mt-3 pt-2 border-t border-slate-100 flex items-center gap-3 text-xs text-slate-400">
-                          <span>⏱ {msg.latency_ms}ms</span>
-                          {msg.chunks_used && <span>📄 {msg.chunks_used} chunks</span>}
-                          {msg.model && <span>🤖 {msg.model}</span>}
-                        </div>
+                  {msg.role === 'assistant' && (msg.latency_ms || msg.model) && (
+                    <div className="flex items-center gap-3 text-xs text-slate-500 bg-white/70 px-3 py-1.5 rounded-lg border border-slate-200/60 w-fit">
+                      {msg.model && (
+                        <span className="font-medium text-polar-navy flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          {msg.model}
+                        </span>
                       )}
+                      {msg.latency_ms && <span>⏱ {msg.latency_ms}ms</span>}
+                      {msg.chunks_used !== undefined && <span>📄 {msg.chunks_used} chunks cited</span>}
                     </div>
                   )}
                 </div>
