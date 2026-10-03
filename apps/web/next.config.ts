@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+let rawUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").trim();
+if (rawUrl && !rawUrl.startsWith("http://") && !rawUrl.startsWith("https://")) {
+  rawUrl = `https://${rawUrl}`;
+}
+const API_URL = rawUrl.replace(/\/+$/, "");
 
 const nextConfig: NextConfig = {
   async rewrites() {
