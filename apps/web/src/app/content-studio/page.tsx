@@ -432,6 +432,28 @@ export default function ContentStudioPage() {
                       </button>
                     </div>
                   )}
+
+                  {result.status === 'approved' && (
+                    <div className="flex items-center justify-between p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-emerald-800">
+                        <Check size={14} className="text-emerald-600" />
+                        Approved &amp; Saved to NCPOR Database
+                      </div>
+                      <button
+                        onClick={() => navigator.clipboard?.writeText(result.content)}
+                        className="px-3.5 py-1.5 bg-white border border-emerald-300 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5"
+                      >
+                        Copy Approved Text
+                      </button>
+                    </div>
+                  )}
+
+                  {result.status === 'rejected' && (
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 font-medium flex items-center gap-2">
+                      <AlertCircle size={14} className="text-red-500 shrink-0" />
+                      Rejected — Flagged and excluded from official outreach publications.
+                    </div>
+                  )}
                 </div>
               );
             })}
