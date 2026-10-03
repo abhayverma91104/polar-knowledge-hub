@@ -52,6 +52,29 @@ async def lifespan(app: FastAPI):
     if check_db_connection():
         init_db()
         logger.info("Database ready")
+
+        # Auto-seed authentic NCPOR records if database is fresh
+        try:
+            from database import SessionLocal
+            from models import ResearchStation
+            db = SessionLocal()
+            station_count = db.query(ResearchStation).count()
+            db.close()
+            if station_count == 0:
+                logger.info("Fresh database detected (0 stations). Auto-seeding authentic NCPOR records...")
+                try:
+                    import sys
+                    from pathlib import Path
+                    scripts_dir = Path(__file__).resolve().parent.parent.parent / "scripts"
+                    if scripts_dir.exists() and str(scripts_dir) not in sys.path:
+                        sys.path.insert(0, str(scripts_dir))
+                    import seed_database
+                    seed_database.seed_all()
+                    logger.info("Auto-seed completed successfully!")
+                except Exception as seed_err:
+                    logger.warning(f"Auto-seed skipped or encountered: {seed_err}")
+        except Exception as check_err:
+            logger.warning(f"Could not verify database station count: {check_err}")
     else:
         logger.warning("Database not available - running in limited mode")
     yield
@@ -65,9 +88,19 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+cors_origins = [
+    origin.strip()
+    for origin in settings.frontend_url.split(",")
+    if origin.strip()
+]
+for default_origin in ["http://localhost:3000", "http://localhost:3001"]:
+    if default_origin not in cors_origins:
+        cors_origins.append(default_origin)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.frontend_url, "http://localhost:3000", "http://localhost:3001"],
+    allow_origins=cors_origins,
+    allow_origin_regex=r"https?://(localhost|.*\.railway\.app|.*\.up\.railway\.app|.*\.vercel\.app)(:\d+)?",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

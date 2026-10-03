@@ -131,6 +131,9 @@ This script automatically provisions the Python virtual environment, installs ba
 | **Alternative Docs** | `http://localhost:8000/redoc` | ReDoc API Documentation |
 | **Admin Portal** | `http://localhost:3000/admin` | Ingestion & Editorial Dashboard |
 
+### 🚀 Cloud Deployment (Railway)
+To deploy the platform to the cloud with automatic PostgreSQL provisioning and continuous deployment, follow our step-by-step [Railway Deployment Guide](docs/RAILWAY_DEPLOYMENT_GUIDE.md).
+
 ---
 
 ## 🔑 Authentication & Environment Setup
@@ -150,7 +153,7 @@ This script automatically provisions the Python virtual environment, installs ba
 ```
 Frontend:     Next.js 16 (Turbopack, App Router, React 19) + Tailwind CSS v4 + Lucide Icons + Leaflet
 Backend:      FastAPI (Python 3.10+) + Uvicorn + Pydantic v2 + SQLAlchemy ORM
-AI / RAG:     Google Gemini 2.0 Flash + text-embedding-004 + Deterministic Fallback Synthesizer
+AI / RAG:     Google Gemini (gemini-flash-lite-latest + gemini-embedding-001) + RAG Citations
 Cartography:  Esri World Canvas / Satellite / Topo Map Services
 Database:     SQLite (Zero-config local) / PostgreSQL + pgvector (Production deployment)
 Processing:   PyMuPDF (PDF Extraction) + BeautifulSoup4 + httpx (Async Crawler)
