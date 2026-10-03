@@ -58,6 +58,7 @@ class AIService:
         ]
         self.model_name = self.candidate_models[0]
         self.candidate_embed_models = [
+            "text-embedding-004",
             "gemini-embedding-001",
             "gemini-embedding-2",
         ]
@@ -196,7 +197,12 @@ class AIService:
                         )
                         if hasattr(res, "embeddings") and res.embeddings:
                             self.embed_model = em
-                            return list(res.embeddings[0].values)
+                            vec = list(res.embeddings[0].values)
+                            if len(vec) > 768:
+                                vec = vec[:768]
+                            elif len(vec) < 768:
+                                vec = vec + [0.0] * (768 - len(vec))
+                            return vec
                     except Exception as e:
                         logger.warning(f"google-genai embed with {em} error: {e}")
 
@@ -210,7 +216,12 @@ class AIService:
                         )
                         if "embedding" in res:
                             self.embed_model = em
-                            return list(res["embedding"])
+                            vec = list(res["embedding"])
+                            if len(vec) > 768:
+                                vec = vec[:768]
+                            elif len(vec) < 768:
+                                vec = vec + [0.0] * (768 - len(vec))
+                            return vec
                     except Exception as e:
                         logger.warning(f"legacy genai embed with {em} error: {e}")
 

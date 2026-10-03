@@ -1281,71 +1281,79 @@ async def _run_crawl_job(job_id: str, start_url: str, config: dict):
                 db.add(crawl_resource)
                 db.flush()
                 
-                # Auto-create document if we have substantial text
-                raw_text = resource_data.get("raw_text", "")
-                if raw_text and len(raw_text) > 200:
-                    ai_service = get_ai_service()
+                # Create document for review if we have text or a meaningful resource
+                raw_text = (resource_data.get("raw_text") or "").strip()
+                title = resource_data.get("title") or "Untitled NCPOR Resource"
+                
+                ai_service = get_ai_service()
+                meta = {}
+                if len(raw_text) >= 100:
                     try:
-                        meta = ai_service.extract_document_metadata(
-                            raw_text,
-                            resource_data.get("title", ""),
-                        )
+                        meta = ai_service.extract_document_metadata(raw_text, title)
                     except Exception as meta_err:
                         logger.warning(f"Metadata extraction fallback for {resource_data.get('url')}: {meta_err}")
                         meta = {}
-                    
-                    doc = Document(
-                        title=meta.get("title") or resource_data.get("title", "Untitled"),
-                        description=meta.get("abstract", ""),
-                        document_type=DocumentType.OTHER,
-                        authors=meta.get("authors", []),
-                        year=meta.get("year"),
-                        research_domains=meta.get("research_domains", []),
-                        keywords=meta.get("keywords", []),
-                        abstract=meta.get("abstract"),
-                        source="NCPOR",
-                        source_url=resource_data["url"],
-                        content_hash=content_hash,
-                        status=ContentStatus.PENDING_REVIEW,
-                    )
-                    
-                    try:
-                        doc.region = Region(meta.get("region", "other"))
-                    except ValueError:
-                        pass
-                    
-                    try:
-                        doc.document_type = DocumentType(meta.get("document_type", "other"))
-                    except ValueError:
-                        pass
-                    
-                    db.add(doc)
-                    db.flush()
-                    
-                    crawl_resource.document_id = doc.id
-                    crawl_resource.status = "approved"
-                    
-                    # Create chunks
-                    try:
-                        processor = DocumentProcessor(ai_service)
-                        result_proc = processor.process_text(raw_text, resource_data.get("title", ""))
-                        for chunk_data in result_proc.get("chunks", []):
-                            chunk = DocumentChunk(
-                                document_id=doc.id,
-                                chunk_index=chunk_data["index"],
-                                page_number=chunk_data.get("page_number"),
-                                chunk_text=chunk_data["text"],
-                                embedding=chunk_data.get("embedding"),
-                            )
-                            db.add(chunk)
-                    except Exception as chunk_err:
-                        logger.warning(f"Chunking error: {chunk_err}")
-                    
-                    new_count += 1
-                
+
+                doc = Document(
+                    title=meta.get("title") or title,
+                    description=meta.get("abstract") or raw_text[:300] or title,
+                    document_type=DocumentType.OTHER,
+                    authors=meta.get("authors", []) or ["NCPOR Research Team"],
+                    year=meta.get("year") or datetime.utcnow().year,
+                    research_domains=meta.get("research_domains", []) or ["Polar Research"],
+                    keywords=meta.get("keywords", []) or ["NCPOR", "Polar Science"],
+                    abstract=meta.get("abstract") or raw_text[:800] or title,
+                    source="NCPOR",
+                    source_url=resource_data["url"],
+                    content_hash=content_hash,
+                    status=ContentStatus.PENDING_REVIEW,
+                )
+
+                try:
+                    doc.region = Region(meta.get("region", "other"))
+                except ValueError:
+                    pass
+
+                try:
+                    doc.document_type = DocumentType(meta.get("document_type", "other"))
+                except ValueError:
+                    pass
+
+                db.add(doc)
+                db.commit()
+                db.refresh(doc)
+
+                crawl_resource.document_id = doc.id
+                crawl_resource.status = "pending_review"
+                db.commit()
+
+                new_count += 1
                 job.documents_discovered = (job.documents_discovered or 0) + 1
                 job.new_resources = new_count
                 db.commit()
+
+                # Create chunks and vector embeddings safely in separate transaction
+                if len(raw_text) >= 150:
+                    try:
+                        processor = DocumentProcessor(ai_service)
+                        result_proc = processor.process_text(raw_text, title)
+                        for chunk_data in result_proc.get("chunks", []):
+                            emb = chunk_data.get("embedding")
+                            if emb and len(emb) != 768:
+                                emb = emb[:768] if len(emb) > 768 else emb + [0.0] * (768 - len(emb))
+                            chunk = DocumentChunk(
+                                document_id=doc.id,
+                                chunk_index=chunk_data["index"],
+                                page_number=chunk_data.get("page_number", 1),
+                                chunk_text=chunk_data["text"],
+                                embedding=emb,
+                            )
+                            db.add(chunk)
+                        db.commit()
+                    except Exception as chunk_err:
+                        logger.warning(f"Chunking error for doc {doc.id} (document saved regardless): {chunk_err}")
+                        db.rollback()
+
             except Exception as res_err:
                 logger.error(f"Error processing resource {resource_data.get('url')}: {res_err}")
                 db.rollback()
