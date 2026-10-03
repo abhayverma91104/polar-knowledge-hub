@@ -12,18 +12,22 @@ logger = logging.getLogger(__name__)
 
 settings = get_settings()
 
-IS_SQLITE = settings.database_url.startswith("sqlite")
+db_url = settings.database_url
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
+
+IS_SQLITE = db_url.startswith("sqlite")
 
 # SQLite needs connect_args; PostgreSQL needs pool settings
 if IS_SQLITE:
     engine = create_engine(
-        settings.database_url,
+        db_url,
         connect_args={"check_same_thread": False},
         echo=settings.app_debug,
     )
 else:
     engine = create_engine(
-        settings.database_url,
+        db_url,
         pool_size=5,
         max_overflow=10,
         pool_pre_ping=True,
