@@ -1715,3 +1715,16 @@ def _source_dict(s: Source) -> dict:
         "last_synced_at": s.last_synced_at.isoformat() if s.last_synced_at else None,
         "created_at": s.created_at.isoformat() if s.created_at else None,
     }
+
+
+if __name__ == "__main__":
+    import os
+    import uvicorn
+    raw_port = os.environ.get("PORT", "8000")
+    try:
+        port = int(raw_port)
+    except (ValueError, TypeError):
+        port = 8000
+    print(f"Starting server on 0.0.0.0:{port}")
+    uvicorn.run("main:app", host="0.0.0.0", port=port, log_level="info")
+
