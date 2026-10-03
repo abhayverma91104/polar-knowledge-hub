@@ -87,9 +87,6 @@ export default function AdminPage() {
           <h2 className="font-display font-bold text-xl text-polar-navy mb-2">Access Restricted</h2>
           <p className="text-slate-500 mb-6">{error}</p>
           <Link href="/login" className="btn-primary mx-auto">Sign in as Admin</Link>
-          <p className="text-xs text-slate-400 mt-3">
-            Demo credentials: admin@ncpor.res.in / PolarHub@2026
-          </p>
         </div>
       </div>
     );
