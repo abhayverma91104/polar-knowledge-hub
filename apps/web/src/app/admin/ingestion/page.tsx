@@ -83,6 +83,23 @@ export default function IngestionPage() {
     }
   };
 
+  const stopCrawl = async () => {
+    if (pollInterval) {
+      clearInterval(pollInterval);
+      setPollInterval(null);
+    }
+    setCrawling(false);
+    if (currentJob?.id) {
+      try {
+        await ingestionApi.stopJob(currentJob.id);
+        setCrawlLog(prev => [...prev, `[${new Date().toLocaleTimeString()}] ⏹️ Crawl job stopped by user.`]);
+        loadJobs();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  };
+
   const startCrawl = async () => {
     if (!crawlUrl.trim()) return;
     setCrawling(true);
@@ -102,9 +119,19 @@ export default function IngestionPage() {
           setCurrentJob(job);
 
           setCrawlLog(prev => {
-            const latest = `[${new Date().toLocaleTimeString()}] Pages: ${job.pages_scanned} | Docs: ${job.documents_discovered} | New: ${job.new_resources} | Status: ${job.status}`;
-            if (prev[prev.length - 1] !== latest) return [...prev, latest];
-            return prev;
+            const summary = `Pages: ${job.pages_scanned} | Docs: ${job.documents_discovered} | New: ${job.new_resources} | Status: ${job.status}`;
+            const timestamp = `[${new Date().toLocaleTimeString()}]`;
+            const newLine = `${timestamp} ${summary}`;
+
+            if (prev.length === 0) return [newLine];
+
+            const lastLine = prev[prev.length - 1];
+            // If the progress numbers haven't changed, update timestamp in-place instead of flooding identical lines
+            if (lastLine.includes(`Pages: ${job.pages_scanned} | Docs: ${job.documents_discovered} | New: ${job.new_resources} | Status: ${job.status}`)) {
+              return [...prev.slice(0, -1), newLine];
+            }
+
+            return [...prev, newLine];
           });
 
           if (job.status === 'completed' || job.status === 'failed') {
@@ -112,7 +139,11 @@ export default function IngestionPage() {
             setPollInterval(null);
             setCrawling(false);
             loadJobs();
-            setCrawlLog(prev => [...prev, `[${new Date().toLocaleTimeString()}] ✅ Crawl ${job.status === 'completed' ? 'completed successfully' : 'failed'}. ${job.new_resources} new resources.`]);
+            const emoji = job.status === 'completed' ? '✅' : '⚠️';
+            setCrawlLog(prev => [
+              ...prev,
+              `[${new Date().toLocaleTimeString()}] ${emoji} Crawl ${job.status === 'completed' ? 'completed successfully' : 'ended (' + job.status + ')'}. ${job.new_resources} new resources indexed.`
+            ]);
           }
         } catch (e) {
           console.error(e);
@@ -252,17 +283,28 @@ export default function IngestionPage() {
                   <span>The crawler respects robots.txt, uses rate limiting, and only accesses publicly available resources. It never bypasses authentication or access controls.</span>
                 </div>
 
-                <button
-                  onClick={startCrawl}
-                  disabled={crawling || !crawlUrl.trim()}
-                  className="btn-primary w-full py-3.5 text-base justify-center disabled:opacity-50"
-                >
-                  {crawling ? (
-                    <><Loader2 size={18} className="animate-spin" /> Crawling...</>
-                  ) : (
-                    <><Play size={18} /> Start Crawl</>
+                <div className="flex gap-2">
+                  <button
+                    onClick={startCrawl}
+                    disabled={crawling || !crawlUrl.trim()}
+                    className="btn-primary flex-1 py-3.5 text-base justify-center disabled:opacity-50"
+                  >
+                    {crawling ? (
+                      <><Loader2 size={18} className="animate-spin" /> Crawling...</>
+                    ) : (
+                      <><Play size={18} /> Start Crawl</>
+                    )}
+                  </button>
+                  {crawling && (
+                    <button
+                      type="button"
+                      onClick={stopCrawl}
+                      className="btn-secondary py-3.5 px-4 text-rose-500 border-rose-300 hover:bg-rose-50 flex items-center gap-1.5 text-sm font-semibold"
+                    >
+                      <XCircle size={18} /> Stop
+                    </button>
                   )}
-                </button>
+                </div>
               </div>
 
               {/* Progress */}

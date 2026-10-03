@@ -134,6 +134,7 @@ export const ingestionApi = {
   getPendingResources: () => api.get('/api/ingestion/resources/pending'),
   approveResource: (doc_id: string, action: 'approve' | 'reject') =>
     api.post(`/api/ingestion/resources/${doc_id}/approve?action=${action}`),
+  stopJob: (id: string) => api.post(`/api/ingestion/jobs/${id}/stop`),
 };
 
 export const adminApi = {

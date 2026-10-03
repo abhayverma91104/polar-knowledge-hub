@@ -56,9 +56,20 @@ async def lifespan(app: FastAPI):
         # Auto-seed authentic NCPOR records if database is fresh
         try:
             from database import SessionLocal
-            from models import ResearchStation
+            from models import ResearchStation, CrawlJob, CrawlStatus
             db = SessionLocal()
             station_count = db.query(ResearchStation).count()
+            
+            # Clean up any zombie crawl jobs left running from previous instance/restart
+            interrupted = db.query(CrawlJob).filter(CrawlJob.status == CrawlStatus.RUNNING).all()
+            for ij in interrupted:
+                ij.status = CrawlStatus.FAILED
+                ij.error_log = (ij.error_log or []) + ["Crawl was interrupted by server restart"]
+                ij.completed_at = datetime.utcnow()
+            if interrupted:
+                db.commit()
+                logger.info(f"Cleaned up {len(interrupted)} interrupted crawl jobs")
+
             db.close()
             if station_count == 0:
                 logger.info("Fresh database detected (0 stations). Auto-seeding authentic NCPOR records...")
@@ -69,7 +80,7 @@ async def lifespan(app: FastAPI):
                 except Exception as seed_err:
                     logger.warning(f"Auto-seed skipped or encountered: {seed_err}")
         except Exception as check_err:
-            logger.warning(f"Could not verify database station count: {check_err}")
+            logger.warning(f"Startup database check error: {check_err}")
     else:
         logger.warning("Database not available - running in limited mode")
     yield
@@ -1242,87 +1253,102 @@ async def _run_crawl_job(job_id: str, start_url: str, config: dict):
         new_count = 0
         
         for resource_data in resources:
-            # Check for duplicate
-            content_hash = resource_data.get("content_hash", "")
-            existing_doc = db.query(Document).filter(
-                Document.content_hash == content_hash
-            ).first() if content_hash else None
-            
-            if existing_doc:
-                job.duplicates_found = (job.duplicates_found or 0) + 1
-                continue
-            
-            # Create crawl resource record
-            crawl_resource = CrawlResource(
-                crawl_job_id=job_id,
-                url=resource_data["url"],
-                title=resource_data.get("title"),
-                content_type=resource_data.get("content_type"),
-                resource_type=resource_data.get("resource_type"),
-                status="processed",
-                content_hash=content_hash,
-                raw_text=resource_data.get("raw_text", "")[:10000],
-                extracted_metadata=resource_data.get("metadata", {}),
-            )
-            db.add(crawl_resource)
-            db.flush()
-            
-            # Auto-create document if we have substantial text
-            raw_text = resource_data.get("raw_text", "")
-            if raw_text and len(raw_text) > 200:
-                ai_service = get_ai_service()
-                meta = ai_service.extract_document_metadata(
-                    raw_text,
-                    resource_data.get("title", ""),
-                )
+            try:
+                # Check for duplicate
+                content_hash = resource_data.get("content_hash", "")
+                existing_doc = db.query(Document).filter(
+                    Document.content_hash == content_hash
+                ).first() if content_hash else None
                 
-                doc = Document(
-                    title=meta.get("title") or resource_data.get("title", "Untitled"),
-                    description=meta.get("abstract", ""),
-                    document_type=DocumentType.OTHER,
-                    authors=meta.get("authors", []),
-                    year=meta.get("year"),
-                    research_domains=meta.get("research_domains", []),
-                    keywords=meta.get("keywords", []),
-                    abstract=meta.get("abstract"),
-                    source="NCPOR",
-                    source_url=resource_data["url"],
+                if existing_doc:
+                    job.duplicates_found = (job.duplicates_found or 0) + 1
+                    job.documents_discovered = (job.documents_discovered or 0) + 1
+                    db.commit()
+                    continue
+                
+                # Create crawl resource record
+                crawl_resource = CrawlResource(
+                    crawl_job_id=job_id,
+                    url=resource_data["url"],
+                    title=resource_data.get("title"),
+                    content_type=resource_data.get("content_type"),
+                    resource_type=resource_data.get("resource_type"),
+                    status="processed",
                     content_hash=content_hash,
-                    status=ContentStatus.PENDING_REVIEW,
+                    raw_text=resource_data.get("raw_text", "")[:10000],
+                    extracted_metadata=resource_data.get("metadata", {}),
                 )
-                
-                try:
-                    doc.region = Region(meta.get("region", "other"))
-                except ValueError:
-                    pass
-                
-                try:
-                    doc.document_type = DocumentType(meta.get("document_type", "other"))
-                except ValueError:
-                    pass
-                
-                db.add(doc)
+                db.add(crawl_resource)
                 db.flush()
                 
-                crawl_resource.document_id = doc.id
-                crawl_resource.status = "approved"
-                
-                # Create chunks
-                processor = DocumentProcessor(ai_service)
-                result_proc = processor.process_text(raw_text, resource_data.get("title", ""))
-                for chunk_data in result_proc.get("chunks", []):
-                    chunk = DocumentChunk(
-                        document_id=doc.id,
-                        chunk_index=chunk_data["index"],
-                        page_number=chunk_data.get("page_number"),
-                        chunk_text=chunk_data["text"],
-                        embedding=chunk_data.get("embedding"),
+                # Auto-create document if we have substantial text
+                raw_text = resource_data.get("raw_text", "")
+                if raw_text and len(raw_text) > 200:
+                    ai_service = get_ai_service()
+                    try:
+                        meta = ai_service.extract_document_metadata(
+                            raw_text,
+                            resource_data.get("title", ""),
+                        )
+                    except Exception as meta_err:
+                        logger.warning(f"Metadata extraction fallback for {resource_data.get('url')}: {meta_err}")
+                        meta = {}
+                    
+                    doc = Document(
+                        title=meta.get("title") or resource_data.get("title", "Untitled"),
+                        description=meta.get("abstract", ""),
+                        document_type=DocumentType.OTHER,
+                        authors=meta.get("authors", []),
+                        year=meta.get("year"),
+                        research_domains=meta.get("research_domains", []),
+                        keywords=meta.get("keywords", []),
+                        abstract=meta.get("abstract"),
+                        source="NCPOR",
+                        source_url=resource_data["url"],
+                        content_hash=content_hash,
+                        status=ContentStatus.PENDING_REVIEW,
                     )
-                    db.add(chunk)
+                    
+                    try:
+                        doc.region = Region(meta.get("region", "other"))
+                    except ValueError:
+                        pass
+                    
+                    try:
+                        doc.document_type = DocumentType(meta.get("document_type", "other"))
+                    except ValueError:
+                        pass
+                    
+                    db.add(doc)
+                    db.flush()
+                    
+                    crawl_resource.document_id = doc.id
+                    crawl_resource.status = "approved"
+                    
+                    # Create chunks
+                    try:
+                        processor = DocumentProcessor(ai_service)
+                        result_proc = processor.process_text(raw_text, resource_data.get("title", ""))
+                        for chunk_data in result_proc.get("chunks", []):
+                            chunk = DocumentChunk(
+                                document_id=doc.id,
+                                chunk_index=chunk_data["index"],
+                                page_number=chunk_data.get("page_number"),
+                                chunk_text=chunk_data["text"],
+                                embedding=chunk_data.get("embedding"),
+                            )
+                            db.add(chunk)
+                    except Exception as chunk_err:
+                        logger.warning(f"Chunking error: {chunk_err}")
+                    
+                    new_count += 1
                 
-                new_count += 1
-            
-            job.documents_discovered = (job.documents_discovered or 0) + 1
+                job.documents_discovered = (job.documents_discovered or 0) + 1
+                job.new_resources = new_count
+                db.commit()
+            except Exception as res_err:
+                logger.error(f"Error processing resource {resource_data.get('url')}: {res_err}")
+                db.rollback()
         
         job.new_resources = new_count
         job.pages_scanned = result.get("pages_scanned", 0)
@@ -1337,15 +1363,34 @@ async def _run_crawl_job(job_id: str, start_url: str, config: dict):
     except Exception as e:
         logger.error(f"Crawl job {job_id} failed: {e}")
         try:
+            db.rollback()
             job = db.query(CrawlJob).filter(CrawlJob.id == job_id).first()
             if job:
                 job.status = CrawlStatus.FAILED
                 job.error_log = [str(e)]
+                job.completed_at = datetime.utcnow()
                 db.commit()
         except Exception:
             pass
     finally:
         db.close()
+
+
+@app.post("/api/ingestion/jobs/{job_id}/stop")
+async def stop_crawl_job(
+    job_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_editor),
+):
+    job = db.query(CrawlJob).filter(CrawlJob.id == job_id).first()
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    if job.status == CrawlStatus.RUNNING or job.status == CrawlStatus.PENDING:
+        job.status = CrawlStatus.FAILED
+        job.error_log = (job.error_log or []) + ["Manually stopped by user"]
+        job.completed_at = datetime.utcnow()
+        db.commit()
+    return _crawl_job_dict(job)
 
 
 @app.get("/api/ingestion/jobs")
