@@ -508,8 +508,8 @@ def seed_documents(db, expeditions, stations):
         
         for j, chunk_text in enumerate(chunk_texts):
             try:
-                embedding = ai_service.get_embedding(chunk_text)
-            except Exception as emb_e:
+                embedding = ai_service._mock_embedding(chunk_text)
+            except Exception:
                 embedding = None
             chunk = DocumentChunk(
                 document_id=doc.id,
@@ -523,8 +523,8 @@ def seed_documents(db, expeditions, stations):
         docs.append(doc)
         logger.info(f"Seeded document {i+1}/{len(docs_data)}: {data['title'][:60]}")
     
-    db.flush()
-    logger.info(f"Seeded {len(docs)} documents with embeddings")
+    db.commit()
+    logger.info(f"Seeded and committed {len(docs)} documents with embeddings")
     return docs
 
 
@@ -624,8 +624,9 @@ def seed_datasets(db, expeditions, stations):
     
     for ds in datasets:
         db.add(ds)
-    db.flush()
+    db.commit()
     logger.info(f"Seeded {len(datasets)} datasets")
+
 
 
 def seed_media(db, expeditions, stations):
@@ -656,7 +657,7 @@ def seed_media(db, expeditions, stations):
     
     for m in media_items:
         db.add(m)
-    db.flush()
+    db.commit()
     logger.info(f"Seeded {len(media_items)} media items")
 
 
@@ -849,7 +850,7 @@ The Southern Lights (Aurora Australis) occur when solar wind particles interact 
         
         topics.append(topic)
     
-    db.flush()
+    db.commit()
     logger.info(f"Seeded {len(topics)} topics with quizzes")
 
 
@@ -933,7 +934,7 @@ The Southern Ocean affects India's monsoon. Understanding what's happening there
     
     for c in content_items:
         db.add(c)
-    db.flush()
+    db.commit()
     logger.info(f"Seeded {len(content_items)} generated content examples")
 
 

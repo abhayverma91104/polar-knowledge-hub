@@ -1477,19 +1477,33 @@ async def admin_stats(
 @app.post("/api/admin/seed")
 @app.get("/api/admin/seed")
 async def trigger_seed(
-    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
 ):
     """Seed or update authentic NCPOR stations, expeditions, documents, datasets and media"""
     try:
         import seed_database
-        background_tasks.add_task(seed_database.seed_all)
+        seed_database.seed_all()
+        doc_count = db.query(Document).count()
+        exp_count = db.query(Expedition).count()
+        sta_count = db.query(ResearchStation).count()
+        data_count = db.query(Dataset).count()
+        media_count = db.query(Media).count()
+        topic_count = db.query(Topic).count()
         return {
-            "status": "started",
-            "message": "Authentic NCPOR database seeding initiated. Stations, 40+ expeditions, documents, and media are being populated.",
+            "status": "success",
+            "message": f"Database populated successfully with {exp_count} expeditions, {sta_count} stations, {doc_count} documents, {data_count} datasets, {media_count} media, and {topic_count} topics.",
+            "counts": {
+                "expeditions": exp_count,
+                "stations": sta_count,
+                "documents": doc_count,
+                "datasets": data_count,
+                "media": media_count,
+                "topics": topic_count,
+            }
         }
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        import traceback
+        return {"status": "error", "error": str(e), "traceback": traceback.format_exc()}
 
 
 
