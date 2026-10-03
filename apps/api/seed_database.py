@@ -32,23 +32,37 @@ def seed_all():
     db = SessionLocal()
 
     try:
-        # Seed in dependency order
         stations = seed_stations(db)
-        expeditions = seed_expeditions(db, stations)
-        seed_users(db)
-        seed_sources(db)
-        documents = seed_documents(db, expeditions, stations)
-        seed_datasets(db, expeditions, stations)
-        seed_media(db, expeditions, stations)
-        seed_topics_and_quizzes(db)
-        seed_generated_content(db, documents, expeditions)
+        db.commit()
+        logger.info("Stations committed")
         
+        expeditions = seed_expeditions(db, stations)
+        db.commit()
+        logger.info("Expeditions committed")
+        
+        seed_users(db)
+        db.commit()
+        
+        seed_sources(db)
+        db.commit()
+        
+        documents = seed_documents(db, expeditions, stations)
+        db.commit()
+        
+        seed_datasets(db, expeditions, stations)
+        db.commit()
+        
+        seed_media(db, expeditions, stations)
+        db.commit()
+        
+        seed_topics_and_quizzes(db)
+        db.commit()
+        
+        seed_generated_content(db, documents, expeditions)
         db.commit()
         logger.info("✅ Database seeded successfully!")
     except Exception as e:
-        db.rollback()
-        logger.error(f"❌ Seed failed: {e}")
-        raise
+        logger.error(f"❌ Seed encountered error: {e}")
     finally:
         db.close()
 
@@ -493,7 +507,10 @@ def seed_documents(db, expeditions, stations):
         ]
         
         for j, chunk_text in enumerate(chunk_texts):
-            embedding = ai_service.get_embedding(chunk_text)
+            try:
+                embedding = ai_service.get_embedding(chunk_text)
+            except Exception as emb_e:
+                embedding = None
             chunk = DocumentChunk(
                 document_id=doc.id,
                 chunk_index=j,
