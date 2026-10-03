@@ -95,32 +95,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Demo credentials */}
-          <div className="mt-6 pt-5 border-t border-white/10">
-            <div className="text-xs text-white/40 text-center mb-3 font-medium uppercase tracking-wider">
-              Demo Credentials
-            </div>
-            <div className="space-y-2">
-              {[
-                { role: 'Admin', email: 'admin@ncpor.res.in', pw: 'PolarHub@2026' },
-                { role: 'Editor', email: 'editor@ncpor.res.in', pw: 'PolarHub@2026' },
-              ].map(({ role, email: e, pw }) => (
-                <button
-                  key={role}
-                  onClick={() => { setEmail(e); setPassword(pw); }}
-                  className="w-full flex items-center justify-between p-3 bg-white/5 hover:bg-white/8 border border-white/10 rounded-xl transition-all text-left"
-                >
-                  <div>
-                    <div className="text-white text-xs font-semibold">{role}</div>
-                    <div className="text-white/40 text-xs">{e}</div>
-                  </div>
-                  <span className="text-polar-cyan text-xs font-medium">Use →</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <p className="text-center text-white/30 text-xs mt-5">
+          <p className="text-center text-white/30 text-xs mt-6">
             Don&apos;t have an account?{' '}
             <Link href="/register" className="text-polar-cyan hover:underline">Register</Link>
           </p>

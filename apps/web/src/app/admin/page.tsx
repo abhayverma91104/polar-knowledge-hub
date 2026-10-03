@@ -54,7 +54,7 @@ export default function AdminPage() {
       } else {
         const err = statsRes.reason as { response?: { status?: number } };
         if (err.response?.status === 401 || err.response?.status === 403) {
-          setError('Admin access required. Please log in with an admin account.');
+          setError('Admin or Editor access required. Please log in with an authorized account.');
         } else {
           setError('Failed to load admin stats. Is the API server running?');
         }
@@ -86,7 +86,7 @@ export default function AdminPage() {
           <Shield size={40} className="text-slate-300 mx-auto mb-4" />
           <h2 className="font-display font-bold text-xl text-polar-navy mb-2">Access Restricted</h2>
           <p className="text-slate-500 mb-6">{error}</p>
-          <Link href="/login" className="btn-primary mx-auto">Sign in as Admin</Link>
+          <Link href="/login" className="btn-primary mx-auto">Sign in</Link>
         </div>
       </div>
     );

@@ -1182,7 +1182,7 @@ async def start_crawl(
     req: CrawlRequest,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_editor),
 ):
     # Create crawl job
     job = CrawlJob(
@@ -1351,7 +1351,7 @@ async def _run_crawl_job(job_id: str, start_url: str, config: dict):
 @app.get("/api/ingestion/jobs")
 async def list_crawl_jobs(
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_editor),
 ):
     jobs = db.query(CrawlJob).order_by(desc(CrawlJob.created_at)).limit(20).all()
     return [_crawl_job_dict(j) for j in jobs]
@@ -1361,7 +1361,7 @@ async def list_crawl_jobs(
 async def get_crawl_job(
     job_id: str,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_editor),
 ):
     job = db.query(CrawlJob).filter(CrawlJob.id == job_id).first()
     if not job:
@@ -1378,7 +1378,7 @@ async def get_crawl_job(
 @app.get("/api/ingestion/resources/pending")
 async def get_pending_resources(
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_editor),
 ):
     docs = db.query(Document).filter(
         Document.status == ContentStatus.PENDING_REVIEW
@@ -1391,7 +1391,7 @@ async def approve_ingested_resource(
     doc_id: str,
     action: str = Query(..., pattern="^(approve|reject)$"),
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_editor),
 ):
     doc = db.query(Document).filter(Document.id == doc_id).first()
     if not doc:
@@ -1409,7 +1409,7 @@ async def approve_ingested_resource(
 @app.get("/api/sources")
 async def list_sources(
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_editor),
 ):
     sources = db.query(Source).order_by(Source.name).all()
     return [_source_dict(s) for s in sources]
@@ -1424,7 +1424,7 @@ async def create_source(
     is_trusted: bool = Form(False),
     sync_frequency: str = Form("manual"),
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_editor),
 ):
     source = Source(
         name=name,
@@ -1447,7 +1447,7 @@ async def create_source(
 @app.get("/api/admin/stats")
 async def admin_stats(
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_editor),
 ):
     total_docs = db.query(func.count(Document.id)).scalar() or 0
     pending_docs = db.query(func.count(Document.id)).filter(
