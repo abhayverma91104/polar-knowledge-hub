@@ -1390,7 +1390,7 @@ async def get_pending_resources(
 @app.post("/api/ingestion/resources/{doc_id}/approve")
 async def approve_ingested_resource(
     doc_id: str,
-    action: str = Query(..., regex="^(approve|reject)$"),
+    action: str = Query(..., pattern="^(approve|reject)$"),
     db: Session = Depends(get_db),
     current_user: User = Depends(require_admin),
 ):

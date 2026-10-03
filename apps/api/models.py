@@ -281,7 +281,7 @@ class DocumentChunk(Base):
     page_number = Column(Integer, nullable=True)
     chunk_text = Column(Text, nullable=False)
     embedding = Column(Vector(768), nullable=True)  # Gemini text-embedding-004: 768 dims
-    metadata = Column(JSON, default=dict)
+    chunk_metadata = Column("metadata", JSON, default=dict)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     document = relationship("Document", back_populates="chunks")
