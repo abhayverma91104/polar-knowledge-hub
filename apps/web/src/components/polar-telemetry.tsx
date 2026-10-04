@@ -301,6 +301,51 @@ export function PolarTelemetry({
                         ))}
                       </div>
                     </div>
+
+                    {/* 24h Synoptic Diurnal Curve SVG */}
+                    <div className="flex flex-col gap-1 mb-3 bg-[#ebf5ff]/60 dark:bg-white/5 p-2 rounded-lg border border-[#bfc7d2]/30 dark:border-white/5">
+                      <span className="font-mono text-[9px] text-[#707881] dark:text-slate-400 font-bold uppercase tracking-wider">
+                        24H Diurnal Temperature Gradient
+                      </span>
+                      <div className="w-full h-9 flex items-center px-1">
+                        <svg className="w-full h-8 text-[#006194] dark:text-sky-400" preserveAspectRatio="none" viewBox="0 0 200 40">
+                          <path
+                            d={
+                              st.id === 'bharati'
+                                ? 'M0,28 Q25,32 50,22 T100,16 T150,24 T200,10'
+                                : st.id === 'maitri'
+                                ? 'M0,15 Q35,5 75,20 T150,12 T200,22'
+                                : st.id === 'himadri'
+                                ? 'M0,22 Q50,30 100,10 T200,18'
+                                : 'M0,35 Q60,10 120,25 T200,8'
+                            }
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                          <path
+                            d={
+                              st.id === 'bharati'
+                                ? 'M0,28 Q25,32 50,22 T100,16 T150,24 T200,10 L200,40 L0,40 Z'
+                                : st.id === 'maitri'
+                                ? 'M0,15 Q35,5 75,20 T150,12 T200,22 L200,40 L0,40 Z'
+                                : st.id === 'himadri'
+                                ? 'M0,22 Q50,30 100,10 T200,18 L200,40 L0,40 Z'
+                                : 'M0,35 Q60,10 120,25 T200,8 L200,40 L0,40 Z'
+                            }
+                            fill="currentColor"
+                            fillOpacity="0.15"
+                          />
+                        </svg>
+                      </div>
+                      <div className="flex justify-between font-mono text-[9px] text-[#707881] dark:text-slate-400">
+                        <span>00:00 UTC</span>
+                        <span className="font-semibold text-[#006194] dark:text-sky-300">
+                          {st.id === 'bharati' ? '-18°C min' : st.id === 'maitri' ? 'Priyadarshini' : st.id === 'himadri' ? 'Kongsfjorden' : 'Bara Shigri'}
+                        </span>
+                        <span>23:59 UTC</span>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Station Specialized Sensor Badges */}
