@@ -8,6 +8,7 @@ import {
   AlertCircle, Sparkles, ChevronDown, Database, Globe
 } from 'lucide-react';
 import { documentsApi, expeditionsApi, contentApi, assistantApi } from '@/lib/api';
+import { MarkdownRenderer } from '@/components/markdown-renderer';
 
 const CONTENT_TYPES = [
   { id: 'summary', label: 'Scientific Summary', icon: FileText, description: '150-200 word summary', color: 'text-blue-500 bg-blue-50' },
@@ -403,10 +404,8 @@ export default function ContentStudioPage() {
                     AI-generated — human review required before official publication
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-4 max-h-72 overflow-y-auto">
-                    <pre className="text-sm text-slate-700 whitespace-pre-wrap font-sans leading-relaxed">
-                      {result.content}
-                    </pre>
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-4 max-h-96 overflow-y-auto">
+                    <MarkdownRenderer content={result.content} />
                   </div>
 
                   {result.status === 'draft' && result.id && (

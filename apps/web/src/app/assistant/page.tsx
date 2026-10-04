@@ -8,6 +8,7 @@ import {
   MessageSquare, Lightbulb, Search, Loader2, User
 } from 'lucide-react';
 import { assistantApi } from '@/lib/api';
+import { MarkdownRenderer } from '@/components/markdown-renderer';
 
 const SUGGESTED_QUESTIONS = [
   'What research was conducted during the 44th Indian Antarctic Expedition?',
@@ -226,11 +227,9 @@ function AssistantContent() {
                   {/* Message bubble */}
                   <div className={msg.role === 'user' ? 'chat-message-user' : 'chat-message-ai'}>
                     {msg.role === 'assistant' ? (
-                      <div className="prose prose-sm max-w-none text-slate-700">
-                        <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.content}</p>
-                      </div>
+                      <MarkdownRenderer content={msg.content} />
                     ) : (
-                      <p className="text-sm">{msg.content}</p>
+                      <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
                     )}
                   </div>
 
