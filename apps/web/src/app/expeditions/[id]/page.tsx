@@ -84,14 +84,16 @@ export default function ExpeditionDetailPage({ params }: { params: Promise<{ id:
           <span>/</span>
           <Link href="/expeditions" className="hover:text-white transition-colors">Expeditions</Link>
           <span>/</span>
-          <span className="text-sky-400 font-mono">IAE-{expedition.number}</span>
+          <span className="text-sky-400 font-mono">
+            {expedition.region === 'arctic' ? `Arctic-${expedition.number}` : `IAE-${expedition.number}`}
+          </span>
         </div>
 
         {/* Hero Banner */}
         <div className="p-8 sm:p-10 rounded-2xl border border-white/10 mb-8" style={{ background: '#0a1628' }}>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 border border-sky-500/40 text-sky-300 text-xs font-bold uppercase tracking-wider mb-4">
             <Award size={14} />
-            <span>Official Expedition Dossier · #{expedition.number}</span>
+            <span>Official Expedition Dossier · {expedition.region === 'arctic' ? 'Arctic ' : ''}#{expedition.number}</span>
           </div>
 
           <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-white mb-4 leading-tight">

@@ -125,7 +125,7 @@ class Expedition(Base):
     __tablename__ = "expeditions"
 
     id = Column(String, primary_key=True, default=generate_uuid)
-    number = Column(Integer, nullable=False, unique=True)
+    number = Column(Integer, nullable=False, index=True)
     title = Column(String, nullable=False)
     year = Column(Integer, nullable=False)
     region = Column(SQLEnum(Region), nullable=False)

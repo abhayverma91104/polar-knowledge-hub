@@ -56,8 +56,11 @@ def init_db():
                 conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
                 conn.commit()
                 logger.info("pgvector extension enabled")
+                # Drop legacy single-number unique constraint if present so Arctic & Antarctic series can both exist
+                conn.execute(text("ALTER TABLE expeditions DROP CONSTRAINT IF EXISTS expeditions_number_key CASCADE"))
+                conn.commit()
         except Exception as e:
-            logger.warning(f"Could not enable pgvector (OK for SQLite): {e}")
+            logger.warning(f"Could not enable pgvector or alter constraint (OK for SQLite): {e}")
 
     # Create all tables
     Base.metadata.create_all(bind=engine)

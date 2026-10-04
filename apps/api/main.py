@@ -69,9 +69,10 @@ async def lifespan(app: FastAPI):
                 db.commit()
                 logger.info(f"Cleaned up {len(interrupted)} interrupted crawl jobs")
 
-            # Always ensure all 6 authentic Indian research stations & observatories are seeded
+            # Always ensure all 6 authentic Indian research stations & observatories and polar expeditions are seeded
             station_count = db.query(ResearchStation).count()
-            seed_database.seed_stations(db)
+            stations = seed_database.seed_stations(db)
+            seed_database.seed_expeditions(db, stations)
             if station_count == 0:
                 logger.info("Fresh database detected. Auto-seeding authentic NCPOR records...")
                 seed_database.seed_all()

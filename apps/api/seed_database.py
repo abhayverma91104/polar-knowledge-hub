@@ -15,7 +15,7 @@ project_root = os.path.dirname(scripts_dir)
 sys.path.insert(0, os.path.join(project_root, 'apps', 'api'))
 
 from datetime import datetime, timedelta
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 from database import SessionLocal, init_db
 from models import (
     User, UserRole, Document, DocumentType, DocumentChunk, Dataset,
@@ -205,12 +205,8 @@ def seed_stations(db):
 def seed_expeditions(db, stations):
     logger.info("Seeding expeditions...")
     
-    existing = db.query(Expedition).first()
-    if existing:
-        logger.info("Expeditions already seeded, skipping")
-        return db.query(Expedition).all()
-    
     expeditions_data = [
+        # Antarctic Expeditions
         {
             "number": 1,
             "title": "1st Indian Antarctic Expedition",
@@ -294,29 +290,170 @@ def seed_expeditions(db, stations):
             "chief_scientist": "Dr. Shailesh Nayak",
             "is_featured": True,
         },
+
+        # Arctic Expeditions
+        {
+            "number": 1,
+            "title": "1st Indian Arctic Expedition",
+            "year": 2007,
+            "region": Region.ARCTIC,
+            "start_date": datetime(2007, 8, 3),
+            "end_date": datetime(2007, 9, 5),
+            "duration_days": 34,
+            "description": "India's maiden scientific expedition to the Arctic, initiating India's presence at Ny-Ålesund in the Svalbard archipelago, Norway. Led by Dr. Rasik Ravindra, the team conducted reconnaissance and initiated biological, atmospheric, and glaciological baseline studies.",
+            "objectives": [
+                "Establish India's presence at Ny-Ålesund, Svalbard",
+                "Reconnaissance of atmospheric and glacial sampling sites in Kongsfjorden",
+                "Bio-prospecting of Arctic cold-tolerant microbes and flora",
+                "Baseline meteorological characterization",
+            ],
+            "research_domains": ["Atmospheric Science", "Polar Biology", "Glaciology", "Climate Science"],
+            "team_size": 5,
+            "chief_scientist": "Dr. Rasik Ravindra",
+            "is_featured": False,
+        },
+        {
+            "number": 2,
+            "title": "2nd Indian Arctic Expedition (Himadri Commissioning)",
+            "year": 2008,
+            "region": Region.ARCTIC,
+            "start_date": datetime(2008, 7, 1),
+            "end_date": datetime(2008, 8, 28),
+            "duration_days": 59,
+            "description": "Historic milestone in Indian polar research: formal inauguration and commissioning of 'Himadri'—India's permanent Arctic research base at Ny-Ålesund, making India the 11th nation in the world to operate a permanent Arctic station.",
+            "objectives": [
+                "Commission and operationalize Himadri Research Station",
+                "Establish continuous atmospheric aerosol and greenhouse gas monitoring",
+                "Study Arctic warming amplification and teleconnections with the Indian Monsoon",
+                "Investigate Kongsfjorden hydrography and marine phytoplankton dynamics",
+            ],
+            "research_domains": ["Atmospheric Physics", "Glaciology", "Oceanography", "Marine Biology"],
+            "team_size": 14,
+            "chief_scientist": "Dr. Rasik Ravindra",
+            "is_featured": False,
+        },
+        {
+            "number": 8,
+            "title": "8th Indian Arctic Expedition (IndARC Deployment)",
+            "year": 2014,
+            "region": Region.ARCTIC,
+            "start_date": datetime(2014, 7, 15),
+            "end_date": datetime(2014, 8, 30),
+            "duration_days": 47,
+            "description": "Landmark Arctic mission during which India deployed 'IndARC'—its first multi-sensor moored underwater observatory—at a depth of ~192 meters in the Kongsfjorden fjord to record continuous year-round oceanic temperature, salinity, and current dynamics.",
+            "objectives": [
+                "Deploy IndARC multi-sensor underwater moored observatory in Kongsfjorden",
+                "Continuous tracking of Arctic Atlantic water mass exchange",
+                "Hydrographic CTD profiling across glacial fronts",
+                "Biogeochemical sampling for marine carbon cycling",
+            ],
+            "research_domains": ["Physical Oceanography", "Marine Geochemistry", "Climate Teleconnections"],
+            "team_size": 18,
+            "chief_scientist": "Dr. K. P. Krishnan",
+            "is_featured": False,
+        },
+        {
+            "number": 14,
+            "title": "14th Indian Arctic Expedition",
+            "year": 2022,
+            "region": Region.ARCTIC,
+            "start_date": datetime(2022, 6, 20),
+            "end_date": datetime(2022, 9, 10),
+            "duration_days": 83,
+            "description": "Comprehensive multidisciplinary research program investigating rapid Arctic warming, glacier retreat kinetics in Svalbard, cryoconite microbial diversity, and long-term IndARC telemetry retrievals.",
+            "objectives": [
+                "Retrieve and service IndARC moored observatory array",
+                "Assess glacier mass balance on Midtre Lovénbreen and Austre Brøggerbreen",
+                "Monitor black carbon deposition and albedo reduction on Arctic snow",
+                "Study atmospheric boundary layer physics during summer melt",
+            ],
+            "research_domains": ["Glaciology", "Atmospheric Science", "Microbiology", "Oceanography"],
+            "team_size": 24,
+            "chief_scientist": "Dr. Manish Tiwari",
+            "is_featured": False,
+        },
+        {
+            "number": 15,
+            "title": "15th Indian Arctic Expedition",
+            "year": 2023,
+            "region": Region.ARCTIC,
+            "start_date": datetime(2023, 6, 15),
+            "end_date": datetime(2023, 9, 18),
+            "duration_days": 96,
+            "description": "Multidisciplinary expedition focusing on biogeochemical cycling, fjord sediment core analysis, permafrost thaw dynamics, and high-resolution atmospheric aerosol-cloud interactions over Kongsfjorden.",
+            "objectives": [
+                "Glacier mass balance and ice-velocity tracking",
+                "Aerosol-cloud-radiation interaction modeling",
+                "Sediment biogeochemistry in Kongsfjorden",
+                "Investigate Arctic sea ice depletion mechanisms and Indian monsoon links",
+            ],
+            "research_domains": ["Glaciology", "Atmospheric Chemistry", "Marine Ecology", "Climate Science"],
+            "team_size": 28,
+            "chief_scientist": "Dr. Archana Dayal",
+            "is_featured": False,
+        },
+        {
+            "number": 16,
+            "title": "16th Indian Arctic Expedition (1st Arctic Winter Mission)",
+            "year": 2024,
+            "region": Region.ARCTIC,
+            "start_date": datetime(2023, 12, 19),
+            "end_date": datetime(2024, 3, 25),
+            "duration_days": 98,
+            "description": "Historic breakthrough for Indian polar research: India's first-ever winter scientific expedition to the Arctic. Operated out of Himadri throughout the harsh polar night (-30°C and 24-hour total darkness) to conduct unprecedented winter atmospheric, astronomical, and space weather observations.",
+            "objectives": [
+                "Conduct India's first-ever continuous polar night Arctic scientific observations",
+                "Monitor winter atmospheric chemistry and aurora borealis space weather dynamics",
+                "Radio-frequency environment and low-frequency astronomical measurements",
+                "Winter sea-ice freeze-up kinetics and Kongsfjorden convection profiling",
+            ],
+            "research_domains": ["Space Weather", "Atmospheric Physics", "Sea Ice Dynamics", "Climate Science", "Astronomy"],
+            "team_size": 12,
+            "chief_scientist": "Dr. K. P. Krishnan",
+            "is_featured": True,
+        },
     ]
     
     maitri = next((s for s in stations if s.code == "MAITRI"), None)
     bharati = next((s for s in stations if s.code == "BHARATI"), None)
+    himadri = next((s for s in stations if s.code == "HIMADRI"), None)
+    indarc = next((s for s in stations if s.code == "INDARC"), None)
     
     expeditions = []
     for data in expeditions_data:
-        exp = Expedition(**data)
-        db.add(exp)
-        db.flush()
+        exp = db.query(Expedition).filter(
+            and_(Expedition.number == data["number"], Expedition.region == data["region"])
+        ).first()
+
+        if not exp:
+            exp = db.query(Expedition).filter(Expedition.title == data["title"]).first()
+
+        if not exp:
+            exp = Expedition(**data)
+            db.add(exp)
+            db.flush()
+            logger.info(f"Added expedition: {data['title']} ({data['region'].value})")
+        else:
+            for k, v in data.items():
+                setattr(exp, k, v)
+            db.flush()
         
-        # Link stations to Antarctic expeditions
-        if exp.region == Region.ANTARCTICA and maitri:
-            link = ExpeditionStation(expedition_id=exp.id, station_id=maitri.id)
-            db.add(link)
-        if exp.region == Region.ANTARCTICA and bharati and exp.number >= 33:
-            link2 = ExpeditionStation(expedition_id=exp.id, station_id=bharati.id)
-            db.add(link2)
+        # Link stations
+        if exp.region == Region.ANTARCTICA:
+            if maitri and not db.query(ExpeditionStation).filter_by(expedition_id=exp.id, station_id=maitri.id).first():
+                db.add(ExpeditionStation(expedition_id=exp.id, station_id=maitri.id))
+            if bharati and exp.number >= 33 and not db.query(ExpeditionStation).filter_by(expedition_id=exp.id, station_id=bharati.id).first():
+                db.add(ExpeditionStation(expedition_id=exp.id, station_id=bharati.id))
+        elif exp.region == Region.ARCTIC:
+            if himadri and not db.query(ExpeditionStation).filter_by(expedition_id=exp.id, station_id=himadri.id).first():
+                db.add(ExpeditionStation(expedition_id=exp.id, station_id=himadri.id))
+            if indarc and exp.number >= 8 and not db.query(ExpeditionStation).filter_by(expedition_id=exp.id, station_id=indarc.id).first():
+                db.add(ExpeditionStation(expedition_id=exp.id, station_id=indarc.id))
         
         expeditions.append(exp)
     
-    db.flush()
-    logger.info(f"Seeded {len(expeditions)} expeditions")
+    db.commit()
+    logger.info(f"Verified {len(expeditions)} authentic expeditions across Antarctica and Arctic")
     return expeditions
 
 

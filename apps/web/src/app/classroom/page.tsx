@@ -118,7 +118,7 @@ export default function ClassroomPage() {
                   const emoji = CATEGORY_EMOJIS[topic.category || ''] || '❄️';
 
                   return (
-                    <div key={topic.id} className="card overflow-hidden group hover-lift">
+                    <div key={topic.id} className="card overflow-hidden group hover-lift flex flex-col">
                       {/* Hero */}
                       <div className={`relative h-44 bg-gradient-to-br ${gradient} overflow-hidden`}>
                         {topic.hero_image_url && (
@@ -141,7 +141,7 @@ export default function ClassroomPage() {
                       </div>
 
                       {/* Content */}
-                      <div className="p-6">
+                      <div className="p-6 flex flex-col flex-1">
                         <h2 className="font-display font-bold text-xl text-polar-navy mb-2 group-hover:text-polar-cyan transition-colors">
                           {topic.title}
                         </h2>
@@ -149,27 +149,30 @@ export default function ClassroomPage() {
                           <p className="text-slate-500 text-sm mb-4 line-clamp-2">{topic.subtitle}</p>
                         )}
 
-                        <div className="flex gap-2">
+                        <div className="flex items-center gap-2 mt-auto pt-4 border-t border-slate-100">
                           <Link
                             href={`/classroom/${topic.slug}`}
-                            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-polar-navy text-white rounded-xl text-sm font-semibold hover:bg-polar-navy-700 transition-colors"
+                            className="flex-1 h-10 flex items-center justify-center gap-2 px-3 bg-sky-500 hover:bg-sky-600 active:bg-sky-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm shadow-sky-500/20"
+                            style={{ color: '#ffffff' }}
                           >
-                            <Play size={13} />
-                            Learn
+                            <Play size={13} className="text-white fill-white shrink-0" />
+                            <span style={{ color: '#ffffff' }}>Learn</span>
                           </Link>
                           <button
                             onClick={() => startQuiz(topic)}
-                            className="flex items-center gap-1.5 px-4 py-2.5 bg-polar-cyan/10 text-polar-cyan border border-polar-cyan/20 rounded-xl text-sm font-semibold hover:bg-polar-cyan/20 transition-colors"
+                            className="flex-1 h-10 flex items-center justify-center gap-1.5 px-3 bg-sky-50 hover:bg-sky-100 active:bg-sky-200 text-sky-700 border border-sky-200/80 rounded-xl text-xs font-bold transition-all"
+                            style={{ color: '#0369a1' }}
                           >
-                            <HelpCircle size={13} />
-                            Quiz
+                            <HelpCircle size={14} className="text-sky-600 shrink-0" />
+                            <span style={{ color: '#0369a1' }}>Quiz</span>
                           </button>
                           <Link
                             href={`/assistant?q=${encodeURIComponent('Tell me about ' + topic.title + ' in polar regions')}`}
-                            className="flex items-center gap-1.5 px-3 py-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-slate-200 transition-colors"
+                            className="h-10 w-10 shrink-0 flex items-center justify-center bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-600 rounded-xl transition-all"
+                            style={{ color: '#475569' }}
                             title="Ask AI"
                           >
-                            <MessageSquare size={13} />
+                            <MessageSquare size={14} className="text-slate-600 shrink-0" />
                           </Link>
                         </div>
                       </div>

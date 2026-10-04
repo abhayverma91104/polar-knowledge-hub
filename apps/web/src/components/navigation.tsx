@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  Search, Menu, X, Globe, User, ChevronDown,
+  Search, Menu, X, User, ChevronDown,
   Snowflake, LogIn, LogOut, Shield, Sparkles
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-store';
@@ -107,17 +107,13 @@ export function Navigation() {
             {/* Search */}
             <Link
               href="/repository"
-              className="p-2 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/15 text-white rounded-lg border border-white/15 transition-all text-xs font-semibold shadow-sm"
+              style={{ color: '#ffffff' }}
               title="Search Repository"
             >
-              <Search size={18} />
+              <Search size={14} className="text-sky-400" />
+              <span className="hidden sm:inline" style={{ color: '#ffffff' }}>Search</span>
             </Link>
-
-            {/* Language */}
-            <button className="hidden sm:flex items-center gap-1 p-2 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-all text-sm">
-              <Globe size={16} />
-              <span className="text-xs">EN</span>
-            </button>
 
             {/* Auth */}
             {user ? (
@@ -147,26 +143,31 @@ export function Navigation() {
                           {user.full_name || 'User'}
                         </div>
                         <div className="text-white/50 text-xs truncate">{user.email}</div>
-                        <span className="inline-block mt-1 px-2 py-0.5 bg-polar-cyan/20 text-polar-cyan-300 text-[10px] rounded font-medium uppercase tracking-wider">
+                        <span
+                          className="inline-block mt-1 px-2 py-0.5 bg-sky-500/25 border border-sky-400/30 text-[10px] rounded font-bold uppercase tracking-wider"
+                          style={{ color: '#38bdf8' }}
+                        >
                           {user.role}
                         </span>
                       </div>
                       {(user.role === 'admin' || user.role === 'editor') && (
                         <Link
                           href="/admin"
-                          className="flex items-center gap-2.5 px-4 py-2.5 text-white/80 hover:text-white hover:bg-white/5 transition-colors text-sm"
+                          className="flex items-center gap-2.5 px-4 py-2.5 hover:bg-white/10 transition-colors text-sm font-medium"
+                          style={{ color: '#ffffff' }}
                           onClick={() => setUserMenuOpen(false)}
                         >
-                          <Shield size={15} />
-                          Admin Dashboard
+                          <Shield size={16} className="text-sky-400 shrink-0" />
+                          <span style={{ color: '#ffffff' }}>Admin Dashboard</span>
                         </Link>
                       )}
                       <button
                         onClick={() => { logout(); setUserMenuOpen(false); }}
-                        className="flex items-center gap-2.5 px-4 py-2.5 text-white/80 hover:text-white hover:bg-white/5 transition-colors text-sm w-full text-left"
+                        className="flex items-center gap-2.5 px-4 py-2.5 hover:bg-white/10 transition-colors text-sm w-full text-left font-medium"
+                        style={{ color: '#f1f5f9' }}
                       >
-                        <LogOut size={15} />
-                        Sign out
+                        <LogOut size={15} className="text-rose-400 shrink-0" />
+                        <span style={{ color: '#f1f5f9' }}>Sign out</span>
                       </button>
                     </div>
                   </>
