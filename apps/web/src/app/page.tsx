@@ -8,6 +8,7 @@ import {
   Wind, Waves, FlaskConical, Satellite, Mountain, Users, Award
 } from 'lucide-react';
 import { statsApi, expeditionsApi } from '@/lib/api';
+import { PolarTelemetry } from '@/components/polar-telemetry';
 
 interface Stats {
   documents: number;
@@ -315,6 +316,13 @@ export default function HomePage() {
               </>
             )}
           </div>
+        </div>
+      </section>
+
+      {/* ─── LIVE POLAR TELEMETRY ─── */}
+      <section style={{ padding: '3.5rem 0', background: '#ffffff', borderBottom: '1px solid #e2e8f0' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
+          <PolarTelemetry />
         </div>
       </section>
 

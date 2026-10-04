@@ -880,6 +880,155 @@ async def list_stations(
     return [_station_summary(s) for s in stations]
 
 
+@app.get("/api/stations/telemetry")
+async def get_stations_telemetry():
+    """
+    Near-real-time atmospheric and cryospheric sensor feeds from Indian Polar Observatories.
+    Simulated scientific telemetry with calibrated diurnal cycle and 30s live jitter.
+    """
+    import math
+    now_ts = int(time.time() // 30)  # changes every 30s
+    j1 = math.sin(now_ts * 0.7) * 0.3
+    j2 = math.cos(now_ts * 0.9) * 0.25
+    j3 = math.sin(now_ts * 1.1) * 0.2
+    j4 = math.cos(now_ts * 0.5) * 0.35
+
+    stations = [
+        {
+            "id": "maitri",
+            "name": "Maitri Station",
+            "location": "Schirmacher Oasis · 70°45'58\"S, 11°44'09\"E",
+            "region": "ANTARCTICA",
+            "status": "ONLINE",
+            "surface_temp": round(-18.4 + j1, 1),
+            "temp_unit": "°C",
+            "wind_vector": f"{int(round(24 + j2 * 4))} km/h",
+            "wind_dir": "ENE",
+            "solar_rad": int(round(312 + j3 * 15)),
+            "solar_unit": "W/m²",
+            "barometer": round(984.2 + j1 * 0.8, 1),
+            "barometer_unit": "hPa",
+            "metrics": [
+                {"label": "Surface Temp", "value": f"{round(-18.4 + j1, 1)}°C", "is_primary": True},
+                {"label": "Wind Vector", "value": f"{int(round(24 + j2 * 4))} km/h", "sub": "ENE", "is_primary": True},
+                {"label": "Solar Rad", "value": f"{int(round(312 + j3 * 15))} W/m²"},
+                {"label": "Barometer", "value": f"{round(984.2 + j1 * 0.8, 1)} hPa"}
+            ],
+            "badges": [
+                {"type": "users", "text": "23 Wintering Personnel"},
+                {"type": "water", "text": "Lake Priyadarshini Active"}
+            ]
+        },
+        {
+            "id": "bharati",
+            "name": "Bharati Station",
+            "location": "Larsemann Hills · 69°24'28\"S, 76°11'14\"E",
+            "region": "ANTARCTICA",
+            "status": "ONLINE",
+            "surface_temp": round(-12.1 + j2, 1),
+            "temp_unit": "°C",
+            "katabatic_gust": f"{int(round(38 + j4 * 6))} km/h",
+            "wind_dir": "SE",
+            "solar_rad": int(round(418 + j1 * 20)),
+            "solar_unit": "W/m²",
+            "barometer": round(991.5 + j3 * 0.9, 1),
+            "barometer_unit": "hPa",
+            "metrics": [
+                {"label": "Surface Temp", "value": f"{round(-12.1 + j2, 1)}°C", "is_primary": True},
+                {"label": "Katabatic Gust", "value": f"{int(round(38 + j4 * 6))} km/h", "sub": "SE", "is_primary": True},
+                {"label": "Solar Rad", "value": f"{int(round(418 + j1 * 20))} W/m²"},
+                {"label": "Barometer", "value": f"{round(991.5 + j3 * 0.9, 1)} hPa"}
+            ],
+            "badges": [
+                {"type": "radar", "text": "Polarimetric Radar"},
+                {"type": "signal", "text": "High-Speed SatCom 250Mbps"}
+            ]
+        },
+        {
+            "id": "himadri",
+            "name": "Himadri Station",
+            "location": "Ny-Ålesund, Svalbard · 78°55'N, 11°56'E",
+            "region": "ARCTIC",
+            "status": "ONLINE",
+            "surface_temp": round(-4.8 + j3, 1),
+            "temp_unit": "°C",
+            "wind_vector": f"{int(round(16 + j1 * 3))} km/h",
+            "wind_dir": "NNW",
+            "aerosol_od": f"{round(0.082 + j2 * 0.005, 3)} τ",
+            "fjord_salinity": f"{round(34.8 + j4 * 0.2, 1)} PSU",
+            "metrics": [
+                {"label": "Surface Temp", "value": f"{round(-4.8 + j3, 1)}°C", "is_primary": True},
+                {"label": "Wind Vector", "value": f"{int(round(16 + j1 * 3))} km/h", "sub": "NNW", "is_primary": True},
+                {"label": "Aerosol OD", "value": f"{round(0.082 + j2 * 0.005, 3)} τ"},
+                {"label": "Fjord Salinity", "value": f"{round(34.8 + j4 * 0.2, 1)} PSU"}
+            ],
+            "badges": [
+                {"type": "flask", "text": "Kongsfjorden Lab"},
+                {"type": "anchor", "text": "IndARC Mooring Linked"}
+            ]
+        },
+        {
+            "id": "himansh",
+            "name": "Himansh Observatory",
+            "location": "Chandra Basin · 32°24'N, 77°37'E (4,080m)",
+            "region": "HIMALAYA",
+            "status": "ONLINE",
+            "surface_temp": round(-9.6 + j4, 1),
+            "temp_unit": "°C",
+            "wind_vector": f"{int(round(12 + j3 * 2))} km/h",
+            "wind_dir": "W",
+            "snow_water_eq": f"{int(round(420 + j1 * 10))} mm",
+            "glacier_drift": f"{round(-1.24 + j2 * 0.03, 2)} m/a",
+            "metrics": [
+                {"label": "Altitude Temp", "value": f"{round(-9.6 + j4, 1)}°C", "is_primary": True},
+                {"label": "Wind Vector", "value": f"{int(round(12 + j3 * 2))} km/h", "sub": "W", "is_primary": True},
+                {"label": "Snow Water Eq", "value": f"{int(round(420 + j1 * 10))} mm"},
+                {"label": "Glacier Drift", "value": f"{round(-1.24 + j2 * 0.03, 2)} m/a"}
+            ],
+            "badges": [
+                {"type": "mountain", "text": "Bara Shigri Cryosphere"},
+                {"type": "activity", "text": "Datalogger VHF Active"}
+            ]
+        }
+    ]
+
+    synoptic_gradient = []
+    for h in range(24):
+        hour_str = f"{h:02d}:00"
+        diurnal = math.sin((h - 8) / 24.0 * 2 * math.pi)
+        katabatic_factor = 1.0 + 0.35 * math.sin((h - 2) / 24.0 * 2 * math.pi)
+
+        m_temp = round(-18.4 + diurnal * 2.2 + math.sin(h * 1.3) * 0.3, 1)
+        b_temp = round(-12.1 + diurnal * 2.6 + math.cos(h * 1.1) * 0.4, 1)
+        h_temp = round(-4.8 + diurnal * 1.5 + math.sin(h * 0.9) * 0.2, 1)
+        hm_temp = round(-9.6 + diurnal * 3.4 + math.cos(h * 1.4) * 0.3, 1)
+
+        m_wind = int(round(24 * katabatic_factor + math.cos(h * 1.7) * 3))
+        b_wind = int(round(38 * katabatic_factor + math.sin(h * 1.5) * 5))
+        h_wind = int(round(16 + math.sin(h * 1.2) * 3))
+        hm_wind = int(round(12 + math.cos(h * 0.8) * 3))
+
+        synoptic_gradient.append({
+            "hour": hour_str,
+            "maitri_temp": m_temp,
+            "bharati_temp": b_temp,
+            "himadri_temp": h_temp,
+            "himansh_temp": hm_temp,
+            "maitri_wind": m_wind,
+            "bharati_wind": b_wind,
+            "himadri_wind": h_wind,
+            "himansh_wind": hm_wind,
+        })
+
+    return {
+        "status": "streaming",
+        "refresh_interval_sec": 30,
+        "timestamp_utc": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC"),
+        "stations": stations,
+        "synoptic_gradient": synoptic_gradient,
+    }
+
+
 @app.get("/api/stations/{station_id}")
 async def get_station(station_id: str, db: Session = Depends(get_db)):
     station = db.query(ResearchStation).filter(

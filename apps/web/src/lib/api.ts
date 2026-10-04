@@ -92,6 +92,7 @@ export const expeditionsApi = {
 export const stationsApi = {
   list: (params?: Record<string, unknown>) => api.get('/api/stations', { params }),
   get: (id: string) => api.get(`/api/stations/${id}`),
+  telemetry: () => api.get('/api/stations/telemetry'),
 };
 
 // ─── Datasets ───

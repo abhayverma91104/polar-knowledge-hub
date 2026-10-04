@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { stationsApi } from '@/lib/api';
 import type { Station } from '@/components/polar-map';
+import { PolarTelemetry } from '@/components/polar-telemetry';
 
 // Dynamically import Map component (SSR disabled for Leaflet window dependencies)
 const PolarMapComponent = dynamic(() => import('@/components/polar-map'), {
@@ -155,6 +156,7 @@ export default function ExplorePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [regionFilter, setRegionFilter] = useState<'all' | 'antarctica' | 'arctic' | 'himalayas'>('all');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mainView, setMainView] = useState<'map' | 'telemetry'>('map');
 
   useEffect(() => {
     stationsApi
@@ -289,26 +291,60 @@ export default function ExplorePage() {
           </h1>
         </div>
 
-        {/* Global Statistics Badges */}
-        <div className="flex flex-wrap items-center gap-2">
+        {/* Global Statistics Badges & View Switcher */}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* View Toggle */}
+          <div className="bg-slate-900/90 p-1 rounded-xl flex items-center gap-1 border border-white/10">
+            <button
+              onClick={() => setMainView('map')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                mainView === 'map'
+                  ? 'bg-sky-500 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Globe size={13} />
+              Geospatial Map
+            </button>
+            <button
+              onClick={() => setMainView('telemetry')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                mainView === 'telemetry'
+                  ? 'bg-sky-500 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Activity size={13} />
+              Live Telemetry
+            </button>
+          </div>
+
           <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-xs">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
             <span className="text-slate-300 font-medium">{stations.filter((s) => s.is_active).length} Active Stations</span>
-          </div>
-
-          <div className="flex items-center gap-2 bg-sky-500/10 border border-sky-500/30 px-3 py-1.5 rounded-xl text-xs text-sky-300 font-medium">
-            <span>❄️</span>
-            <span>Antarctica & Arctic Bases</span>
-          </div>
-
-          <div className="flex items-center gap-2 bg-purple-500/10 border border-purple-500/30 px-3 py-1.5 rounded-xl text-xs text-purple-300 font-medium">
-            <span>🏔️</span>
-            <span>Himalayan Cryosphere</span>
           </div>
         </div>
       </div>
 
       {/* Main Exploration Work Area */}
+      {mainView === 'telemetry' ? (
+        <div className="flex-1 p-4 sm:p-6 max-w-7xl mx-auto w-full overflow-y-auto">
+          <PolarTelemetry
+            onSelectStation={(stationId) => {
+              const matched = stations.find(
+                (s) =>
+                  s.id.toLowerCase() === stationId.toLowerCase() ||
+                  s.name.toLowerCase().includes(stationId.toLowerCase())
+              );
+              if (matched) {
+                setSelected(matched);
+                setMainView('map');
+              }
+            }}
+            showExploreLink={false}
+          />
+        </div>
+      ) : (
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden" style={{ minHeight: 'calc(100vh - 144px)' }}>
         {/* Left Navigator Drawer (Station Directory) */}
         <div className="w-full lg:w-96 bg-[#081324] border-r border-white/10 flex flex-col shrink-0 overflow-hidden">
@@ -589,6 +625,7 @@ export default function ExplorePage() {
           </div>
         )}
       </div>
+      )}
     </div>
   );
 }
