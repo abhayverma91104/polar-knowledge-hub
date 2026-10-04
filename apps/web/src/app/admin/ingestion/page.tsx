@@ -179,17 +179,17 @@ export default function IngestionPage() {
   };
 
   return (
-    <div className="min-h-screen bg-polar-frost pt-16">
-      <div className="py-12" style={{ background: '#0a1628' }}>
+    <div className="min-h-screen bg-surface text-on-surface pt-16 transition-colors">
+      <div className="py-12 bg-white dark:bg-[#0a1628] border-b border-[#bfc7d2]/40 dark:border-white/10 transition-colors">
         <div className="max-w-screen-xl mx-auto px-6 lg:px-8">
-          <div className="flex items-center gap-2 text-polar-cyan text-sm font-semibold mb-2">
+          <div className="flex items-center gap-2 text-[#006194] dark:text-sky-400 text-sm font-semibold mb-2 font-mono">
             <Globe size={14} />
             Admin · Ingestion Engine
           </div>
-          <h1 className="font-display font-bold text-3xl text-white mb-2">
+          <h1 className="font-display font-bold text-3xl text-on-surface mb-2">
             Knowledge Ingestion
           </h1>
-          <p className="text-white/60">
+          <p className="text-on-surface-variant">
             Import and synchronize publicly available polar science resources from NCPOR.
           </p>
         </div>
@@ -197,7 +197,7 @@ export default function IngestionPage() {
 
       <div className="max-w-screen-xl mx-auto px-6 lg:px-8 py-8">
         {/* Tabs */}
-        <div className="flex gap-1 bg-white border border-slate-200 rounded-xl p-1 w-fit mb-8">
+        <div className="flex gap-1 bg-white dark:bg-[#0a1628] border border-[#bfc7d2]/40 dark:border-white/10 rounded-xl p-1 w-fit mb-8 transition-colors">
           {[
             { id: 'crawl', label: 'Crawl NCPOR Website', icon: Globe },
             { id: 'jobs', label: 'Job History', icon: Activity },

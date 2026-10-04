@@ -278,15 +278,15 @@ export default function ExplorePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#060d19] text-slate-100 flex flex-col pt-16">
+    <div className="min-h-screen bg-surface text-on-surface flex flex-col pt-20 transition-colors">
       {/* Top Header Bar */}
-      <div className="border-b border-white/10 px-6 py-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4" style={{ background: '#0a1628' }}>
+      <div className="border-b border-[#bfc7d2]/40 dark:border-white/10 px-6 py-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-gradient-to-b from-[#ebf5ff] to-surface dark:from-[#0a1628] dark:to-[#06111F]">
         <div>
-          <div className="flex items-center gap-2 text-sky-400 text-xs font-bold uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[#00685f] dark:text-teal-300 font-mono text-xs font-bold uppercase tracking-wider mb-1">
             <Compass size={14} className="animate-spin-slow" />
             <span>Interactive Geospatial Console · NCPOR</span>
           </div>
-          <h1 className="font-display font-bold text-2xl sm:text-3xl text-white tracking-tight">
+          <h1 className="font-display font-bold text-2xl sm:text-3xl text-[#001e2e] dark:text-white tracking-tight">
             Polar Research Stations & Observatories
           </h1>
         </div>
@@ -294,13 +294,13 @@ export default function ExplorePage() {
         {/* Global Statistics Badges & View Switcher */}
         <div className="flex flex-wrap items-center gap-3">
           {/* View Toggle */}
-          <div className="bg-slate-900/90 p-1 rounded-xl flex items-center gap-1 border border-white/10">
+          <div className="bg-[#dff0ff] dark:bg-white/10 p-1 rounded-xl flex items-center gap-1 border border-[#bfc7d2]/40 dark:border-white/10">
             <button
               onClick={() => setMainView('map')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                 mainView === 'map'
-                  ? 'bg-sky-500 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-[#007bb9] text-white shadow-sm'
+                  : 'text-[#707881] dark:text-slate-300 hover:text-[#001e2e] dark:hover:text-white'
               }`}
             >
               <Globe size={13} />
@@ -308,10 +308,10 @@ export default function ExplorePage() {
             </button>
             <button
               onClick={() => setMainView('telemetry')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                 mainView === 'telemetry'
-                  ? 'bg-sky-500 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-[#007bb9] text-white shadow-sm'
+                  : 'text-[#707881] dark:text-slate-300 hover:text-[#001e2e] dark:hover:text-white'
               }`}
             >
               <Activity size={13} />
@@ -319,9 +319,9 @@ export default function ExplorePage() {
             </button>
           </div>
 
-          <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-xs">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span className="text-slate-300 font-medium">{stations.filter((s) => s.is_active).length} Active Stations</span>
+          <div className="flex items-center gap-2 bg-white dark:bg-white/5 border border-[#bfc7d2]/40 dark:border-white/10 px-3 py-1.5 rounded-xl text-xs font-mono">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="text-[#001e2e] dark:text-slate-200 font-semibold">{stations.filter((s) => s.is_active).length} Active Stations</span>
           </div>
         </div>
       </div>

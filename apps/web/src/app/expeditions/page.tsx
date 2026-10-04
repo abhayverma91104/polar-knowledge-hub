@@ -153,31 +153,31 @@ export default function ExpeditionsPage() {
   const arctic = expeditions.filter(e => e.region === 'arctic');
 
   return (
-    <div className="min-h-screen bg-polar-frost pt-16">
+    <div className="min-h-screen bg-surface text-on-surface pt-20 transition-colors">
       {/* Header */}
-      <div className="py-16" style={{ background: '#0a1628' }}>
-        <div className="max-w-screen-xl mx-auto px-6 lg:px-8">
-          <div className="section-label-dark section-label mb-4">
-            <Globe size={12} />
-            Indian Polar Expeditions
+      <div className="py-14 bg-gradient-to-b from-[#ebf5ff] to-surface dark:from-[#0a1628] dark:to-[#06111F] border-b border-[#bfc7d2]/40 dark:border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#dff0ff] dark:bg-white/10 text-[#00685f] dark:text-teal-300 font-mono text-xs font-semibold uppercase tracking-wider mb-4 border border-[#bfc7d2]/40 dark:border-white/10">
+            <Globe size={13} />
+            National Logistical Operations · MoES
           </div>
-          <h1 className="font-display font-bold text-4xl text-white mb-3">
+          <h1 className="font-display font-bold text-3xl sm:text-5xl text-[#001e2e] dark:text-white mb-3">
             Expeditions to the Poles
           </h1>
-          <p className="text-white/60 text-xl max-w-2xl">
-            India has conducted 44+ expeditions to Antarctica and 16+ to the Arctic. Explore the full timeline of scientific discovery.
+          <p className="text-[#3f4850] dark:text-slate-300 text-base sm:text-lg max-w-2xl leading-relaxed">
+            India has conducted 44+ expeditions to Antarctica and 16+ to the Arctic. Explore the complete timeline of scientific discovery, vessels, and research domains.
           </p>
 
           {/* Region filter */}
-          <div className="flex gap-2 mt-6">
+          <div className="flex flex-wrap gap-2 mt-6">
             {REGIONS.map((r) => (
               <button
                 key={r.value}
                 onClick={() => setRegionFilter(r.value)}
-                className={`px-4 py-2 rounded-full text-sm font-semibold transition-all border ${
+                className={`px-4 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all border ${
                   regionFilter === r.value
-                    ? 'bg-polar-cyan text-white border-polar-cyan'
-                    : 'border-white/20 text-white/60 hover:text-white hover:border-white/40'
+                    ? 'bg-[#007bb9] text-white border-[#007bb9] shadow-sm'
+                    : 'bg-white dark:bg-white/10 border-[#bfc7d2]/50 dark:border-white/10 text-[#3f4850] dark:text-slate-300 hover:border-[#006194]'
                 }`}
               >
                 {r.label}
@@ -187,11 +187,11 @@ export default function ExpeditionsPage() {
         </div>
       </div>
 
-      <div className="max-w-screen-xl mx-auto px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(9)].map((_, i) => (
-              <div key={i} className="card h-64 skeleton" />
+              <div key={i} className="h-64 rounded-xl bg-[#ebf5ff] dark:bg-white/5 animate-pulse border border-[#bfc7d2]/30 dark:border-white/5" />
             ))}
           </div>
         ) : (
@@ -199,8 +199,8 @@ export default function ExpeditionsPage() {
             {(regionFilter === '' || regionFilter === 'antarctica') && antarctic.length > 0 && (
               <div className="mb-14">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-1 h-8 bg-sky-400 rounded-full" />
-                  <h2 className="font-display font-bold text-2xl text-polar-navy">
+                  <div className="w-1.5 h-7 bg-[#006194] dark:bg-sky-400 rounded-full" />
+                  <h2 className="font-display font-bold text-2xl text-[#001e2e] dark:text-white">
                     Antarctic Expeditions ({antarctic.length})
                   </h2>
                 </div>
@@ -215,8 +215,8 @@ export default function ExpeditionsPage() {
             {(regionFilter === '' || regionFilter === 'arctic') && arctic.length > 0 && (
               <div>
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-1 h-8 bg-teal-400 rounded-full" />
-                  <h2 className="font-display font-bold text-2xl text-polar-navy">
+                  <div className="w-1.5 h-7 bg-[#00685f] dark:bg-teal-400 rounded-full" />
+                  <h2 className="font-display font-bold text-2xl text-[#001e2e] dark:text-white">
                     Arctic Expeditions ({arctic.length})
                   </h2>
                 </div>
@@ -229,10 +229,10 @@ export default function ExpeditionsPage() {
             )}
 
             {expeditions.length === 0 && (
-              <div className="card p-16 text-center">
-                <Globe size={48} className="text-slate-300 mx-auto mb-4" />
-                <h3 className="font-display font-bold text-xl text-polar-navy mb-2">No expeditions found</h3>
-                <p className="text-slate-500">The API server may not be running. Start it with <code className="bg-slate-100 px-1 rounded">uvicorn apps.api.main:app</code></p>
+              <div className="p-16 text-center rounded-xl bg-surface-container-lowest border border-[#bfc7d2]/40 dark:border-white/10">
+                <Globe size={48} className="text-slate-300 dark:text-slate-600 mx-auto mb-4" />
+                <h3 className="font-display font-bold text-xl text-[#001e2e] dark:text-white mb-2">No expeditions found</h3>
+                <p className="text-[#707881] text-sm">Please verify the API connectivity or refresh the filters.</p>
               </div>
             )}
           </>
@@ -247,7 +247,7 @@ function ExpeditionCard({ expedition }: { expedition: Expedition }) {
   return (
     <Link
       href={`/expeditions/${expedition.id}`}
-      className="card group overflow-hidden hover-lift"
+      className="bg-surface-container-lowest rounded-xl border border-[#bfc7d2]/40 dark:border-white/10 hover:border-[#006194] transition-all shadow-sm hover:shadow-md flex flex-col justify-between overflow-hidden group"
     >
       {/* Color bar */}
       <div className={`h-1.5 ${isAntarctic ? 'bg-gradient-to-r from-sky-400 to-blue-500' : 'bg-gradient-to-r from-teal-400 to-cyan-500'}`} />

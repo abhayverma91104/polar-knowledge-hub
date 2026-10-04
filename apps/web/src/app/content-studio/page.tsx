@@ -130,35 +130,35 @@ export default function ContentStudioPage() {
     : expeditions.find(e => e.id === selectedExpId)?.title;
 
   return (
-    <div className="min-h-screen bg-polar-frost pt-16">
+    <div className="min-h-screen bg-surface text-on-surface pt-20 transition-colors">
       {/* Header */}
-      <div className="py-16" style={{ background: '#0a1628' }}>
-        <div className="max-w-screen-xl mx-auto px-6 lg:px-8">
+      <div className="py-14 bg-gradient-to-b from-[#ebf5ff] to-surface dark:from-[#0a1628] dark:to-[#06111F] border-b border-[#bfc7d2]/40 dark:border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-start justify-between flex-wrap gap-4">
             <div>
-              <div className="section-label-dark section-label mb-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#dff0ff] dark:bg-white/10 text-[#00685f] dark:text-teal-300 font-mono text-xs font-semibold uppercase tracking-wider mb-4 border border-[#bfc7d2]/40 dark:border-white/10">
                 <Sparkles size={12} />
-                AI Content Studio
+                NCPOR Public Science Dissemination · Content Studio
               </div>
-              <h1 className="font-display font-bold text-4xl text-white mb-3">
+              <h1 className="font-display font-bold text-3xl sm:text-5xl text-[#001e2e] dark:text-white mb-3">
                 From Research to Outreach
               </h1>
-              <p className="text-white/60 text-xl max-w-2xl">
+              <p className="text-[#3f4850] dark:text-slate-300 text-base sm:text-lg max-w-2xl leading-relaxed">
                 Transform scientific knowledge into accessible public content — articles, social posts, student explanations, and quizzes.
               </p>
             </div>
             {statusLoading ? (
-              <div className="flex items-center gap-2 text-xs text-white/50 bg-white/5 border border-white/10 px-3.5 py-1.5 rounded-full">
-                <Loader2 size={12} className="animate-spin text-white/50" />
+              <div className="flex items-center gap-2 text-xs text-[#707881] bg-white/60 dark:bg-white/5 border border-[#bfc7d2]/40 dark:border-white/10 px-3.5 py-1.5 rounded-full">
+                <Loader2 size={12} className="animate-spin text-[#006194]" />
                 Checking Gemini...
               </div>
             ) : aiStatus?.has_key ? (
-              <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 bg-emerald-400/10 border border-emerald-400/25 px-3.5 py-1.5 rounded-full shadow-sm">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <div className="flex items-center gap-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3.5 py-1.5 rounded-full shadow-xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 Gemini Connected ({aiStatus.model || 'gemini-flash-lite'})
               </div>
             ) : (
-              <div className="flex items-center gap-2 text-xs font-medium text-amber-300 bg-amber-400/10 border border-amber-400/25 px-3.5 py-1.5 rounded-full">
+              <div className="flex items-center gap-2 text-xs font-medium text-amber-700 dark:text-amber-300 bg-amber-400/10 border border-amber-400/30 px-3.5 py-1.5 rounded-full">
                 <span className="w-2 h-2 rounded-full bg-amber-400" />
                 Gemini API Key Required · Demo Mode
               </div>
@@ -166,34 +166,34 @@ export default function ContentStudioPage() {
           </div>
 
           {!statusLoading && aiStatus && !aiStatus.has_key && (
-            <div className="bg-amber-500/10 border border-amber-500/20 text-amber-200 text-xs px-4 py-2.5 rounded-lg flex items-center gap-2 mt-4">
-              <span className="text-amber-400">⚠️</span>
+            <div className="bg-amber-500/10 border border-amber-500/20 text-amber-800 dark:text-amber-200 text-xs px-4 py-2.5 rounded-lg flex items-center gap-2 mt-4">
+              <span className="text-amber-500">⚠️</span>
               <span>
-                <strong>Gemini API Key Missing:</strong> Operating in offline demo mode. Add <code className="bg-black/30 px-1.5 py-0.5 rounded text-white">GEMINI_API_KEY</code> in <code className="bg-black/30 px-1.5 py-0.5 rounded text-white">apps/api/.env</code> to generate with live Google Gemini.
+                <strong>Gemini API Key Missing:</strong> Operating in offline demo mode. Add <code className="bg-black/10 dark:bg-black/40 px-1.5 py-0.5 rounded text-[#001e2e] dark:text-white">GEMINI_API_KEY</code> in <code className="bg-black/10 dark:bg-black/40 px-1.5 py-0.5 rounded text-[#001e2e] dark:text-white">apps/api/.env</code> to generate with live Google Gemini.
               </span>
             </div>
           )}
         </div>
       </div>
 
-      <div className="max-w-screen-xl mx-auto px-6 lg:px-8 py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Configuration Panel */}
           <div className="space-y-6">
             {/* Step 1: Source */}
-            <div className="card p-6">
-              <h2 className="font-display font-bold text-lg text-polar-navy mb-4 flex items-center gap-2">
-                <span className="w-6 h-6 bg-polar-cyan rounded-full flex items-center justify-center text-white text-xs font-bold">1</span>
+            <div className="bg-surface-container-lowest p-6 rounded-2xl border border-[#bfc7d2]/40 dark:border-white/10 shadow-sm">
+              <h2 className="font-display font-bold text-lg text-[#001e2e] dark:text-white mb-4 flex items-center gap-2">
+                <span className="w-6 h-6 bg-[#006194] rounded-full flex items-center justify-center text-white text-xs font-bold">1</span>
                 Select Source
               </h2>
 
               <div className="flex gap-2 mb-4">
                 <button
                   onClick={() => setSelectedSourceType('document')}
-                  className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium border transition-all ${
+                  className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold border transition-all ${
                     selectedSourceType === 'document'
-                      ? 'bg-polar-cyan/10 border-polar-cyan/40 text-polar-cyan'
-                      : 'border-slate-200 text-slate-500 hover:border-slate-300'
+                      ? 'bg-[#cce5ff] dark:bg-sky-950 border-[#006194] text-[#004b73] dark:text-sky-300'
+                      : 'border-[#bfc7d2]/50 dark:border-white/10 text-[#707881] dark:text-slate-400 hover:border-[#006194]'
                   }`}
                 >
                   <FileText size={14} className="inline mr-1" />
@@ -201,10 +201,10 @@ export default function ContentStudioPage() {
                 </button>
                 <button
                   onClick={() => setSelectedSourceType('expedition')}
-                  className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium border transition-all ${
+                  className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold border transition-all ${
                     selectedSourceType === 'expedition'
-                      ? 'bg-polar-cyan/10 border-polar-cyan/40 text-polar-cyan'
-                      : 'border-slate-200 text-slate-500 hover:border-slate-300'
+                      ? 'bg-[#cce5ff] dark:bg-sky-950 border-[#006194] text-[#004b73] dark:text-sky-300'
+                      : 'border-[#bfc7d2]/50 dark:border-white/10 text-[#707881] dark:text-slate-400 hover:border-[#006194]'
                   }`}
                 >
                   <Globe size={14} className="inline mr-1" />
@@ -214,7 +214,7 @@ export default function ContentStudioPage() {
 
               {selectedSourceType === 'document' ? (
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-mono font-semibold text-[#707881] uppercase tracking-wider mb-2">
                     Select Document
                   </label>
                   <select

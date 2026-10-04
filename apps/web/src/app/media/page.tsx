@@ -150,25 +150,25 @@ export default function MediaPage() {
   });
 
   return (
-    <div className="min-h-screen pt-24 pb-20 text-slate-100" style={{ background: '#070f1e' }}>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen pt-20 pb-20 bg-surface text-on-surface transition-colors">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
-        <div className="p-8 sm:p-10 rounded-2xl border border-white/10 mb-8" style={{ background: '#0a1628' }}>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 text-xs font-bold uppercase tracking-wider mb-4">
+        <div className="p-8 sm:p-10 rounded-2xl bg-gradient-to-b from-[#ebf5ff] to-surface dark:from-[#0a1628] dark:to-[#06111F] border border-[#bfc7d2]/40 dark:border-white/10 mb-8 mt-4 shadow-sm">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#dff0ff] dark:bg-white/10 text-[#00685f] dark:text-teal-300 text-xs font-mono font-bold uppercase tracking-wider mb-4 border border-[#bfc7d2]/40 dark:border-white/10">
             <ImageIcon size={14} />
-            <span>NCPOR Media & Photographic Repository</span>
+            <span>NCPOR Documentary Archives · Field Media</span>
           </div>
 
-          <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-white mb-3">
+          <h1 className="font-display font-bold text-3xl sm:text-4xl text-[#001e2e] dark:text-white mb-3">
             Polar Media Archives
           </h1>
-          <p className="text-slate-300 text-base leading-relaxed max-w-3xl">
+          <p className="text-[#3f4850] dark:text-slate-300 text-base leading-relaxed max-w-3xl">
             Official photographic and documentary records from Indian expeditions to Antarctica, the Arctic, and the Southern Ocean.
           </p>
 
           {/* Region Tabs */}
-          <div className="flex items-center gap-2 mt-6 pt-6 border-t border-white/10 overflow-x-auto pb-2">
+          <div className="flex items-center gap-2 mt-6 pt-6 border-t border-[#bfc7d2]/30 dark:border-white/10 overflow-x-auto pb-2">
             {[
               { id: 'all', label: 'All Media' },
               { id: 'antarctica', label: 'Antarctic Expeditions' },
@@ -177,12 +177,11 @@ export default function MediaPage() {
               <button
                 key={tab.id}
                 onClick={() => setSelectedRegion(tab.id)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors border"
-                style={{
-                  background: selectedRegion === tab.id ? '#0ea5e9' : 'rgba(255,255,255,0.03)',
-                  borderColor: selectedRegion === tab.id ? '#0ea5e9' : 'rgba(255,255,255,0.1)',
-                  color: selectedRegion === tab.id ? '#ffffff' : '#94a3b8',
-                }}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold whitespace-nowrap transition-all border ${
+                  selectedRegion === tab.id
+                    ? 'bg-[#007bb9] text-white border-[#007bb9] shadow-sm'
+                    : 'bg-white dark:bg-white/5 border-[#bfc7d2]/40 dark:border-white/10 text-[#3f4850] dark:text-slate-300 hover:border-[#006194]'
+                }`}
               >
                 {tab.label}
               </button>
@@ -196,35 +195,34 @@ export default function MediaPage() {
             <div
               key={item.id + idx}
               onClick={() => setActiveModalItem(item)}
-              className="rounded-2xl border border-white/10 overflow-hidden cursor-pointer group transition-all hover:border-sky-500/50 flex flex-col justify-between"
-              style={{ background: '#0a1628' }}
+              className="rounded-2xl border border-[#bfc7d2]/40 dark:border-white/10 bg-white dark:bg-[#0a1628] overflow-hidden cursor-pointer group transition-all hover:border-[#006194] shadow-sm hover:shadow-md flex flex-col justify-between"
             >
-              <div className="relative aspect-[16/10] overflow-hidden" style={{ background: '#070f1e' }}>
+              <div className="relative aspect-[16/10] overflow-hidden bg-[#ebf5ff] dark:bg-[#0c1c30]">
                 <img
                   src={item.thumbnail_url || item.file_url}
                   alt={item.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute top-3 right-3 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-black/60 backdrop-blur-md text-white border border-white/10">
+                <div className="absolute top-3 right-3 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-black/60 backdrop-blur-md text-white border border-white/10 font-mono">
                   {item.region || 'Polar'}
                 </div>
               </div>
 
               <div className="p-5 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="font-display font-bold text-base text-white mb-2 group-hover:text-sky-400 transition-colors">
+                  <h3 className="font-display font-bold text-base text-on-surface mb-2 group-hover:text-[#006194] dark:group-hover:text-sky-400 transition-colors">
                     {item.title}
                   </h3>
                   {item.description && (
-                    <p className="text-slate-400 text-xs line-clamp-2 mb-4 leading-relaxed">
+                    <p className="text-on-surface-variant text-xs line-clamp-2 mb-4 leading-relaxed">
                       {item.description}
                     </p>
                   )}
                 </div>
 
-                <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
+                <div className="pt-3 border-t border-[#bfc7d2]/30 dark:border-white/10 flex items-center justify-between text-xs text-on-surface-variant font-mono">
                   <span>{item.year || 2024}</span>
-                  <span className="text-sky-400 font-semibold group-hover:underline">View Photo →</span>
+                  <span className="text-[#006194] dark:text-sky-400 font-semibold group-hover:underline">View Photo →</span>
                 </div>
               </div>
             </div>
@@ -235,17 +233,16 @@ export default function MediaPage() {
         {activeModalItem && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
             <div
-              className="relative max-w-4xl w-full rounded-2xl border border-white/15 overflow-hidden flex flex-col max-h-[90vh]"
-              style={{ background: '#0a1628' }}
+              className="relative max-w-4xl w-full rounded-2xl border border-[#bfc7d2]/40 dark:border-white/15 bg-white dark:bg-[#0a1628] overflow-hidden flex flex-col max-h-[90vh] shadow-2xl"
             >
               {/* Modal Header */}
-              <div className="p-4 px-6 border-b border-white/10 flex items-center justify-between">
-                <div className="text-sm font-bold text-white truncate max-w-lg">
+              <div className="p-4 px-6 border-b border-[#bfc7d2]/30 dark:border-white/10 flex items-center justify-between">
+                <div className="text-sm font-bold text-on-surface truncate max-w-lg">
                   {activeModalItem.title}
                 </div>
                 <button
                   onClick={() => setActiveModalItem(null)}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+                  className="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-[#ebf5ff] dark:hover:bg-white/10 transition-colors cursor-pointer"
                 >
                   <X size={18} />
                 </button>
@@ -262,11 +259,11 @@ export default function MediaPage() {
 
               {/* Modal Footer Details */}
               <div className="p-6 overflow-y-auto">
-                <p className="text-slate-200 text-sm leading-relaxed mb-4">
+                <p className="text-on-surface text-sm leading-relaxed mb-4">
                   {activeModalItem.description}
                 </p>
 
-                <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-slate-400 pt-3 border-t border-white/10">
+                <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-on-surface-variant pt-3 border-t border-[#bfc7d2]/30 dark:border-white/10">
                   <div className="flex items-center gap-3">
                     {activeModalItem.credit && (
                       <span><strong>Credit:</strong> {activeModalItem.credit}</span>
@@ -279,7 +276,7 @@ export default function MediaPage() {
                     download
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#006194] hover:bg-[#007bb9] text-white font-semibold text-xs transition-colors shadow-sm"
                   >
                     <Download size={13} /> Full Resolution
                   </a>

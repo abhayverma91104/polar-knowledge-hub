@@ -102,33 +102,33 @@ export default function AdminPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-polar-frost pt-16">
+    <div className="min-h-screen bg-surface text-on-surface pt-16 transition-colors">
       {/* Header */}
-      <div className="py-12" style={{ background: '#0a1628' }}>
+      <div className="py-12 bg-white dark:bg-[#0a1628] border-b border-[#bfc7d2]/40 dark:border-white/10 transition-colors">
         <div className="max-w-screen-xl mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <div className="flex items-center gap-2 text-polar-cyan text-sm font-semibold mb-2">
+              <div className="flex items-center gap-2 text-[#006194] dark:text-sky-400 text-sm font-semibold mb-2 font-mono">
                 <Shield size={14} />
                 Admin Dashboard
               </div>
-              <h1 className="font-display font-bold text-3xl text-white">
+              <h1 className="font-display font-bold text-3xl text-on-surface">
                 Platform Overview
               </h1>
             </div>
             <div className="flex items-center gap-3">
               {aiStatus?.has_key ? (
-                <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 bg-emerald-400/10 border border-emerald-400/25 px-3 py-2 rounded-xl">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <div className="flex items-center gap-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/25 px-3 py-2 rounded-xl">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   Gemini AI Live ({aiStatus.model || 'gemini-flash-lite'})
                 </div>
               ) : (
-                <div className="flex items-center gap-2 text-xs font-medium text-amber-300 bg-amber-400/10 border border-amber-400/25 px-3 py-2 rounded-xl">
-                  <span className="w-2 h-2 rounded-full bg-amber-400" />
+                <div className="flex items-center gap-2 text-xs font-medium text-amber-600 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 border border-amber-500/25 px-3 py-2 rounded-xl">
+                  <span className="w-2 h-2 rounded-full bg-amber-500" />
                   Gemini API Key Required
                 </div>
               )}
-              <Link href="/admin/ingestion" className="btn-primary">
+              <Link href="/admin/ingestion" className="inline-flex items-center gap-2 px-4 py-2 bg-[#006194] hover:bg-[#007bb9] text-white text-sm font-semibold rounded-lg shadow-sm transition-colors">
                 <Globe size={16} />
                 Knowledge Ingestion
               </Link>

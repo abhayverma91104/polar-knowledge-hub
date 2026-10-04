@@ -127,47 +127,47 @@ function AssistantContent() {
   };
 
   return (
-    <div className="min-h-screen bg-polar-frost flex flex-col pt-16">
+    <div className="min-h-screen bg-surface text-on-surface flex flex-col pt-20 transition-colors">
       {/* Header */}
-      <div className="border-b border-white/10 py-8" style={{ background: '#0a1628' }}>
+      <div className="border-b border-[#bfc7d2]/40 dark:border-white/10 py-10 bg-gradient-to-b from-[#ebf5ff] to-surface dark:from-[#0a1628] dark:to-[#06111F]">
         <div className="max-w-4xl mx-auto px-6">
           <div className="flex items-center gap-4 flex-wrap">
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg" style={{ background: '#0ea5e9' }}>
-              <Snowflake size={24} className="text-white" />
+            <div className="w-11 h-11 rounded-2xl flex items-center justify-center shadow-md bg-[#006194] text-white">
+              <Snowflake size={22} className="text-white" />
             </div>
             <div>
-              <div className="section-label-dark section-label mb-1">
-                <MessageSquare size={12} />
-                RAG-powered · NCPOR Knowledge Base
+              <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#dff0ff] dark:bg-white/10 text-[#00685f] dark:text-teal-300 font-mono text-[11px] font-bold uppercase tracking-wider mb-1 border border-[#bfc7d2]/40 dark:border-white/10">
+                <MessageSquare size={11} />
+                RAG-grounded · NCPOR Knowledge Base
               </div>
-              <h1 className="font-display font-bold text-3xl text-white">Ask Polar AI</h1>
+              <h1 className="font-display font-bold text-3xl text-[#001e2e] dark:text-white">Ask Polar AI</h1>
             </div>
             {statusLoading ? (
-              <div className="ml-auto flex items-center gap-2 text-xs text-white/50 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
-                <Loader2 size={12} className="animate-spin text-white/50" />
+              <div className="ml-auto flex items-center gap-2 text-xs text-[#707881] bg-white/60 dark:bg-white/5 border border-[#bfc7d2]/40 dark:border-white/10 px-3 py-1.5 rounded-full">
+                <Loader2 size={12} className="animate-spin text-[#006194]" />
                 Checking Gemini...
               </div>
             ) : aiStatus?.has_key ? (
-              <div className="ml-auto flex items-center gap-2 text-xs font-semibold text-emerald-400 bg-emerald-400/10 border border-emerald-400/25 px-3 py-1.5 rounded-full shadow-sm">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <div className="ml-auto flex items-center gap-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-full shadow-xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 Gemini Connected ({aiStatus.model || 'gemini-flash-lite'})
               </div>
             ) : (
-              <div className="ml-auto flex items-center gap-2 text-xs font-medium text-amber-300 bg-amber-400/10 border border-amber-400/25 px-3 py-1.5 rounded-full">
+              <div className="ml-auto flex items-center gap-2 text-xs font-medium text-amber-700 dark:text-amber-300 bg-amber-400/10 border border-amber-400/30 px-3 py-1.5 rounded-full">
                 <span className="w-2 h-2 rounded-full bg-amber-400" />
                 Gemini API Key Required · Demo Mode
               </div>
             )}
           </div>
-          <p className="text-white/50 mt-3 max-w-2xl">
+          <p className="text-[#3f4850] dark:text-slate-300 mt-3 max-w-2xl text-sm leading-relaxed">
             Explore NCPOR&apos;s scientific knowledge using natural language. Answers are grounded in expedition reports, publications, and research papers.
           </p>
 
           {!statusLoading && aiStatus && !aiStatus.has_key && (
-            <div className="bg-amber-500/10 border border-amber-500/20 text-amber-200 text-xs px-4 py-2.5 rounded-lg flex items-center gap-2 mt-4">
-              <span className="text-amber-400">⚠️</span>
+            <div className="bg-amber-500/10 border border-amber-500/25 text-amber-800 dark:text-amber-200 text-xs px-4 py-2.5 rounded-lg flex items-center gap-2 mt-4">
+              <span className="text-amber-500">⚠️</span>
               <span>
-                <strong>Gemini API Key Missing:</strong> Operating in offline demo mode. To enable live Google Gemini responses, add <code className="bg-black/30 px-1.5 py-0.5 rounded text-white">GEMINI_API_KEY</code> in <code className="bg-black/30 px-1.5 py-0.5 rounded text-white">apps/api/.env</code>.
+                <strong>Gemini API Key Missing:</strong> Operating in offline demo mode. To enable live Google Gemini responses, add <code className="bg-black/10 dark:bg-black/40 px-1.5 py-0.5 rounded text-[#001e2e] dark:text-white">GEMINI_API_KEY</code> in <code className="bg-black/10 dark:bg-black/40 px-1.5 py-0.5 rounded text-[#001e2e] dark:text-white">apps/api/.env</code>.
               </span>
             </div>
           )}
@@ -178,13 +178,13 @@ function AssistantContent() {
         {/* Empty state */}
         {messages.length === 0 && (
           <div className="flex-1 flex flex-col items-center justify-center py-12">
-            <div className="w-16 h-16 bg-polar-navy rounded-2xl flex items-center justify-center mb-5">
-              <MessageSquare size={28} className="text-polar-cyan" />
+            <div className="w-14 h-14 bg-[#006194] rounded-2xl flex items-center justify-center mb-5 text-white shadow-sm">
+              <MessageSquare size={26} />
             </div>
-            <h2 className="font-display font-bold text-2xl text-polar-navy mb-2">
+            <h2 className="font-display font-bold text-2xl text-[#001e2e] dark:text-white mb-2">
               Ask about Indian Polar Research
             </h2>
-            <p className="text-slate-500 text-center max-w-md mb-8">
+            <p className="text-[#3f4850] dark:text-slate-400 text-center max-w-md mb-8 text-sm">
               Ask any question about NCPOR&apos;s expeditions, research stations, datasets, or scientific findings. I&apos;ll search the knowledge base and provide cited answers.
             </p>
 
@@ -193,9 +193,9 @@ function AssistantContent() {
                 <button
                   key={q}
                   onClick={() => handleSend(q)}
-                  className="flex items-start gap-3 p-4 bg-white hover:bg-polar-frost border border-slate-200 hover:border-polar-cyan/30 rounded-xl text-left text-sm text-slate-600 hover:text-polar-navy transition-all group"
+                  className="flex items-start gap-3 p-4 bg-surface-container-lowest hover:bg-[#ebf5ff] dark:hover:bg-white/10 border border-[#bfc7d2]/40 dark:border-white/10 hover:border-[#006194] rounded-xl text-left text-xs sm:text-sm text-[#3f4850] dark:text-slate-200 hover:text-[#001e2e] dark:hover:text-white transition-all group shadow-xs cursor-pointer"
                 >
-                  <Lightbulb size={14} className="text-polar-cyan mt-0.5 shrink-0" />
+                  <Lightbulb size={15} className="text-[#006194] dark:text-sky-400 mt-0.5 shrink-0" />
                   {q}
                 </button>
               ))}

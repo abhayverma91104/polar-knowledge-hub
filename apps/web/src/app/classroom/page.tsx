@@ -78,37 +78,31 @@ export default function ClassroomPage() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-polar-frost pt-16">
+    <div className="min-h-screen bg-surface text-on-surface pt-20 transition-colors">
       {/* Header */}
-      <div className="py-16" style={{ background: '#0a1628' }}>
-        <div className="max-w-screen-xl mx-auto px-6 lg:px-8">
-          <div className="section-label-dark section-label mb-4">
-            <BookOpen size={12} />
-            Polar Classroom
+      <div className="py-14 bg-gradient-to-b from-[#ebf5ff] to-surface dark:from-[#0a1628] dark:to-[#06111F] border-b border-[#bfc7d2]/40 dark:border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#dff0ff] dark:bg-white/10 text-[#00685f] dark:text-teal-300 font-mono text-xs font-semibold uppercase tracking-wider mb-4 border border-[#bfc7d2]/40 dark:border-white/10">
+            <BookOpen size={13} />
+            <span>Educational & Research Curriculum</span>
           </div>
-          <h1 className="font-display font-bold text-4xl text-white mb-3">
+          <h1 className="font-display font-bold text-3xl sm:text-5xl text-[#001e2e] dark:text-white mb-3">
             Learn the Science of the Poles
           </h1>
-          <p className="text-white/60 text-xl max-w-2xl">
+          <p className="text-[#3f4850] dark:text-slate-300 text-base sm:text-lg max-w-2xl font-normal leading-relaxed">
             Educational content on glaciology, oceanography, climate change, and India&apos;s polar expeditions. Complete with quizzes and AI explanations.
           </p>
         </div>
       </div>
 
-      <div className="max-w-screen-xl mx-auto px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Topics Grid */}
         {!quizTopic && (
           <>
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[...Array(6)].map((_, i) => (
-                  <div key={i} className="card h-64">
-                    <div className="h-32 skeleton rounded-t-xl" />
-                    <div className="p-5 space-y-2">
-                      <div className="w-3/4 h-5 skeleton" />
-                      <div className="w-full h-4 skeleton" />
-                    </div>
-                  </div>
+                  <div key={i} className="h-64 rounded-xl bg-[#ebf5ff] dark:bg-white/5 animate-pulse border border-[#bfc7d2]/30 dark:border-white/5" />
                 ))}
               </div>
             ) : (
@@ -118,7 +112,7 @@ export default function ClassroomPage() {
                   const emoji = CATEGORY_EMOJIS[topic.category || ''] || '❄️';
 
                   return (
-                    <div key={topic.id} className="card overflow-hidden group hover-lift flex flex-col">
+                    <div key={topic.id} className="bg-surface-container-lowest rounded-xl border border-[#bfc7d2]/40 dark:border-white/10 overflow-hidden shadow-sm hover:shadow-md hover:border-[#006194] transition-all flex flex-col group">
                       {/* Hero */}
                       <div className={`relative h-44 bg-gradient-to-br ${gradient} overflow-hidden`}>
                         {topic.hero_image_url && (
@@ -133,8 +127,8 @@ export default function ClassroomPage() {
                           <div className="text-4xl mb-1">{emoji}</div>
                         </div>
                         {topic.reading_time_minutes && (
-                          <div className="absolute top-4 right-4 flex items-center gap-1 bg-black/30 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
-                            <Clock size={10} />
+                          <div className="absolute top-4 right-4 flex items-center gap-1 bg-black/40 backdrop-blur-sm text-white font-mono text-xs px-2.5 py-1 rounded-full">
+                            <Clock size={11} />
                             {topic.reading_time_minutes} min read
                           </div>
                         )}
@@ -142,11 +136,11 @@ export default function ClassroomPage() {
 
                       {/* Content */}
                       <div className="p-6 flex flex-col flex-1">
-                        <h2 className="font-display font-bold text-xl text-polar-navy mb-2 group-hover:text-polar-cyan transition-colors">
+                        <h2 className="font-display font-bold text-xl text-[#001e2e] dark:text-white mb-2 group-hover:text-[#006194] dark:group-hover:text-sky-400 transition-colors">
                           {topic.title}
                         </h2>
                         {topic.subtitle && (
-                          <p className="text-slate-500 text-sm mb-4 line-clamp-2">{topic.subtitle}</p>
+                          <p className="text-[#3f4850] dark:text-slate-300 text-sm mb-4 line-clamp-2 leading-relaxed">{topic.subtitle}</p>
                         )}
 
                         <div className="flex items-center gap-2 mt-auto pt-4 border-t border-slate-100">

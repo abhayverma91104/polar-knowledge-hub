@@ -149,34 +149,34 @@ export default function StationsPage() {
   });
 
   return (
-    <div className="min-h-screen pt-24 pb-20 text-slate-100" style={{ background: '#070f1e' }}>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen pt-20 pb-20 bg-surface text-on-surface transition-colors">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header Banner */}
-        <div className="p-8 sm:p-10 rounded-2xl border border-white/10 mb-8" style={{ background: '#0a1628' }}>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 text-xs font-bold uppercase tracking-wider mb-4">
+        <div className="p-8 sm:p-10 rounded-2xl bg-gradient-to-b from-[#ebf5ff] to-surface dark:from-[#0a1628] dark:to-[#06111F] border border-[#bfc7d2]/40 dark:border-white/10 mb-8 mt-4 shadow-sm">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#dff0ff] dark:bg-white/10 text-[#00685f] dark:text-teal-300 text-xs font-mono font-bold uppercase tracking-wider mb-4 border border-[#bfc7d2]/40 dark:border-white/10">
             <Globe size={14} />
             <span>National Centre for Polar and Ocean Research</span>
           </div>
 
-          <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-white mb-3">
+          <h1 className="font-display font-bold text-3xl sm:text-4xl text-[#001e2e] dark:text-white mb-3">
             Indian Polar & Cryospheric Stations
           </h1>
-          <p className="text-slate-300 text-base leading-relaxed max-w-3xl">
+          <p className="text-[#3f4850] dark:text-slate-300 text-base leading-relaxed max-w-3xl">
             Explore India&apos;s network of permanent year-round scientific observation stations across Antarctica, the Arctic, and the Himalayas.
           </p>
 
           {/* Quick Actions */}
-          <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t border-white/10">
+          <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t border-[#bfc7d2]/30 dark:border-white/10">
             <Link
               href="/explore"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-white text-xs font-semibold transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#007bb9] hover:bg-[#006194] text-white text-xs font-semibold shadow-sm transition-colors"
             >
               <Compass size={14} /> Open Interactive Map
             </Link>
             <Link
               href="/expeditions"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-white/15 text-slate-300 hover:bg-white/10 text-xs font-semibold transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[#bfc7d2]/50 dark:border-white/15 bg-white dark:bg-white/5 text-[#001e2e] dark:text-slate-300 hover:bg-[#ebf5ff] dark:hover:bg-white/10 text-xs font-semibold transition-colors"
             >
               Expedition Timelines
             </Link>
@@ -196,12 +196,11 @@ export default function StationsPage() {
               <button
                 key={tab.id}
                 onClick={() => setSelectedRegion(tab.id)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors border"
-                style={{
-                  background: selectedRegion === tab.id ? '#0ea5e9' : 'rgba(255,255,255,0.03)',
-                  borderColor: selectedRegion === tab.id ? '#0ea5e9' : 'rgba(255,255,255,0.1)',
-                  color: selectedRegion === tab.id ? '#ffffff' : '#94a3b8',
-                }}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold whitespace-nowrap transition-all border ${
+                  selectedRegion === tab.id
+                    ? 'bg-[#007bb9] text-white border-[#007bb9] shadow-sm'
+                    : 'bg-white dark:bg-white/5 border-[#bfc7d2]/40 dark:border-white/10 text-[#3f4850] dark:text-slate-300 hover:border-[#006194]'
+                }`}
               >
                 {tab.label}
               </button>
@@ -210,14 +209,13 @@ export default function StationsPage() {
 
           {/* Search Box */}
           <div className="relative w-full sm:w-64">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#707881]" />
             <input
               type="text"
               placeholder="Search station or discipline..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-xl border border-white/10 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-sky-500"
-              style={{ background: '#0a1628' }}
+              className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-[#bfc7d2]/50 dark:border-white/10 bg-white dark:bg-white/5 text-xs text-[#001e2e] dark:text-white placeholder-[#707881] focus:outline-none focus:ring-2 focus:ring-[#006194]"
             />
           </div>
         </div>
@@ -227,60 +225,58 @@ export default function StationsPage() {
           {filteredStations.map((station) => (
             <div
               key={station.id}
-              className="p-6 sm:p-7 rounded-2xl border border-white/10 flex flex-col justify-between"
-              style={{ background: '#0a1628' }}
+              className="p-6 sm:p-7 rounded-2xl border border-[#bfc7d2]/40 dark:border-white/10 bg-surface-container-lowest flex flex-col justify-between shadow-sm hover:border-[#006194] transition-all group"
             >
               <div>
                 {/* Station Top Bar */}
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wider">
+                      <span className="px-2 py-0.5 rounded bg-[#cce5ff] dark:bg-sky-950 text-[#004b73] dark:text-sky-300 font-mono text-[10px] font-bold uppercase tracking-wider">
                         {station.region}
                       </span>
                       {station.is_active && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-400">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                           Active Base
                         </span>
                       )}
                     </div>
-                    <h2 className="font-display font-bold text-2xl text-white">
+                    <h2 className="font-display font-bold text-2xl text-[#001e2e] dark:text-white">
                       {station.name}
                     </h2>
                   </div>
 
                   <div className="text-right">
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Established</span>
-                    <span className="text-sm font-bold text-slate-200">{station.established_year}</span>
+                    <span className="text-[10px] uppercase font-bold text-[#707881] block">Established</span>
+                    <span className="text-sm font-mono font-bold text-[#001e2e] dark:text-slate-200">{station.established_year}</span>
                   </div>
                 </div>
 
                 {/* Description */}
-                <p className="text-slate-300 text-sm leading-relaxed mb-6">
+                <p className="text-[#3f4850] dark:text-slate-300 text-sm leading-relaxed mb-6">
                   {station.description}
                 </p>
 
                 {/* Geographic Position */}
-                <div className="p-3 rounded-xl border border-white/10 mb-5 flex items-center justify-between text-xs" style={{ background: '#070f1e' }}>
-                  <div className="flex items-center gap-2 text-slate-400">
-                    <MapPin size={14} className="text-sky-400 shrink-0" />
+                <div className="p-3 rounded-xl border border-[#bfc7d2]/30 dark:border-white/10 mb-5 flex items-center justify-between text-xs bg-[#ebf5ff]/60 dark:bg-white/5">
+                  <div className="flex items-center gap-2 text-[#707881] dark:text-slate-400">
+                    <MapPin size={14} className="text-[#006194] dark:text-sky-400 shrink-0" />
                     <span>Coordinates</span>
                   </div>
-                  <span className="font-mono text-slate-200 font-semibold">
+                  <span className="font-mono text-[#001e2e] dark:text-slate-200 font-semibold">
                     {Math.abs(station.latitude).toFixed(2)}°{station.latitude >= 0 ? 'N' : 'S'}, {Math.abs(station.longitude).toFixed(2)}°{station.longitude >= 0 ? 'E' : 'W'}
                   </span>
                 </div>
 
                 {/* Research Areas */}
                 <div className="mb-6">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 block mb-2">Scientific Domains</span>
+                  <span className="text-[10px] uppercase font-bold text-[#707881] block mb-2">Scientific Domains</span>
                   <div className="flex flex-wrap gap-1.5">
                     {station.research_areas?.map((area) => (
                       <span
                         key={area}
-                        className="px-2.5 py-1 rounded-md text-[11px] font-medium border border-white/10 text-slate-300"
-                        style={{ background: '#070f1e' }}
+                        className="px-2.5 py-1 rounded-md text-[11px] font-medium border border-[#bfc7d2]/30 dark:border-white/10 text-[#3f4850] dark:text-slate-300 bg-[#ebf5ff]/40 dark:bg-white/5"
                       >
                         {area}
                       </span>
@@ -290,17 +286,17 @@ export default function StationsPage() {
               </div>
 
               {/* Station Actions */}
-              <div className="flex items-center justify-between pt-4 border-t border-white/10">
+              <div className="flex items-center justify-between pt-4 border-t border-[#bfc7d2]/30 dark:border-white/10">
                 <Link
                   href={`/explore?station=${station.code.toLowerCase()}`}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-400 hover:text-sky-300 transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#006194] dark:text-sky-400 hover:underline transition-colors"
                 >
                   <Compass size={13} /> View on Globe
                 </Link>
 
                 <Link
                   href={`/repository?q=${encodeURIComponent(station.name)}`}
-                  className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs text-[#707881] dark:text-slate-400 hover:text-[#001e2e] dark:hover:text-white transition-colors"
                 >
                   Publications <ArrowRight size={13} />
                 </Link>

@@ -27,20 +27,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 pt-16" style={{ background: '#070f1e' }}>
+    <div className="min-h-screen flex items-center justify-center px-4 pt-16 bg-surface text-on-surface transition-colors">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg" style={{ background: '#0ea5e9' }}>
-            <Snowflake size={28} className="text-white" />
+          <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg bg-[#006194] text-white">
+            <Snowflake size={28} />
           </div>
-          <h1 className="font-display font-bold text-2xl text-white mb-1">Sign in</h1>
-          <p className="text-white/50 text-sm">Polar Knowledge Hub · NCPOR</p>
+          <h1 className="font-display font-bold text-2xl text-on-surface mb-1">Scientist Sign In</h1>
+          <p className="text-on-surface-variant text-sm">Polar Knowledge Hub · NCPOR (Govt. of India)</p>
         </div>
 
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-sm">
+        <div className="bg-white dark:bg-[#0a1628] border border-[#bfc7d2]/40 dark:border-white/10 rounded-2xl p-8 shadow-xl backdrop-blur-sm transition-colors">
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm mb-5">
+            <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-600 dark:text-red-400 text-sm mb-5">
               <AlertCircle size={15} />
               {error}
             </div>
@@ -48,7 +48,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-white/50 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2 font-mono">
                 Email
               </label>
               <input
@@ -56,14 +56,14 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@ncpor.res.in"
-                className="input input-dark w-full"
+                className="w-full p-3 rounded-xl border border-[#bfc7d2]/50 dark:border-white/10 bg-[#ebf5ff] dark:bg-[#0c1c30] text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-[#006194] text-sm"
                 required
                 autoComplete="email"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-white/50 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2 font-mono">
                 Password
               </label>
               <div className="relative">
@@ -72,14 +72,14 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="input input-dark w-full pr-10"
+                  className="w-full p-3 pr-10 rounded-xl border border-[#bfc7d2]/50 dark:border-white/10 bg-[#ebf5ff] dark:bg-[#0c1c30] text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-[#006194] text-sm"
                   required
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface"
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -89,15 +89,15 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="btn-primary w-full py-3.5 text-base justify-center mt-2"
+              className="w-full py-3.5 bg-[#006194] hover:bg-[#007bb9] text-white font-semibold rounded-xl text-base justify-center mt-2 transition-colors shadow-md flex items-center cursor-pointer"
             >
               {isLoading ? <Loader2 size={18} className="animate-spin" /> : 'Sign in'}
             </button>
           </form>
 
-          <p className="text-center text-white/30 text-xs mt-6">
+          <p className="text-center text-on-surface-variant text-xs mt-6">
             Don&apos;t have an account?{' '}
-            <Link href="/register" className="text-polar-cyan hover:underline">Register</Link>
+            <Link href="/register" className="text-[#006194] dark:text-sky-400 font-semibold hover:underline">Register</Link>
           </p>
         </div>
       </div>

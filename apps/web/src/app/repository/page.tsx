@@ -174,47 +174,45 @@ function RepositoryContent() {
   const activeFilterCount = Object.values(filters).filter(Boolean).length;
 
   return (
-    <div className="min-h-screen bg-polar-frost pt-16">
+    <div className="min-h-screen bg-surface text-on-surface pt-20 transition-colors">
       {/* Header */}
-      <div className="py-16" style={{ background: '#0a1628' }}>
-        <div className="max-w-screen-xl mx-auto px-6 lg:px-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 text-xs font-bold uppercase tracking-wider mb-4 border border-sky-500/30">
+      <div className="py-14 bg-gradient-to-b from-[#ebf5ff] to-surface dark:from-[#0a1628] dark:to-[#06111F] border-b border-[#bfc7d2]/40 dark:border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#dff0ff] dark:bg-white/10 text-[#00685f] dark:text-teal-300 font-mono text-xs font-semibold uppercase tracking-wider mb-4 border border-[#bfc7d2]/40 dark:border-white/10">
             <Database size={13} />
-            <span>Knowledge Repository</span>
+            <span>Open Scientific Commons · NCPOR Digital Repository</span>
           </div>
-          <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-white mb-3">
+          <h1 className="font-display font-bold text-3xl sm:text-4xl text-[#001e2e] dark:text-white mb-3">
             Polar Knowledge Repository
           </h1>
-          <p className="text-slate-300 text-base sm:text-lg mb-8 max-w-2xl font-light">
-            Search across decades of Indian polar science publications, datasets, and expedition records.
+          <p className="text-[#3f4850] dark:text-slate-300 text-base sm:text-lg mb-8 max-w-2xl font-normal leading-relaxed">
+            Search across decades of Indian polar science publications, datasets, and expedition records with DOI verification.
           </p>
 
           {/* Search bar */}
           <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 max-w-2xl">
             <div className="flex-1 relative">
-              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#707881]" />
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search reports, publications, datasets, expeditions..."
-                className="w-full pl-12 pr-4 py-3.5 text-sm sm:text-base rounded-xl border text-white placeholder-slate-400 focus:outline-none focus:border-sky-500"
-                style={{ background: '#070f1e', borderColor: 'rgba(255,255,255,0.15)' }}
+                className="w-full pl-12 pr-4 py-3 text-sm rounded-xl border border-[#bfc7d2]/50 dark:border-white/10 bg-white dark:bg-white/5 text-[#001e2e] dark:text-white placeholder-[#707881] focus:outline-none focus:ring-2 focus:ring-[#006194]"
               />
             </div>
             <select
               value={searchType}
               onChange={(e) => setSearchType(e.target.value)}
-              className="py-3.5 px-3 sm:w-40 text-sm rounded-xl border text-white focus:outline-none focus:border-sky-500"
-              style={{ background: '#070f1e', borderColor: 'rgba(255,255,255,0.15)' }}
+              className="py-3 px-3 sm:w-40 text-xs font-mono font-semibold rounded-xl border border-[#bfc7d2]/50 dark:border-white/10 bg-white dark:bg-white/5 text-[#001e2e] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#006194]"
             >
               {SEARCH_TYPES.map((t) => (
-                <option key={t.value} value={t.value} style={{ background: '#0a1628', color: '#fff' }}>{t.label}</option>
+                <option key={t.value} value={t.value} className="bg-white dark:bg-[#0a1628] text-[#001e2e] dark:text-white">{t.label}</option>
               ))}
             </select>
             <button
               type="submit"
-              className="px-6 py-3.5 text-sm font-semibold rounded-xl bg-sky-500 hover:bg-sky-400 text-white transition-colors"
+              className="px-6 py-3 text-sm font-semibold rounded-xl bg-[#007bb9] hover:bg-[#006194] text-white shadow-sm transition-colors cursor-pointer"
             >
               Search
             </button>
@@ -222,13 +220,13 @@ function RepositoryContent() {
         </div>
       </div>
 
-      <div className="max-w-screen-xl mx-auto px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
           {/* Sidebar Filters */}
           <aside className="hidden lg:block w-64 shrink-0">
-            <div className="card p-5 sticky top-24">
+            <div className="bg-surface-container-lowest p-5 rounded-xl border border-[#bfc7d2]/40 dark:border-white/10 shadow-sm sticky top-24">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-display font-bold text-polar-navy">Filters</h3>
+                <h3 className="font-display font-bold text-[#001e2e] dark:text-white">Filters</h3>
                 {activeFilterCount > 0 && (
                   <button
                     onClick={clearFilters}
