@@ -62,7 +62,19 @@ Transforms dense technical papers and expedition logs into **9 standardized outr
 8. **Classroom Quizzes:** 5-question multiple-choice assessments with answer keys and detailed rationales formatted in structured JSON.
 9. **Official Press Releases:** Formal Government of India / MoES media announcements with dateline, quote placeholders, and institutional boilerplates.
 
-### 4. 🗺️ Interactive Geospatial Console & Polar Map ([`/explore`](http://localhost:3000/explore) & [`/stations`](http://localhost:3000/stations))
+### 4. 📡 Live Polar Station Telemetry & Synoptic Dynamics ([Landing Page](http://localhost:3000) & [`/explore`](http://localhost:3000/explore))
+* **Near-Real-Time Atmospheric & Cryospheric Feeds:** Simulated scientific telemetry streams updated on a 30-second live cycle across India's permanent polar bases:
+  - **Maitri Station (Antarctica):** $-18.4^\circ\text{C}$ surface temp, $24\text{ km/h ENE}$ wind vector, $312\text{ W/m}^2$ solar radiation, $984.2\text{ hPa}$ barometer, *23 Wintering Personnel*, *Lake Priyadarshini Monitoring*.
+  - **Bharati Station (Antarctica):** $-12.1^\circ\text{C}$ surface temp, $38\text{ km/h SE}$ katabatic gust, $418\text{ W/m}^2$ solar radiation, $991.5\text{ hPa}$ barometer, *Polarimetric Radar*, *250 Mbps High-Speed SatCom*.
+  - **Himadri Station (Arctic, Svalbard):** $-4.8^\circ\text{C}$ surface temp, $16\text{ km/h NNW}$ wind, $0.082\,\tau$ Aerosol Optical Depth, $34.8\text{ PSU}$ fjord salinity, *Kongsfjorden Lab*, *IndARC Mooring Linked*.
+  - **Himansh Observatory (Himalayas, 4,080m):** $-9.6^\circ\text{C}$ altitude temp, $12\text{ km/h W}$ wind, $420\text{ mm}$ Snow Water Equivalent (SWE), $-1.24\text{ m/a}$ Glacier Drift rate, *Bara Shigri Cryosphere*, *Datalogger VHF*.
+* **Three Dedicated Analytical View Modes:**
+  1. **Matrix:** 4-observatory sensor grid paired with an interactive comparative telemetry data table.
+  2. **24h Thermal Gradient:** Multi-station diurnal temperature analysis with freeze references, min/max statistics, and micro-climate insights.
+  3. **Katabatic Curves:** High-velocity down-slope gravity wind tracking and gust dynamics ($km/h$).
+* **Geospatial Map Synchronization:** Clicking any station in the telemetry dashboard flies the interactive Leaflet map to the station's exact coordinates and opens its inspector.
+
+### 5. 🗺️ Interactive Geospatial Console & Polar Map ([`/explore`](http://localhost:3000/explore) & [`/stations`](http://localhost:3000/stations))
 * **Zero-Watermark High-Resolution Cartography:** Powered by Esri Geographic Web Services:
   - **Dark Polar Canvas (Default):** High-contrast midnight-navy basemap tailored for polar visualization.
   - **Satellite Imagery:** Real satellite photography displaying actual polar ice sheets, glaciers, ice shelves, and sea ice.
@@ -81,7 +93,7 @@ Transforms dense technical papers and expedition logs into **9 standardized outr
   - **Himansh Cryosphere Base** (Spiti Valley, Himachal Pradesh — 13,500 ft High Altitude)
 * **Station Inspector Drawer:** Displays commission years, coordinates, research areas, specialized facilities, and shortcuts to ask Polar AI about specific stations.
 
-### 5. 🎓 Polar Classroom & Educational Hub ([`/classroom`](http://localhost:3000/classroom))
+### 6. 🎓 Polar Classroom & Educational Hub ([`/classroom`](http://localhost:3000/classroom))
 * **Curriculum Modules:** Structured educational lessons covering:
   - *Polar Ice Sheets & Climate Teleconnections*
   - *Glacier Mass Balance & Cryospheric Change*
@@ -91,15 +103,15 @@ Transforms dense technical papers and expedition logs into **9 standardized outr
 * **Interactive Assessment:** Module knowledge check quizzes with immediate answer evaluation and explanations.
 * **AI Concept Explainer:** Integrated endpoint (`POST /api/classroom/topics/{slug}/explain`) allowing learners to ask Polar AI to clarify complex polar concepts in simple language.
 
-### 6. 📸 Polar Media Archives ([`/media`](http://localhost:3000/media))
+### 7. 📸 Polar Media Archives ([`/media`](http://localhost:3000/media))
 * Curated photographic records of polar expeditions, auroral observations, wildlife populations (penguins, seals), ice core drilling operations, and polar research vessels (*ORV Sagar Kanya*, *Sagar Nidhi*).
 * High-resolution lightbox modal with metadata, location tags, and related research links.
 
-### 7. 🚢 Expeditions Timeline & Dossiers ([`/expeditions`](http://localhost:3000/expeditions))
+### 8. 🚢 Expeditions Timeline & Dossiers ([`/expeditions`](http://localhost:3000/expeditions))
 * Chronological breakdown of Indian Scientific Expeditions to Antarctica (ISEA 1st to 44th), Arctic summer and winter expeditions, and Southern Ocean expeditions.
 * Detailed expedition briefs covering objectives, voyage logs, team rosters, and participating national laboratories.
 
-### 8. ⚙️ Web Crawler & Editorial Review Queue ([`/admin`](http://localhost:3000/admin))
+### 9. ⚙️ Web Crawler & Editorial Review Queue ([`/admin`](http://localhost:3000/admin))
 * **Automated Web Crawler:** Background crawler designed for institutional domains (`ncpor.res.in`, `ncaor.gov.in`) with robots.txt compliance, polite rate limiting, and SHA-256 deduplication.
 * **Progress Telemetry:** High-contrast, real-time scanning logs with error recovery.
 * **Editorial Review Queue ([`/admin/review`](http://localhost:3000/admin/review)):** Human-in-the-loop review portal allowing curators to inspect, edit metadata, approve, or reject crawled resources before public ingestion.
@@ -151,7 +163,7 @@ To deploy the platform to the cloud with automatic PostgreSQL provisioning and c
 ## 🏗️ Architecture & Tech Stack
 
 ```
-Frontend:     Next.js 16 (Turbopack, App Router, React 19) + Tailwind CSS v4 + Lucide Icons + Leaflet
+Frontend:     Next.js 16 (Turbopack, App Router, React 19) + Tailwind CSS v4 + Recharts + Lucide Icons + Leaflet
 Backend:      FastAPI (Python 3.10+) + Uvicorn + Pydantic v2 + SQLAlchemy ORM
 AI / RAG:     Google Gemini (gemini-flash-lite-latest + gemini-embedding-001) + RAG Citations
 Cartography:  Esri World Canvas / Satellite / Topo Map Services

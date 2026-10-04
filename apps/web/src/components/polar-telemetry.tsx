@@ -5,11 +5,11 @@ import Link from 'next/link';
 import {
   Activity, Radio, Wind, Compass, Users, Waves,
   Anchor, Mountain, FlaskConical, Wifi, Eye, RefreshCw,
-  TrendingDown, ArrowUpRight, Zap
+  TrendingDown, ArrowUpRight, Zap, Thermometer, Gauge, AlertTriangle, ShieldCheck
 } from 'lucide-react';
 import {
   ResponsiveContainer, LineChart, Line, XAxis, YAxis,
-  Tooltip, CartesianGrid
+  Tooltip, CartesianGrid, ReferenceLine
 } from 'recharts';
 import { stationsApi } from '@/lib/api';
 
@@ -183,33 +183,33 @@ export function PolarTelemetry({
 
         {/* Top-Right Segmented Tabs */}
         <div className="flex items-center gap-2 self-start lg:self-center">
-          <div className="bg-slate-200/70 p-1 rounded-xl flex items-center gap-1 border border-slate-200">
+          <div className="bg-slate-200/80 p-1 rounded-xl flex items-center gap-1 border border-slate-300/80 shadow-inner">
             <button
               onClick={() => setActiveTab('matrix')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 activeTab === 'matrix'
-                  ? 'bg-white text-polar-navy shadow-sm'
-                  : 'text-slate-600 hover:text-polar-navy'
+                  ? 'bg-white text-polar-navy shadow-sm ring-1 ring-black/5'
+                  : 'text-slate-600 hover:text-polar-navy hover:bg-white/50'
               }`}
             >
               Matrix
             </button>
             <button
               onClick={() => setActiveTab('thermal')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 activeTab === 'thermal'
-                  ? 'bg-white text-polar-navy shadow-sm'
-                  : 'text-slate-600 hover:text-polar-navy'
+                  ? 'bg-white text-polar-navy shadow-sm ring-1 ring-black/5'
+                  : 'text-slate-600 hover:text-polar-navy hover:bg-white/50'
               }`}
             >
               24h Thermal Gradient
             </button>
             <button
               onClick={() => setActiveTab('katabatic')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 activeTab === 'katabatic'
-                  ? 'bg-white text-polar-navy shadow-sm'
-                  : 'text-slate-600 hover:text-polar-navy'
+                  ? 'bg-white text-polar-navy shadow-sm ring-1 ring-black/5'
+                  : 'text-slate-600 hover:text-polar-navy hover:bg-white/50'
               }`}
             >
               Katabatic Curves
@@ -218,7 +218,7 @@ export function PolarTelemetry({
 
           <button
             onClick={fetchTelemetry}
-            className={`p-2 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-sky-600 transition-colors shadow-sm ${
+            className={`p-2 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-sky-600 transition-colors shadow-sm cursor-pointer ${
               isRefreshing ? 'animate-spin' : ''
             }`}
             title="Refresh Telemetry Now"
@@ -228,253 +228,367 @@ export function PolarTelemetry({
         </div>
       </div>
 
-      {/* ─── 4 Station Cards ─── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
-        {stations.map((st) => {
-          const regionStyle = REGION_COLORS[st.region] || {
-            bg: 'bg-slate-100',
-            text: 'text-slate-600',
-            border: 'border-slate-200',
-          };
+      {/* ───────────────────────────────────────────────────────────── */}
+      {/* VIEW MODE 1: MATRIX (Station Sensor Cards & Comprehensive Grid) */}
+      {/* ───────────────────────────────────────────────────────────── */}
+      {activeTab === 'matrix' && (
+        <div className="space-y-6">
+          {/* 4 Station Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            {stations.map((st) => {
+              const regionStyle = REGION_COLORS[st.region] || {
+                bg: 'bg-slate-100',
+                text: 'text-slate-600',
+                border: 'border-slate-200',
+              };
 
-          return (
-            <div
-              key={st.id}
-              onClick={() => onSelectStation?.(st.id)}
-              className={`bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm hover:shadow-md hover:border-sky-300 transition-all flex flex-col justify-between group ${
-                onSelectStation ? 'cursor-pointer' : ''
-              }`}
-            >
-              {/* Top Meta */}
-              <div>
-                <div className="flex items-center justify-between gap-2 mb-2">
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-600">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    ONLINE
+              return (
+                <div
+                  key={st.id}
+                  onClick={() => onSelectStation?.(st.id)}
+                  className={`bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm hover:shadow-md hover:border-sky-300 transition-all flex flex-col justify-between group ${
+                    onSelectStation ? 'cursor-pointer' : ''
+                  }`}
+                >
+                  {/* Top Meta */}
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-600">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        ONLINE
+                      </div>
+                      <span
+                        className={`text-[10px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider border ${regionStyle.bg} ${regionStyle.text} ${regionStyle.border}`}
+                      >
+                        {st.region}
+                      </span>
+                    </div>
+
+                    <h3 className="font-display font-bold text-lg text-polar-navy group-hover:text-sky-600 transition-colors">
+                      {st.name}
+                    </h3>
+                    <p className="text-[11px] text-slate-400 font-mono mt-0.5 line-clamp-1" title={st.location}>
+                      {st.location}
+                    </p>
+
+                    {/* 2x2 Metric Grid */}
+                    <div className="bg-[#f0f7fc]/70 rounded-xl p-3.5 my-3.5 border border-sky-100/60">
+                      <div className="grid grid-cols-2 gap-3">
+                        {st.metrics.map((m, idx) => (
+                          <div key={idx} className={idx < 2 ? 'border-b border-sky-100/60 pb-2.5' : 'pt-0.5'}>
+                            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">
+                              {m.label}
+                            </div>
+                            <div className="flex items-baseline gap-1 mt-0.5">
+                              <span
+                                className={`font-mono font-bold leading-none ${
+                                  m.is_primary && idx === 0
+                                    ? 'text-2xl text-sky-600'
+                                    : m.is_primary && idx === 1
+                                    ? 'text-2xl text-slate-800'
+                                    : 'text-sm font-semibold text-slate-700'
+                                }`}
+                              >
+                                {m.value}
+                              </span>
+                              {m.sub && (
+                                <span className="text-[10px] font-bold text-slate-400 uppercase">
+                                  {m.sub}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                  <span
-                    className={`text-[10px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider border ${regionStyle.bg} ${regionStyle.text} ${regionStyle.border}`}
-                  >
-                    {st.region}
-                  </span>
-                </div>
 
-                <h3 className="font-display font-bold text-lg text-polar-navy group-hover:text-sky-600 transition-colors">
-                  {st.name}
-                </h3>
-                <p className="text-[11px] text-slate-400 font-mono mt-0.5 line-clamp-1" title={st.location}>
-                  {st.location}
-                </p>
-
-                {/* 2x2 Metric Grid */}
-                <div className="bg-[#f0f7fc]/70 rounded-xl p-3.5 my-3.5 border border-sky-100/60">
-                  <div className="grid grid-cols-2 gap-3">
-                    {st.metrics.map((m, idx) => (
-                      <div key={idx} className={idx < 2 ? 'border-b border-sky-100/60 pb-2.5' : 'pt-0.5'}>
-                        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">
-                          {m.label}
-                        </div>
-                        <div className="flex items-baseline gap-1 mt-0.5">
-                          <span
-                            className={`font-mono font-bold leading-none ${
-                              m.is_primary && idx === 0
-                                ? 'text-2xl text-sky-600'
-                                : m.is_primary && idx === 1
-                                ? 'text-2xl text-slate-800'
-                                : 'text-sm font-semibold text-slate-700'
-                            }`}
-                          >
-                            {m.value}
-                          </span>
-                          {m.sub && (
-                            <span className="text-[10px] font-bold text-slate-400 uppercase">
-                              {m.sub}
-                            </span>
-                          )}
-                        </div>
+                  {/* Station Specialized Sensor Badges */}
+                  <div className="pt-2 border-t border-slate-100 space-y-1.5">
+                    {st.badges.map((b, bIdx) => (
+                      <div key={bIdx} className="flex items-center gap-2 text-[11px] text-slate-600 font-medium">
+                        {renderBadgeIcon(b.type)}
+                        <span className="truncate">{b.text}</span>
                       </div>
                     ))}
                   </div>
                 </div>
-              </div>
+              );
+            })}
+          </div>
 
-              {/* Station Specialized Sensor Badges */}
-              <div className="pt-2 border-t border-slate-100 space-y-1.5">
-                {st.badges.map((b, bIdx) => (
-                  <div key={bIdx} className="flex items-center gap-2 text-[11px] text-slate-600 font-medium">
-                    {renderBadgeIcon(b.type)}
-                    <span className="truncate">{b.text}</span>
-                  </div>
-                ))}
+          {/* Matrix Comparative Sensor Table */}
+          <div className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm">
+            <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Gauge size={16} className="text-sky-600" />
+                <h4 className="font-display font-bold text-sm text-polar-navy">
+                  Multi-Observatory Real-Time Sensor Telemetry Matrix
+                </h4>
+              </div>
+              <span className="text-[11px] font-mono text-slate-400">
+                Synchronized at {timestamp_utc}
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-50/80 text-slate-500 uppercase font-bold text-[10px] border-b border-slate-200/60">
+                  <tr>
+                    <th className="py-3 px-4">Station / Location</th>
+                    <th className="py-3 px-4">Region</th>
+                    <th className="py-3 px-4">Ambient Temp</th>
+                    <th className="py-3 px-4">Wind / Gust Vector</th>
+                    <th className="py-3 px-4">Barometer</th>
+                    <th className="py-3 px-4">Solar / Cryo Sensor</th>
+                    <th className="py-3 px-4 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {stations.map((st) => (
+                    <tr key={st.id} className="hover:bg-sky-50/30 transition-colors">
+                      <td className="py-3.5 px-4 font-semibold text-polar-navy">
+                        <div>{st.name}</div>
+                        <div className="text-[10px] font-mono text-slate-400 font-normal">{st.location.split('·')[0]}</div>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <span className="font-bold text-[10px] uppercase text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-100">
+                          {st.region}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4 font-mono font-bold text-sky-600 text-sm">
+                        {st.surface_temp}°C
+                      </td>
+                      <td className="py-3.5 px-4 font-mono text-slate-700">
+                        {st.wind_vector || st.katabatic_gust} <span className="text-[10px] text-slate-400">{st.wind_dir}</span>
+                      </td>
+                      <td className="py-3.5 px-4 font-mono text-slate-600">
+                        {st.barometer ? `${st.barometer} hPa` : '—'}
+                      </td>
+                      <td className="py-3.5 px-4 text-slate-600">
+                        {st.solar_rad ? `${st.solar_rad} W/m²` : st.fjord_salinity ? `Salinity ${st.fjord_salinity}` : st.snow_water_eq ? `SWE ${st.snow_water_eq}` : 'Active'}
+                      </td>
+                      <td className="py-3.5 px-4 text-right">
+                        <button
+                          onClick={() => onSelectStation?.(st.id)}
+                          className="px-2.5 py-1 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold text-[11px] transition-colors cursor-pointer inline-flex items-center gap-1"
+                        >
+                          Inspect <ArrowUpRight size={11} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ───────────────────────────────────────────────────────────── */}
+      {/* VIEW MODE 2: 24h THERMAL GRADIENT (Diurnal Analysis & Curves) */}
+      {/* ───────────────────────────────────────────────────────────── */}
+      {activeTab === 'thermal' && (
+        <div className="space-y-6">
+          {/* Thermal Summary Stat Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-sm">
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Coldest Inland Base</div>
+              <div className="text-xl font-extrabold text-[#0284c7] font-mono">Maitri Station</div>
+              <div className="mt-2 text-xs text-slate-600 flex justify-between font-mono">
+                <span>Mean: <strong>-18.4°C</strong></span>
+                <span>Min: <strong>-21.2°C</strong></span>
+                <span>Max: <strong>-15.8°C</strong></span>
               </div>
             </div>
-          );
-        })}
-      </div>
-
-      {/* ─── Synoptic Chart Panel ─── */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-sky-500/10 flex items-center justify-center text-sky-600">
-              <Activity size={15} />
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-sm">
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Antarctic Coastal Base</div>
+              <div className="text-xl font-extrabold text-[#0d9488] font-mono">Bharati Station</div>
+              <div className="mt-2 text-xs text-slate-600 flex justify-between font-mono">
+                <span>Mean: <strong>-12.1°C</strong></span>
+                <span>Min: <strong>-15.1°C</strong></span>
+                <span>Max: <strong>-9.2°C</strong></span>
+              </div>
             </div>
-            <div>
-              <h4 className="font-display font-bold text-sm sm:text-base text-polar-navy">
-                {activeTab === 'katabatic'
-                  ? '24-Hour Polar Katabatic Wind & Gust Dynamics'
-                  : '24-Hour Synoptic Micro-Climate Gradient'}
-              </h4>
-              <p className="text-[11px] text-slate-400">
-                {activeTab === 'katabatic'
-                  ? 'Continuous wind velocity tracking across Antarctic, Arctic and Himalayan stations'
-                  : 'Multi-observatory temperature curves calibrated across synoptic diurnal cycle'}
-              </p>
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-sm">
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">High Arctic Fjord</div>
+              <div className="text-xl font-extrabold text-[#0ea5e9] font-mono">Himadri Station</div>
+              <div className="mt-2 text-xs text-slate-600 flex justify-between font-mono">
+                <span>Mean: <strong>-4.8°C</strong></span>
+                <span>Min: <strong>-6.5°C</strong></span>
+                <span>Max: <strong>-3.1°C</strong></span>
+              </div>
+            </div>
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-sm">
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Himalayan Cryosphere (4,080m)</div>
+              <div className="text-xl font-extrabold text-[#6366f1] font-mono">Himansh Obs.</div>
+              <div className="mt-2 text-xs text-slate-600 flex justify-between font-mono">
+                <span>Mean: <strong>-9.6°C</strong></span>
+                <span>Min: <strong>-13.3°C</strong></span>
+                <span>Max: <strong>-5.9°C</strong></span>
+              </div>
             </div>
           </div>
 
-          {/* Series Legends */}
-          <div className="flex items-center gap-3 text-xs flex-wrap font-mono">
-            <span className="flex items-center gap-1.5 text-sky-700 font-bold">
-              <span className="w-2.5 h-1 rounded-full bg-[#0284c7]" />
-              Maitri ({stations[0]?.surface_temp}°C)
-            </span>
-            <span className="flex items-center gap-1.5 text-teal-700 font-bold">
-              <span className="w-2.5 h-1 rounded-full bg-[#0d9488]" />
-              Bharati ({stations[1]?.surface_temp}°C)
-            </span>
-            <span className="flex items-center gap-1.5 text-cyan-700 font-bold">
-              <span className="w-2.5 h-1 rounded-full bg-[#0ea5e9]" />
-              Himadri ({stations[2]?.surface_temp}°C)
-            </span>
-            <span className="flex items-center gap-1.5 text-indigo-700 font-bold">
-              <span className="w-2.5 h-1 rounded-full bg-[#6366f1]" />
-              Himansh ({stations[3]?.surface_temp}°C)
-            </span>
+          {/* Expanded Thermal Chart */}
+          <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+              <div className="flex items-center gap-2">
+                <Thermometer size={18} className="text-sky-600" />
+                <div>
+                  <h4 className="font-display font-bold text-base text-polar-navy">
+                    24-Hour Synoptic Micro-Climate Thermal Gradient
+                  </h4>
+                  <p className="text-xs text-slate-400">
+                    Continuous temperature trajectories (°C) showing synoptic diurnal swings and polar inversion bands.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 text-xs flex-wrap font-mono">
+                <span className="flex items-center gap-1.5 text-sky-700 font-bold">
+                  <span className="w-2.5 h-1 rounded-full bg-[#0284c7]" />
+                  Maitri
+                </span>
+                <span className="flex items-center gap-1.5 text-teal-700 font-bold">
+                  <span className="w-2.5 h-1 rounded-full bg-[#0d9488]" />
+                  Bharati
+                </span>
+                <span className="flex items-center gap-1.5 text-cyan-700 font-bold">
+                  <span className="w-2.5 h-1 rounded-full bg-[#0ea5e9]" />
+                  Himadri
+                </span>
+                <span className="flex items-center gap-1.5 text-indigo-700 font-bold">
+                  <span className="w-2.5 h-1 rounded-full bg-[#6366f1]" />
+                  Himansh
+                </span>
+              </div>
+            </div>
+
+            <div className="h-72 w-full pt-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={synoptic_gradient} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                  <XAxis dataKey="hour" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={{ stroke: '#e2e8f0' }} />
+                  <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} unit="°C" domain={[-24, 0]} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#0a1628',
+                      borderRadius: '12px',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      color: '#fff',
+                      fontSize: '12px',
+                    }}
+                    labelStyle={{ fontWeight: 'bold', color: '#38bdf8' }}
+                  />
+                  <ReferenceLine y={0} stroke="#ef4444" strokeDasharray="3 3" label={{ value: '0°C Freeze', fill: '#ef4444', fontSize: 10 }} />
+                  <Line type="monotone" dataKey="maitri_temp" name="Maitri Temp" stroke="#0284c7" strokeWidth={3} dot={false} />
+                  <Line type="monotone" dataKey="bharati_temp" name="Bharati Temp" stroke="#0d9488" strokeWidth={3} dot={false} />
+                  <Line type="monotone" dataKey="himadri_temp" name="Himadri Temp" stroke="#0ea5e9" strokeWidth={3} dot={false} />
+                  <Line type="monotone" dataKey="himansh_temp" name="Himansh Temp" stroke="#6366f1" strokeWidth={3} dot={false} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
+      )}
 
-        {/* Dynamic Chart Container */}
-        <div className="h-52 w-full pt-2">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={synoptic_gradient}
-              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-              <XAxis
-                dataKey="hour"
-                stroke="#94a3b8"
-                fontSize={10}
-                tickLine={false}
-                axisLine={{ stroke: '#e2e8f0' }}
-              />
-              <YAxis
-                stroke="#94a3b8"
-                fontSize={10}
-                tickLine={false}
-                axisLine={false}
-                unit={activeTab === 'katabatic' ? 'km/h' : '°C'}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#0a1628',
-                  borderRadius: '12px',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  color: '#fff',
-                  fontSize: '12px',
-                  boxShadow: '0 10px 25px -5px rgba(0,0,0,0.3)',
-                }}
-                labelStyle={{ fontWeight: 'bold', color: '#38bdf8', marginBottom: '4px' }}
-              />
-              {activeTab === 'katabatic' ? (
-                <>
-                  <Line
-                    type="monotone"
-                    dataKey="maitri_wind"
-                    name="Maitri Wind"
-                    stroke="#0284c7"
-                    strokeWidth={2.5}
-                    dot={false}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="bharati_wind"
-                    name="Bharati Gust"
-                    stroke="#0d9488"
-                    strokeWidth={2.5}
-                    dot={false}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="himadri_wind"
-                    name="Himadri Wind"
-                    stroke="#0ea5e9"
-                    strokeWidth={2.5}
-                    dot={false}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="himansh_wind"
-                    name="Himansh Wind"
-                    stroke="#6366f1"
-                    strokeWidth={2.5}
-                    dot={false}
-                  />
-                </>
-              ) : (
-                <>
-                  <Line
-                    type="monotone"
-                    dataKey="maitri_temp"
-                    name="Maitri Temp"
-                    stroke="#0284c7"
-                    strokeWidth={2.5}
-                    dot={false}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="bharati_temp"
-                    name="Bharati Temp"
-                    stroke="#0d9488"
-                    strokeWidth={2.5}
-                    dot={false}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="himadri_temp"
-                    name="Himadri Temp"
-                    stroke="#0ea5e9"
-                    strokeWidth={2.5}
-                    dot={false}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="himansh_temp"
-                    name="Himansh Temp"
-                    stroke="#6366f1"
-                    strokeWidth={2.5}
-                    dot={false}
-                  />
-                </>
-              )}
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+      {/* ───────────────────────────────────────────────────────────── */}
+      {/* VIEW MODE 3: KATABATIC CURVES (Wind Velocity & Storm Dynamics) */}
+      {/* ───────────────────────────────────────────────────────────── */}
+      {activeTab === 'katabatic' && (
+        <div className="space-y-6">
+          {/* Wind & Katabatic Dynamics Summary */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-sm">
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Peak Gust Observatory</div>
+              <div className="text-xl font-extrabold text-[#0d9488] font-mono">Bharati (Larsemann)</div>
+              <div className="mt-2 text-xs text-slate-600 font-mono">
+                Current: <strong>38 km/h SE</strong> · Max: <strong>54 km/h</strong>
+              </div>
+            </div>
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-sm">
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Continental Ice-Cap Draft</div>
+              <div className="text-xl font-extrabold text-[#0284c7] font-mono">Maitri (Schirmacher)</div>
+              <div className="mt-2 text-xs text-slate-600 font-mono">
+                Current: <strong>24 km/h ENE</strong> · Max: <strong>36 km/h</strong>
+              </div>
+            </div>
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-sm">
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Fjord Sea-Level Breeze</div>
+              <div className="text-xl font-extrabold text-[#0ea5e9] font-mono">Himadri (Ny-Ålesund)</div>
+              <div className="mt-2 text-xs text-slate-600 font-mono">
+                Current: <strong>16 km/h NNW</strong> · Max: <strong>22 km/h</strong>
+              </div>
+            </div>
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-sm">
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Himalayan Valley Gradient</div>
+              <div className="text-xl font-extrabold text-[#6366f1] font-mono">Himansh (Chandra Basin)</div>
+              <div className="mt-2 text-xs text-slate-600 font-mono">
+                Current: <strong>12 km/h W</strong> · Max: <strong>28 km/h</strong>
+              </div>
+            </div>
+          </div>
 
-        {/* Footer meta */}
-        <div className="flex items-center justify-between pt-3 mt-2 border-t border-slate-100 text-[11px] text-slate-400 font-mono">
-          <span>UTC 00:00 – 23:59 SYNOP CYCLE</span>
-          {showExploreLink && (
-            <Link
-              href="/explore"
-              className="text-sky-600 hover:text-sky-700 font-sans font-bold flex items-center gap-1 transition-colors"
-            >
-              Open Interactive Geospatial Map <ArrowUpRight size={12} />
-            </Link>
-          )}
+          {/* Expanded Katabatic Wind Chart */}
+          <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+              <div className="flex items-center gap-2">
+                <Wind size={18} className="text-teal-600" />
+                <div>
+                  <h4 className="font-display font-bold text-base text-polar-navy">
+                    24-Hour Polar Katabatic Wind & Storm Dynamics
+                  </h4>
+                  <p className="text-xs text-slate-400">
+                    High-density gravity-driven down-slope wind velocity tracking across polar ice sheets.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 text-xs flex-wrap font-mono">
+                <span className="flex items-center gap-1.5 text-teal-700 font-bold">
+                  <span className="w-2.5 h-1 rounded-full bg-[#0d9488]" />
+                  Bharati Gusts
+                </span>
+                <span className="flex items-center gap-1.5 text-sky-700 font-bold">
+                  <span className="w-2.5 h-1 rounded-full bg-[#0284c7]" />
+                  Maitri Wind
+                </span>
+                <span className="flex items-center gap-1.5 text-cyan-700 font-bold">
+                  <span className="w-2.5 h-1 rounded-full bg-[#0ea5e9]" />
+                  Himadri Wind
+                </span>
+                <span className="flex items-center gap-1.5 text-indigo-700 font-bold">
+                  <span className="w-2.5 h-1 rounded-full bg-[#6366f1]" />
+                  Himansh Wind
+                </span>
+              </div>
+            </div>
+
+            <div className="h-72 w-full pt-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={synoptic_gradient} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                  <XAxis dataKey="hour" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={{ stroke: '#e2e8f0' }} />
+                  <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} unit=" km/h" domain={[0, 60]} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#0a1628',
+                      borderRadius: '12px',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      color: '#fff',
+                      fontSize: '12px',
+                    }}
+                    labelStyle={{ fontWeight: 'bold', color: '#38bdf8' }}
+                  />
+                  <Line type="monotone" dataKey="bharati_wind" name="Bharati Gust" stroke="#0d9488" strokeWidth={3} dot={false} />
+                  <Line type="monotone" dataKey="maitri_wind" name="Maitri Wind" stroke="#0284c7" strokeWidth={3} dot={false} />
+                  <Line type="monotone" dataKey="himadri_wind" name="Himadri Wind" stroke="#0ea5e9" strokeWidth={3} dot={false} />
+                  <Line type="monotone" dataKey="himansh_wind" name="Himansh Wind" stroke="#6366f1" strokeWidth={3} dot={false} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
