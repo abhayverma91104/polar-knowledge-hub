@@ -15,6 +15,7 @@ project_root = os.path.dirname(scripts_dir)
 sys.path.insert(0, os.path.join(project_root, 'apps', 'api'))
 
 from datetime import datetime, timedelta
+from sqlalchemy import or_
 from database import SessionLocal, init_db
 from models import (
     User, UserRole, Document, DocumentType, DocumentChunk, Dataset,
@@ -106,11 +107,6 @@ def seed_users(db):
 def seed_stations(db):
     logger.info("Seeding research stations...")
     
-    existing = db.query(ResearchStation).first()
-    if existing:
-        logger.info("Stations already seeded, skipping")
-        return db.query(ResearchStation).all()
-    
     stations_data = [
         {
             "name": "Maitri",
@@ -119,9 +115,9 @@ def seed_stations(db):
             "latitude": -70.7669,
             "longitude": 11.7325,
             "established_year": 1989,
-            "description": "Maitri is India's second permanent research station in Antarctica, located in the Schirmacher Oasis. It serves as the base for India's Antarctic expeditions and conducts year-round scientific research in glaciology, meteorology, and earth sciences.",
+            "description": "Maitri is India's second permanent research station in Antarctica, situated in the ice-free Schirmacher Oasis of Queen Maud Land. Built on solid bedrock near Lake Priyadarshini, it has supported continuous, year-round scientific observation in glaciology, meteorology, and earth sciences for over three decades.",
             "research_areas": ["Glaciology", "Meteorology", "Geology", "Earth Sciences", "Atmospheric Science", "Biology"],
-            "facilities": ["Meteorological Observatory", "Glaciological Laboratory", "Geology Lab", "Medical Facility", "Communication Center", "Power Plant"],
+            "facilities": ["Meteorological Observatory", "Glaciological Laboratory", "Geology Lab", "Lake Monitoring Post", "Medical Facility", "Communication Center", "Power Plant"],
             "is_active": True,
         },
         {
@@ -131,10 +127,22 @@ def seed_stations(db):
             "latitude": -69.4069,
             "longitude": 76.1831,
             "established_year": 2012,
-            "description": "Bharati is India's third and newest research station, located at Larsemann Hills, East Antarctica. It is a state-of-the-art facility designed for modern polar science and can accommodate up to 47 scientists. It focuses on oceanography, geology, and atmospheric science.",
+            "description": "Bharati is India's third and newest permanent research station, located at Larsemann Hills, East Antarctica. It is an ultra-modern, energy-efficient facility constructed from 134 prefabricated shipping containers on stilts to withstand extreme polar blizzards and conduct research in oceanography, geology, and atmospheric science.",
             "research_areas": ["Oceanography", "Geology", "Atmospheric Science", "Climate Research", "Marine Biology", "Glaciology"],
-            "facilities": ["Oceanographic Laboratory", "Geological Survey Center", "Climate Monitoring Station", "Cafeteria", "Accommodation Modules", "Helipad", "Marine Lab"],
+            "facilities": ["Oceanographic Laboratory", "Geological Survey Center", "Climate Monitoring Station", "Atmospheric Sounding", "Accommodation Modules", "Helipad", "Marine Lab"],
             "is_active": True,
+        },
+        {
+            "name": "Dakshin Gangotri",
+            "code": "DG",
+            "region": Region.ANTARCTICA,
+            "latitude": -70.0906,
+            "longitude": 12.0083,
+            "established_year": 1983,
+            "description": "Dakshin Gangotri was India's historic first permanent research base in Antarctica, established during the third scientific expedition in 1983. Successfully operated year-round until 1990; now preserved as a designated historic heritage site and automated weather checkpoint.",
+            "research_areas": ["Glaciology", "Meteorology", "Historical Heritage", "Cryospheric Dynamics"],
+            "facilities": ["Historic Expedition Site", "Automatic Weather Station (AWS)", "Sub-surface Ice Core Storage"],
+            "is_active": False,
         },
         {
             "name": "Himadri",
@@ -143,21 +151,54 @@ def seed_stations(db):
             "latitude": 78.9267,
             "longitude": 11.9228,
             "established_year": 2008,
-            "description": "Himadri is India's Arctic research station located at Ny-Ålesund, Svalbard, Norway. It is India's first and only Arctic research base, established under the aegis of NCPOR for studying climate change, atmospheric science, and glaciology in the Arctic region.",
-            "research_areas": ["Climate Change", "Glaciology", "Atmospheric Science", "Biology", "Marine Research", "Carbon Cycling"],
-            "facilities": ["Climate Monitoring Equipment", "Atmospheric Lab", "Biology Lab", "Accommodation", "Communication Equipment"],
+            "description": "Himadri is India's Arctic research station located at Ny-Ålesund, Svalbard, Norway (the world's northernmost scientific research community). Established under the aegis of NCPOR for studying climate change, atmospheric physics, Arctic teleconnections with the Indian monsoon, and glaciology.",
+            "research_areas": ["Climate Change", "Glaciology", "Atmospheric Science", "Polar Biology", "Aerosol Chemistry", "Marine Carbon Cycle"],
+            "facilities": ["Climate Monitoring Equipment", "Atmospheric Lab", "Biology Lab", "Accommodation", "Satellite Communication Post"],
+            "is_active": True,
+        },
+        {
+            "name": "IndARC Observatory",
+            "code": "INDARC",
+            "region": Region.ARCTIC,
+            "latitude": 78.9833,
+            "longitude": 12.0167,
+            "established_year": 2014,
+            "description": "IndARC is India's first multi-sensor moored underwater observatory in the Arctic, deployed at a depth of ~192 meters in the Kongsfjorden fjord between Spitsbergen and the Arctic Ocean to track oceanic temperature, salinity, currents, and climate teleconnections.",
+            "research_areas": ["Physical Oceanography", "Fjord Hydrodynamics", "Current Velocities", "Salinity Dynamics", "Arctic Teleconnections"],
+            "facilities": ["Moored Acoustic Doppler Current Profiler (ADCP)", "CTD Sensor Arrays", "Biogeochemical Profilers"],
+            "is_active": True,
+        },
+        {
+            "name": "Himansh Cryosphere Station",
+            "code": "HIMANSH",
+            "region": Region.OTHER,
+            "latitude": 32.4167,
+            "longitude": 77.6167,
+            "established_year": 2016,
+            "description": "Himansh is India's high-altitude cryosphere research station established by NCPOR in the Chandra Basin (Spiti Valley, Himachal Pradesh) at 13,500 ft (4,080 m). Dedicated to studying Himalayan glaciers (Earth's Third Pole), glacier mass balance, and meltwater hydrology.",
+            "research_areas": ["Glacier Mass Balance", "Hydrology", "Snow Cover Dynamics", "Black Carbon Monitoring", "Runoff Modeling"],
+            "facilities": ["High-Altitude Laboratory", "Automatic Weather Stations (AWS)", "Discharge Gauging Sensors", "Permafrost Boreholes"],
             "is_active": True,
         },
     ]
     
     stations = []
     for data in stations_data:
-        station = ResearchStation(**data)
-        db.add(station)
+        station = db.query(ResearchStation).filter(
+            or_(ResearchStation.code == data["code"], ResearchStation.name == data["name"])
+        ).first()
+        if not station:
+            station = ResearchStation(**data)
+            db.add(station)
+            logger.info(f"Added research station: {data['name']} ({data['code']})")
+        else:
+            # Update attributes
+            for k, v in data.items():
+                setattr(station, k, v)
         stations.append(station)
     
-    db.flush()
-    logger.info(f"Seeded {len(stations)} research stations")
+    db.commit()
+    logger.info(f"Verified {len(stations)} authentic research stations and observatories")
     return stations
 
 

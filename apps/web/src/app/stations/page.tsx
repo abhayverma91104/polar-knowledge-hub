@@ -51,6 +51,18 @@ const FALLBACK_STATIONS: Station[] = [
     is_active: true,
   },
   {
+    id: 'dakshin-gangotri',
+    name: 'Dakshin Gangotri',
+    code: 'DG',
+    region: 'antarctica',
+    latitude: -70.0906,
+    longitude: 12.0083,
+    established_year: 1983,
+    description: "Dakshin Gangotri was India's historic first permanent base in Antarctica, established during the third scientific expedition. Successfully operated year-round until 1990; now preserved as a designated historic heritage site and automated weather checkpoint.",
+    research_areas: ['Glaciology', 'Meteorology', 'Historical Heritage', 'Cryospheric Dynamics'],
+    is_active: false,
+  },
+  {
     id: 'himadri',
     name: 'Himadri',
     code: 'HIMADRI',
@@ -89,16 +101,32 @@ const FALLBACK_STATIONS: Station[] = [
 ];
 
 export default function StationsPage() {
-  const [stations, setStations] = useState<Station[]>([]);
+  const [stations, setStations] = useState<Station[]>(FALLBACK_STATIONS);
   const [loading, setLoading] = useState(true);
   const [selectedRegion, setSelectedRegion] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    stationsApi.list()
+    stationsApi.list({ include_historical: true })
       .then((res) => {
-        if (res.data && res.data.length > 0) {
-          setStations(res.data);
+        if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+          const backendStations = res.data;
+          const merged = FALLBACK_STATIONS.map((def) => {
+            const b = backendStations.find(
+              (item: any) =>
+                item.id === def.id ||
+                (item.code && def.code && item.code.toUpperCase() === def.code.toUpperCase()) ||
+                item.name.toLowerCase() === def.name.toLowerCase()
+            );
+            if (!b) return def;
+            return {
+              ...def,
+              ...b,
+              id: def.id,
+              region: def.region === 'himalayas' ? 'himalayas' : (b.region?.toLowerCase() || def.region),
+            };
+          });
+          setStations(merged);
         } else {
           setStations(FALLBACK_STATIONS);
         }

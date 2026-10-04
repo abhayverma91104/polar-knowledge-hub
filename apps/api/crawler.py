@@ -98,8 +98,13 @@ class NCPORCrawler:
     IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".webp"]
     VIDEO_EXTENSIONS = [".mp4", ".avi", ".mov", ".webm"]
 
-    def __init__(self, progress_callback: Optional[Callable] = None):
+    def __init__(
+        self,
+        progress_callback: Optional[Callable] = None,
+        resource_callback: Optional[Callable] = None,
+    ):
         self.progress_callback = progress_callback
+        self.resource_callback = resource_callback
         self.robots = RobotsChecker()
         self.visited_urls = set()
         self.content_hashes = set()
@@ -201,6 +206,11 @@ class NCPORCrawler:
                             resource = await self._process_pdf(current_url, resp.content)
                             if resource:
                                 resources.append(resource)
+                                if self.resource_callback:
+                                    try:
+                                        await self.resource_callback(resource)
+                                    except Exception as cb_err:
+                                        logger.warning(f"Error in resource callback (PDF): {cb_err}")
                         continue
 
                     # Handle HTML page
@@ -214,6 +224,11 @@ class NCPORCrawler:
                         page_resource = self._extract_page_resource(current_url, soup, resp.text)
                         if page_resource:
                             resources.append(page_resource)
+                            if self.resource_callback:
+                                try:
+                                    await self.resource_callback(page_resource)
+                                except Exception as cb_err:
+                                    logger.warning(f"Error in resource callback (HTML): {cb_err}")
 
                         # Extract links for further crawling
                         if follow_links and depth < max_depth:

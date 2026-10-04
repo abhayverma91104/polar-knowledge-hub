@@ -111,6 +111,11 @@ export default function IngestionPage() {
       const jobId = res.data.job_id;
       setCrawlLog(prev => [...prev, `[${new Date().toLocaleTimeString()}] Crawl job started: ${jobId}`]);
 
+      let lastPages = -1;
+      let lastDocs = -1;
+      let lastNew = -1;
+      let lastStatus = '';
+
       // Poll for progress
       const interval = setInterval(async () => {
         try {
@@ -118,21 +123,36 @@ export default function IngestionPage() {
           const job = jobRes.data;
           setCurrentJob(job);
 
-          setCrawlLog(prev => {
-            const summary = `Pages: ${job.pages_scanned} | Docs: ${job.documents_discovered} | New: ${job.new_resources} | Status: ${job.status}`;
+          const pagesChanged = job.pages_scanned !== lastPages;
+          const docsChanged = job.documents_discovered !== lastDocs;
+          const newChanged = job.new_resources !== lastNew;
+          const statusChanged = job.status !== lastStatus;
+
+          if (pagesChanged || docsChanged || newChanged || statusChanged) {
             const timestamp = `[${new Date().toLocaleTimeString()}]`;
-            const newLine = `${timestamp} ${summary}`;
+            const logEntries: string[] = [];
 
-            if (prev.length === 0) return [newLine];
-
-            const lastLine = prev[prev.length - 1];
-            // If the progress numbers haven't changed, update timestamp in-place instead of flooding identical lines
-            if (lastLine.includes(`Pages: ${job.pages_scanned} | Docs: ${job.documents_discovered} | New: ${job.new_resources} | Status: ${job.status}`)) {
-              return [...prev.slice(0, -1), newLine];
+            if (newChanged && lastNew !== -1 && job.new_resources > lastNew) {
+              const delta = job.new_resources - lastNew;
+              logEntries.push(`${timestamp} 📥 Discovered & staged ${delta} new resource${delta > 1 ? 's' : ''} (Total: ${job.new_resources})`);
+            } else if (docsChanged && lastDocs !== -1 && job.documents_discovered > lastDocs && !newChanged) {
+              const delta = job.documents_discovered - lastDocs;
+              logEntries.push(`${timestamp} ℹ️ Discovered ${delta} document link${delta > 1 ? 's' : ''}`);
             }
 
-            return [...prev, newLine];
-          });
+            if (pagesChanged && job.pages_scanned > 0) {
+              logEntries.push(`${timestamp} 🌐 Scanned page ${job.pages_scanned} · ${job.documents_discovered} docs discovered · ${job.new_resources} staged for review`);
+            }
+
+            if (logEntries.length > 0) {
+              setCrawlLog(prev => [...prev, ...logEntries]);
+            }
+
+            lastPages = job.pages_scanned;
+            lastDocs = job.documents_discovered;
+            lastNew = job.new_resources;
+            lastStatus = job.status;
+          }
 
           if (job.status === 'completed' || job.status === 'failed') {
             clearInterval(interval);
@@ -142,7 +162,7 @@ export default function IngestionPage() {
             const emoji = job.status === 'completed' ? '✅' : '⚠️';
             setCrawlLog(prev => [
               ...prev,
-              `[${new Date().toLocaleTimeString()}] ${emoji} Crawl ${job.status === 'completed' ? 'completed successfully' : 'ended (' + job.status + ')'}. ${job.new_resources} new resources indexed.`
+              `[${new Date().toLocaleTimeString()}] ${emoji} Crawl ${job.status === 'completed' ? 'completed successfully' : 'ended (' + job.status + ')'}. ${job.pages_scanned} pages scanned, ${job.new_resources} new resources indexed for review.`
             ]);
           }
         } catch (e) {

@@ -53,14 +53,13 @@ async def lifespan(app: FastAPI):
         init_db()
         logger.info("Database ready")
 
-        # Auto-seed authentic NCPOR records if database is fresh
+        # Clean up any zombie crawl jobs left running from previous instance/restart
         try:
             from database import SessionLocal
             from models import ResearchStation, CrawlJob, CrawlStatus
+            import seed_database
             db = SessionLocal()
-            station_count = db.query(ResearchStation).count()
             
-            # Clean up any zombie crawl jobs left running from previous instance/restart
             interrupted = db.query(CrawlJob).filter(CrawlJob.status == CrawlStatus.RUNNING).all()
             for ij in interrupted:
                 ij.status = CrawlStatus.FAILED
@@ -70,17 +69,16 @@ async def lifespan(app: FastAPI):
                 db.commit()
                 logger.info(f"Cleaned up {len(interrupted)} interrupted crawl jobs")
 
-            db.close()
+            # Always ensure all 6 authentic Indian research stations & observatories are seeded
+            station_count = db.query(ResearchStation).count()
+            seed_database.seed_stations(db)
             if station_count == 0:
-                logger.info("Fresh database detected (0 stations). Auto-seeding authentic NCPOR records...")
-                try:
-                    import seed_database
-                    seed_database.seed_all()
-                    logger.info("Auto-seed completed successfully!")
-                except Exception as seed_err:
-                    logger.warning(f"Auto-seed skipped or encountered: {seed_err}")
-        except Exception as check_err:
-            logger.warning(f"Startup database check error: {check_err}")
+                logger.info("Fresh database detected. Auto-seeding authentic NCPOR records...")
+                seed_database.seed_all()
+                logger.info("Auto-seed completed successfully!")
+            db.close()
+        except Exception as startup_err:
+            logger.warning(f"Startup database check/seed error: {startup_err}")
     else:
         logger.warning("Database not available - running in limited mode")
     yield
@@ -1230,6 +1228,9 @@ async def _run_crawl_job(job_id: str, start_url: str, config: dict):
         job.started_at = datetime.utcnow()
         db.commit()
         
+        processed_hashes = set()
+        ai_service = get_ai_service()
+
         async def on_progress(data: dict):
             try:
                 cur_job = db.query(CrawlJob).filter(CrawlJob.id == job_id).first()
@@ -1238,34 +1239,31 @@ async def _run_crawl_job(job_id: str, start_url: str, config: dict):
                     db.commit()
             except Exception:
                 pass
-        
-        crawler = NCPORCrawler(progress_callback=on_progress)
-        result = await crawler.crawl(start_url, config, job_id)
-        
-        if "error" in result:
-            job.status = CrawlStatus.FAILED
-            job.error_log = [result["error"]]
-            db.commit()
-            return
-        
-        # Process discovered resources
-        resources = result.get("resources", [])
-        new_count = 0
-        
-        for resource_data in resources:
+
+        async def on_resource(resource_data: dict):
+            nonlocal processed_hashes
+            content_hash = resource_data.get("content_hash", "")
+            if content_hash and content_hash in processed_hashes:
+                return
+            if content_hash:
+                processed_hashes.add(content_hash)
+
             try:
+                cur_job = db.query(CrawlJob).filter(CrawlJob.id == job_id).first()
+                if not cur_job or cur_job.status != CrawlStatus.RUNNING:
+                    return
+
                 # Check for duplicate
-                content_hash = resource_data.get("content_hash", "")
                 existing_doc = db.query(Document).filter(
                     Document.content_hash == content_hash
                 ).first() if content_hash else None
-                
+
                 if existing_doc:
-                    job.duplicates_found = (job.duplicates_found or 0) + 1
-                    job.documents_discovered = (job.documents_discovered or 0) + 1
+                    cur_job.duplicates_found = (cur_job.duplicates_found or 0) + 1
+                    cur_job.documents_discovered = (cur_job.documents_discovered or 0) + 1
                     db.commit()
-                    continue
-                
+                    return
+
                 # Create crawl resource record
                 crawl_resource = CrawlResource(
                     crawl_job_id=job_id,
@@ -1280,12 +1278,10 @@ async def _run_crawl_job(job_id: str, start_url: str, config: dict):
                 )
                 db.add(crawl_resource)
                 db.flush()
-                
-                # Create document for review if we have text or a meaningful resource
+
                 raw_text = (resource_data.get("raw_text") or "").strip()
                 title = resource_data.get("title") or "Untitled NCPOR Resource"
-                
-                ai_service = get_ai_service()
+
                 meta = {}
                 if len(raw_text) >= 100:
                     try:
@@ -1325,11 +1321,9 @@ async def _run_crawl_job(job_id: str, start_url: str, config: dict):
 
                 crawl_resource.document_id = doc.id
                 crawl_resource.status = "pending_review"
-                db.commit()
 
-                new_count += 1
-                job.documents_discovered = (job.documents_discovered or 0) + 1
-                job.new_resources = new_count
+                cur_job.documents_discovered = (cur_job.documents_discovered or 0) + 1
+                cur_job.new_resources = (cur_job.new_resources or 0) + 1
                 db.commit()
 
                 # Create chunks and vector embeddings safely in separate transaction
@@ -1357,16 +1351,34 @@ async def _run_crawl_job(job_id: str, start_url: str, config: dict):
             except Exception as res_err:
                 logger.error(f"Error processing resource {resource_data.get('url')}: {res_err}")
                 db.rollback()
-        
-        job.new_resources = new_count
-        job.pages_scanned = result.get("pages_scanned", 0)
-        job.errors_count = len(result.get("errors", []))
-        job.error_log = result.get("errors", [])[:20]
-        job.status = CrawlStatus.COMPLETED
-        job.completed_at = datetime.utcnow()
-        db.commit()
-        
-        logger.info(f"Crawl job {job_id} completed: {new_count} new resources")
+
+        crawler = NCPORCrawler(progress_callback=on_progress, resource_callback=on_resource)
+        result = await crawler.crawl(start_url, config, job_id)
+
+        if "error" in result:
+            job = db.query(CrawlJob).filter(CrawlJob.id == job_id).first()
+            if job:
+                job.status = CrawlStatus.FAILED
+                job.error_log = [result["error"]]
+                db.commit()
+            return
+
+        # Ensure any remaining resources are processed
+        for resource_data in result.get("resources", []):
+            ch = resource_data.get("content_hash", "")
+            if ch and ch not in processed_hashes:
+                await on_resource(resource_data)
+
+        job = db.query(CrawlJob).filter(CrawlJob.id == job_id).first()
+        if job and job.status == CrawlStatus.RUNNING:
+            job.pages_scanned = result.get("pages_scanned", job.pages_scanned)
+            job.errors_count = len(result.get("errors", []))
+            job.error_log = result.get("errors", [])[:20]
+            job.status = CrawlStatus.COMPLETED
+            job.completed_at = datetime.utcnow()
+            db.commit()
+
+        logger.info(f"Crawl job {job_id} completed: {job.new_resources if job else 0} new resources")
     
     except Exception as e:
         logger.error(f"Crawl job {job_id} failed: {e}")
@@ -1643,16 +1655,20 @@ def _expedition_full(e: Expedition, db: Session) -> dict:
 
 
 def _station_summary(s: ResearchStation) -> dict:
+    region_val = s.region.value if s.region else "other"
+    if s.code == "HIMANSH":
+        region_val = "himalayas"
     return {
         "id": s.id,
         "name": s.name,
         "code": s.code,
-        "region": s.region.value if s.region else None,
+        "region": region_val,
         "latitude": s.latitude,
         "longitude": s.longitude,
         "established_year": s.established_year,
         "description": (s.description or "")[:300],
         "research_areas": s.research_areas or [],
+        "facilities": s.facilities or [],
         "image_url": s.image_url,
         "is_active": s.is_active,
     }

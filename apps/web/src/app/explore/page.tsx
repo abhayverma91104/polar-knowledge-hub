@@ -134,7 +134,7 @@ const DEFAULT_STATIONS: Station[] = [
     id: 'himansh',
     name: 'Himansh Cryosphere Station',
     code: 'HIMANSH',
-    region: 'other',
+    region: 'himalayas',
     latitude: 32.4167,
     longitude: 77.6167,
     established_year: 2016,
@@ -161,21 +161,58 @@ export default function ExplorePage() {
       .list({ include_historical: true })
       .then((r) => {
         if (r.data && Array.isArray(r.data) && r.data.length > 0) {
-          // Merge with detailed descriptions & facilities if backend returned minimal fields
-          const merged = r.data.map((backendSt: any) => {
-            const def = DEFAULT_STATIONS.find(
-              (d) => d.id === backendSt.id || d.code?.toUpperCase() === backendSt.code?.toUpperCase()
+          const backendStations = r.data;
+          // Merge while ensuring all authentic stations & observatories are preserved
+          const merged = DEFAULT_STATIONS.map((def) => {
+            const backendSt = backendStations.find(
+              (b: any) =>
+                b.id === def.id ||
+                (b.code && def.code && b.code.toUpperCase() === def.code.toUpperCase()) ||
+                b.name.toLowerCase() === def.name.toLowerCase()
             );
+            if (!backendSt) return def;
             return {
               ...def,
               ...backendSt,
-              facilities: backendSt.facilities || def?.facilities || [],
-              research_areas: backendSt.research_areas || def?.research_areas || [],
-              document_count: backendSt.document_count ?? def?.document_count ?? 12,
-              dataset_count: backendSt.dataset_count ?? def?.dataset_count ?? 6,
-              media_count: backendSt.media_count ?? def?.media_count ?? 8,
+              id: def.id,
+              region: def.region === 'himalayas' ? 'himalayas' : (backendSt.region?.toLowerCase() || def.region),
+              facilities: backendSt.facilities && backendSt.facilities.length > 0 ? backendSt.facilities : def.facilities,
+              research_areas: backendSt.research_areas && backendSt.research_areas.length > 0 ? backendSt.research_areas : def.research_areas,
+              document_count: backendSt.document_count ?? def.document_count ?? 12,
+              dataset_count: backendSt.dataset_count ?? def.dataset_count ?? 6,
+              media_count: backendSt.media_count ?? def.media_count ?? 8,
+              is_active: backendSt.is_active !== undefined ? backendSt.is_active : def.is_active,
             };
           });
+
+          // Also include any extra backend station not in DEFAULT_STATIONS
+          for (const b of backendStations) {
+            const exists = merged.some(
+              (m) =>
+                m.id === b.id ||
+                (m.code && b.code && m.code.toUpperCase() === b.code.toUpperCase()) ||
+                m.name.toLowerCase() === b.name.toLowerCase()
+            );
+            if (!exists) {
+              merged.push({
+                id: b.id,
+                name: b.name,
+                code: b.code,
+                region: b.region?.toLowerCase() || 'other',
+                latitude: b.latitude,
+                longitude: b.longitude,
+                established_year: b.established_year,
+                description: b.description || '',
+                research_areas: b.research_areas || [],
+                facilities: b.facilities || [],
+                document_count: b.document_count ?? 0,
+                dataset_count: b.dataset_count ?? 0,
+                media_count: b.media_count ?? 0,
+                is_active: b.is_active ?? true,
+              });
+            }
+          }
+
           setStations(merged);
           if (merged.length > 0 && !selected) {
             setSelected(merged[0]);
@@ -190,7 +227,7 @@ export default function ExplorePage() {
   // Filter stations based on search query and region filter
   const filteredStations = useMemo(() => {
     return stations.filter((s) => {
-      const isHimansh = s.code === 'HIMANSH' || s.name.toLowerCase().includes('himansh');
+      const isHimansh = s.code === 'HIMANSH' || s.name.toLowerCase().includes('himansh') || s.region?.toLowerCase() === 'himalayas';
       let matchesRegion = true;
       if (regionFilter === 'antarctica') matchesRegion = s.region?.toLowerCase() === 'antarctica';
       else if (regionFilter === 'arctic') matchesRegion = s.region?.toLowerCase() === 'arctic';
@@ -314,7 +351,7 @@ export default function ExplorePage() {
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
-                Antarctica
+                Antarctica ({stations.filter((s) => s.region?.toLowerCase() === 'antarctica').length})
               </button>
               <button
                 onClick={() => setRegionFilter('arctic')}
@@ -322,7 +359,7 @@ export default function ExplorePage() {
                   regionFilter === 'arctic' ? 'bg-teal-500 text-white font-bold shadow-sm' : 'text-slate-400 hover:text-white'
                 }`}
               >
-                Arctic
+                Arctic ({stations.filter((s) => s.region?.toLowerCase() === 'arctic').length})
               </button>
               <button
                 onClick={() => setRegionFilter('himalayas')}
@@ -332,7 +369,7 @@ export default function ExplorePage() {
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
-                Himalayas
+                Himalayas ({stations.filter((s) => s.code === 'HIMANSH' || s.region?.toLowerCase() === 'himalayas').length})
               </button>
             </div>
           </div>
