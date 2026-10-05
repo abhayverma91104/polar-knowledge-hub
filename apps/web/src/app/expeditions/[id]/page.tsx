@@ -242,7 +242,7 @@ export default function ExpeditionDetailPage({ params }: { params: Promise<{ id:
                 href="/content-studio"
                 className="w-full block text-center py-2.5 rounded-xl bg-[#006194] hover:bg-[#007bb9] text-white font-bold text-xs transition-colors shadow-sm"
               >
-                Generate Outreach in Content Studio
+                Generate Outreach in Outreach Studio
               </Link>
             </div>
 

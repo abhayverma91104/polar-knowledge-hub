@@ -19,7 +19,12 @@ export default function LoginPage() {
     setError('');
     try {
       await login(email, password);
-      router.push('/admin');
+      const user = useAuth.getState().user;
+      if (user?.role === 'admin' || user?.role === 'editor') {
+        router.push('/admin');
+      } else {
+        router.push('/repository');
+      }
     } catch (err: unknown) {
       const e = err as { response?: { data?: { detail?: string } } };
       setError(e.response?.data?.detail || 'Invalid email or password');
@@ -55,7 +60,7 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@ncpor.res.in"
+                placeholder="scientist@ncpor.res.in"
                 className="w-full p-3 rounded-xl border border-[#bfc7d2]/50 dark:border-white/10 bg-[#ebf5ff] dark:bg-[#0c1c30] text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-[#006194] text-sm"
                 required
                 autoComplete="email"

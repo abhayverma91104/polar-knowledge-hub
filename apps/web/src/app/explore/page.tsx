@@ -486,7 +486,7 @@ export default function ExplorePage() {
         </div>
 
         {/* Center Interactive Map View */}
-        <div className="flex-1 relative h-[500px] lg:h-auto overflow-hidden p-3 lg:p-4 bg-[#050b14]">
+        <div className="flex-1 relative isolate z-0 h-[500px] lg:h-auto overflow-hidden p-3 lg:p-4 bg-[#050b14]">
           <PolarMapComponent
             stations={stations}
             selectedStation={selected}

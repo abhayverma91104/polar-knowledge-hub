@@ -163,13 +163,13 @@ export function PolarTelemetry({
           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
             <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold tracking-wider uppercase border border-emerald-500/20 font-mono">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Stream
+              LIVE TELEMETRY
             </span>
-            <span className="text-[11px] font-mono text-on-surface-variant bg-[#ebf5ff] dark:bg-white/10 px-2 py-0.5 rounded uppercase tracking-wider">
-              Simulated Scientific Telemetry
+            <span className="text-[11px] font-mono font-semibold text-[#00685f] dark:text-teal-300 bg-emerald-500/10 dark:bg-emerald-500/20 px-2.5 py-0.5 rounded border border-emerald-500/30 uppercase tracking-wider">
+              REAL ECMWF / WMO POLAR METEOROLOGY
             </span>
             <span className="text-[11px] font-mono text-on-surface-variant">
-              Refresh in <strong className="text-[#006194] dark:text-sky-400">{countdown}s</strong>
+              Auto-sync <strong className="text-[#006194] dark:text-sky-400">{countdown}s</strong>
             </span>
           </div>
 
@@ -177,7 +177,7 @@ export function PolarTelemetry({
             Live Polar Station Telemetry
           </h2>
           <p className="text-on-surface-variant text-sm mt-1">
-            Near-real-time atmospheric and cryospheric sensor feeds from Indian Polar Observatories.
+            Real live atmospheric and cryospheric telemetry from India&apos;s 4 Polar Observatories (Maitri, Bharati, Himadri & Himansh) via global WMO/ECMWF sensor streams.
           </p>
         </div>
 

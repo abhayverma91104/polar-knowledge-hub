@@ -138,7 +138,7 @@ export default function ContentStudioPage() {
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#dff0ff] dark:bg-white/10 text-[#00685f] dark:text-teal-300 font-mono text-xs font-semibold uppercase tracking-wider mb-4 border border-[#bfc7d2]/40 dark:border-white/10">
                 <Sparkles size={12} />
-                NCPOR Public Science Dissemination · Content Studio
+                NCPOR Public Science Dissemination · Outreach Studio
               </div>
               <h1 className="font-display font-bold text-3xl sm:text-5xl text-[#001e2e] dark:text-white mb-3">
                 From Research to Outreach

@@ -164,6 +164,62 @@ function RepositoryContent() {
     doSearch(query, 1, filters);
   };
 
+  const handleDownload = (doc: {
+    id: string;
+    title: string;
+    document_type?: string;
+    year?: number;
+    region?: string;
+    source?: string;
+    source_url?: string;
+    research_domains?: string[];
+    abstract?: string;
+    file_url?: string;
+  }) => {
+    if (doc.file_url && (doc.file_url.startsWith('http://') || doc.file_url.startsWith('https://') || doc.file_url.startsWith('/'))) {
+      const a = document.createElement('a');
+      a.href = doc.file_url;
+      a.download = `${doc.title.slice(0, 40).replace(/[^a-zA-Z0-9_-]/g, '_')}.pdf`;
+      a.target = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      return;
+    }
+
+    const content = `# ${doc.title}
+**National Centre for Polar and Ocean Research (NCPOR)**
+*Ministry of Earth Sciences, Government of India*
+
+---
+- **Document ID**: ${doc.id}
+- **Document Type**: ${doc.document_type ? doc.document_type.toUpperCase() : 'SCIENTIFIC REPORT'}
+- **Year**: ${doc.year || 'N/A'}
+- **Region**: ${doc.region ? doc.region.toUpperCase() : 'POLAR REGION'}
+- **Source**: ${doc.source || 'NCPOR Knowledge Repository'}
+${doc.source_url ? `- **Source URL**: ${doc.source_url}` : ''}
+- **Research Domains**: ${doc.research_domains?.join(', ') || 'Polar & Cryospheric Sciences'}
+
+---
+
+## Abstract & Summary
+${doc.abstract || 'No abstract text available for this record.'}
+
+---
+*Downloaded from Polar Knowledge Hub · Government of India*
+`;
+
+    const blob = new Blob([content], { type: 'text/markdown;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${doc.title.slice(0, 35).replace(/[^a-zA-Z0-9_-]/g, '_')}_NCPOR.md`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const clearFilters = () => {
     const empty = { document_type: '', region: '', research_domain: '', year: '' };
     setFilters(empty);
@@ -437,12 +493,18 @@ function RepositoryContent() {
                       )}
 
                       <div className="ml-auto flex items-center gap-2">
-                        {doc.file_url && (
-                          <span className="flex items-center gap-1 text-xs text-slate-400 hover:text-polar-cyan transition-colors">
-                            <Download size={12} />
-                            Download
-                          </span>
-                        )}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleDownload(doc);
+                          }}
+                          className="flex items-center gap-1 text-xs text-slate-400 hover:text-polar-cyan transition-colors z-10 cursor-pointer"
+                        >
+                          <Download size={12} />
+                          Download
+                        </button>
                         {doc.source_url && (
                           <span className="flex items-center gap-1 text-xs text-slate-400 hover:text-polar-cyan transition-colors">
                             <ExternalLink size={12} />

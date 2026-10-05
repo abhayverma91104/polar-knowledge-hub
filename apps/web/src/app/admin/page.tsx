@@ -6,9 +6,10 @@ import {
   FileText, Database, Image, Video, Globe, Users,
   Clock, Activity, TrendingUp, RefreshCw, Search,
   Shield, ChevronRight, AlertCircle, CheckCircle, Loader2,
-  Cpu, Sparkles
+  Cpu, Sparkles, BookOpen, Radio, UserCheck
 } from 'lucide-react';
 import { adminApi, assistantApi } from '@/lib/api';
+import { useAuth } from '@/lib/auth-store';
 
 interface AdminStats {
   total_documents: number;
@@ -35,10 +36,11 @@ const ADMIN_LINKS = [
   { href: '/admin/ingestion', label: 'Knowledge Ingestion', icon: Globe, description: 'Crawl NCPOR website, upload documents, manage sources', color: 'text-blue-500 bg-blue-50' },
   { href: '/admin/review', label: 'Content Review', icon: CheckCircle, description: 'Approve or reject ingested resources and AI content', color: 'text-green-500 bg-green-50' },
   { href: '/repository', label: 'Knowledge Repository', icon: Database, description: 'Browse and manage the knowledge base', color: 'text-purple-500 bg-purple-50' },
-  { href: '/content-studio', label: 'Content Studio', icon: Activity, description: 'Generate and review AI outreach content', color: 'text-amber-500 bg-amber-50' },
+  { href: '/content-studio', label: 'Outreach Studio', icon: Activity, description: 'Generate and review AI outreach content', color: 'text-amber-500 bg-amber-50' },
 ];
 
 export default function AdminPage() {
+  const { user } = useAuth();
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [aiStatus, setAiStatus] = useState<AIStatus | null>(null);
   const [loading, setLoading] = useState(true);
@@ -79,14 +81,111 @@ export default function AdminPage() {
     );
   }
 
+  // If user is a verified researcher or non-admin, render Researcher Workspace rather than dead-end error
+  if (user && user.role !== 'admin' && user.role !== 'editor') {
+    return (
+      <div className="min-h-screen bg-surface text-on-surface pt-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto py-12 transition-colors">
+        <div className="bg-white dark:bg-[#0a1628] border border-[#bfc7d2]/40 dark:border-white/10 rounded-3xl p-8 sm:p-10 shadow-xl mb-8">
+          <div className="flex items-start justify-between flex-wrap gap-4 pb-6 border-b border-[#bfc7d2]/30 dark:border-white/10">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono text-xs font-bold uppercase tracking-wider mb-3 border border-emerald-500/20">
+                <UserCheck size={14} /> Verified Researcher Account
+              </div>
+              <h1 className="font-display font-extrabold text-2xl sm:text-4xl text-on-surface">
+                Welcome, {user.full_name || 'Polar Researcher'}
+              </h1>
+              <p className="text-on-surface-variant text-sm sm:text-base mt-1 font-mono">
+                {user.email} · Role: <span className="uppercase font-bold text-[#006194] dark:text-sky-400">{user.role}</span>
+              </p>
+            </div>
+            <div className="px-4 py-2 rounded-2xl bg-[#ebf5ff] dark:bg-white/5 border border-[#bfc7d2]/40 dark:border-white/10 text-xs font-mono text-on-surface-variant">
+              System Access: <strong className="text-emerald-600 dark:text-emerald-400">Full Research & Outreach</strong>
+            </div>
+          </div>
+
+          <div className="py-6">
+            <h2 className="font-display font-bold text-lg text-on-surface mb-2">
+              Your Researcher Privileges
+            </h2>
+            <p className="text-on-surface-variant text-sm max-w-2xl leading-relaxed mb-6">
+              You have full institutional privileges to explore polar scientific repositories, download technical reports and datasets, utilize the Outreach Studio, and run queries in Polar AI.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Link
+                href="/repository"
+                className="p-5 rounded-2xl border border-[#bfc7d2]/40 dark:border-white/10 bg-[#ebf5ff]/40 dark:bg-white/5 hover:border-[#006194] dark:hover:border-sky-400 transition-all group"
+              >
+                <Database size={24} className="text-[#006194] dark:text-sky-400 mb-3" />
+                <h3 className="font-bold text-sm text-on-surface group-hover:text-[#006194] dark:group-hover:text-sky-300">
+                  Knowledge Repository
+                </h3>
+                <p className="text-xs text-on-surface-variant mt-1">Browse and download peer-reviewed papers & DOIs</p>
+              </Link>
+
+              <Link
+                href="/content-studio"
+                className="p-5 rounded-2xl border border-[#bfc7d2]/40 dark:border-white/10 bg-[#ebf5ff]/40 dark:bg-white/5 hover:border-[#006194] dark:hover:border-sky-400 transition-all group"
+              >
+                <Sparkles size={24} className="text-amber-500 mb-3" />
+                <h3 className="font-bold text-sm text-on-surface group-hover:text-amber-500">
+                  Outreach Studio
+                </h3>
+                <p className="text-xs text-on-surface-variant mt-1">Generate AI articles, press releases & summaries</p>
+              </Link>
+
+              <Link
+                href="/assistant"
+                className="p-5 rounded-2xl border border-[#bfc7d2]/40 dark:border-white/10 bg-[#ebf5ff]/40 dark:bg-white/5 hover:border-[#006194] dark:hover:border-sky-400 transition-all group"
+              >
+                <BookOpen size={24} className="text-teal-500 mb-3" />
+                <h3 className="font-bold text-sm text-on-surface group-hover:text-teal-400">
+                  Polar AI Assistant
+                </h3>
+                <p className="text-xs text-on-surface-variant mt-1">Chat with scientific documents and research datasets</p>
+              </Link>
+
+              <Link
+                href="/explore"
+                className="p-5 rounded-2xl border border-[#bfc7d2]/40 dark:border-white/10 bg-[#ebf5ff]/40 dark:bg-white/5 hover:border-[#006194] dark:hover:border-sky-400 transition-all group"
+              >
+                <Radio size={24} className="text-purple-500 mb-3" />
+                <h3 className="font-bold text-sm text-on-surface group-hover:text-purple-400">
+                  Telemetry & Explorer
+                </h3>
+                <p className="text-xs text-on-surface-variant mt-1">Live real-time weather & sensor feeds from 4 stations</p>
+              </Link>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-800 dark:text-amber-300 flex items-center justify-between flex-wrap gap-2">
+            <span>
+              ℹ️ <strong>Curator Note:</strong> Raw Web Scraping & Ingestion queues are restricted to NCPOR System Administrators.
+            </span>
+            <span className="font-mono text-[11px]">NCPOR Information Technology Services (ITS)</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (error) {
     return (
-      <div className="min-h-screen bg-polar-frost pt-16 flex items-center justify-center">
-        <div className="card p-10 max-w-md text-center">
-          <Shield size={40} className="text-slate-300 mx-auto mb-4" />
-          <h2 className="font-display font-bold text-xl text-polar-navy mb-2">Access Restricted</h2>
-          <p className="text-slate-500 mb-6">{error}</p>
-          <Link href="/login" className="btn-primary mx-auto">Sign in</Link>
+      <div className="min-h-screen bg-surface pt-20 flex items-center justify-center px-4">
+        <div className="bg-white dark:bg-[#0a1628] border border-[#bfc7d2]/40 dark:border-white/10 p-8 sm:p-10 rounded-2xl max-w-md text-center shadow-xl">
+          <Shield size={40} className="text-amber-500 mx-auto mb-4" />
+          <h2 className="font-display font-bold text-xl text-on-surface mb-2">Portal Authentication Required</h2>
+          <p className="text-on-surface-variant text-sm mb-6 leading-relaxed">
+            Please sign in with your NCPOR researcher or administrative credentials to access this dashboard.
+          </p>
+          <div className="flex gap-3 justify-center">
+            <Link href="/login" className="px-5 py-2.5 rounded-xl bg-[#006194] text-white font-semibold text-sm hover:bg-[#007bb9] transition-colors">
+              Sign In
+            </Link>
+            <Link href="/register" className="px-5 py-2.5 rounded-xl border border-[#bfc7d2]/40 dark:border-white/10 text-on-surface font-semibold text-sm hover:bg-[#ebf5ff] dark:hover:bg-white/10 transition-colors">
+              Create Account
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -263,7 +362,7 @@ export default function AdminPage() {
                     href="/content-studio"
                     className="text-xs text-slate-500 hover:text-polar-navy"
                   >
-                    Open Content Studio →
+                    Open Outreach Studio →
                   </Link>
                 </div>
               </div>

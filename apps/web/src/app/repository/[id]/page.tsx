@@ -44,6 +44,59 @@ export default function DocumentDetailPage({ params }: { params: Promise<{ id: s
       });
   }, [resolvedParams.id]);
 
+  const handleDownloadDocument = () => {
+    if (!doc) return;
+    if (doc.file_url && (doc.file_url.startsWith('http://') || doc.file_url.startsWith('https://') || doc.file_url.startsWith('/'))) {
+      const a = document.createElement('a');
+      a.href = doc.file_url;
+      a.download = `${doc.title.slice(0, 40).replace(/[^a-zA-Z0-9_-]/g, '_')}.pdf`;
+      a.target = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      return;
+    }
+
+    const content = `# ${doc.title}
+**National Centre for Polar and Ocean Research (NCPOR)**
+*Ministry of Earth Sciences, Government of India*
+
+---
+- **Document ID**: ${doc.id}
+- **Document Type**: ${doc.document_type ? doc.document_type.toUpperCase() : 'SCIENTIFIC REPORT'}
+- **Year / Date**: ${doc.year || doc.publication_date || 'N/A'}
+- **Region**: ${doc.region ? doc.region.toUpperCase() : 'POLAR REGION'}
+- **Authors**: ${doc.authors && doc.authors.length > 0 ? doc.authors.join(', ') : 'NCPOR Scientific Division'}
+- **Source**: ${doc.source || 'NCPOR Knowledge Repository'}
+${doc.source_url ? `- **Source URL**: ${doc.source_url}` : ''}
+- **Research Domains**: ${doc.research_domains?.join(', ') || 'Polar & Cryospheric Sciences'}
+- **Keywords**: ${doc.keywords?.join(', ') || 'N/A'}
+
+---
+
+## Abstract & Executive Summary
+${doc.abstract || doc.description || 'No formal abstract provided.'}
+
+---
+
+## Suggested Citation
+${doc.authors && doc.authors.length > 0 ? doc.authors.join(', ') : 'NCPOR'} (${doc.year || '2024'}). "${doc.title}". *National Centre for Polar and Ocean Research Knowledge Repository*. Record ID: ${doc.id}.
+
+---
+*Downloaded from Polar Knowledge Hub · Government of India*
+`;
+
+    const blob = new Blob([content], { type: 'text/markdown;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${doc.title.slice(0, 40).replace(/[^a-zA-Z0-9_-]/g, '_')}_NCPOR.md`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen pt-28 pb-16 flex items-center justify-center bg-surface text-on-surface">
@@ -115,20 +168,12 @@ export default function DocumentDetailPage({ params }: { params: Promise<{ id: s
 
           {/* Actions */}
           <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-[#bfc7d2]/30 dark:border-white/10">
-            {doc.file_url ? (
-              <a
-                href={doc.file_url}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#006194] hover:bg-[#007bb9] text-white font-semibold text-sm transition-colors shadow-sm"
-              >
-                <Download size={15} /> Download Document
-              </a>
-            ) : (
-              <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#ebf5ff] dark:bg-white/10 text-on-surface-variant font-semibold text-sm cursor-not-allowed">
-                <FileText size={15} /> PDF Ingestion Pending
-              </span>
-            )}
+            <button
+              onClick={handleDownloadDocument}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#006194] hover:bg-[#007bb9] text-white font-semibold text-sm transition-colors shadow-sm cursor-pointer"
+            >
+              <Download size={15} /> Download Document
+            </button>
 
             <Link
               href={`/assistant?q=Summarize research paper: ${encodeURIComponent(doc.title)}`}

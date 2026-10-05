@@ -14,14 +14,14 @@ export default function HomePage() {
   const router = useRouter();
 
   // Explorer station selection state
-  const [selectedStation, setSelectedStation] = useState<'bharati' | 'maitri' | 'dakshin' | 'himadri'>('bharati');
+  const [selectedStation, setSelectedStation] = useState<'bharati' | 'maitri' | 'dakshin' | 'himadri' | 'himansh'>('bharati');
   const [activeRegionTab, setActiveRegionTab] = useState<'antarctic' | 'arctic' | 'himalayas'>('antarctic');
 
   // Polar AI Console query state
   const [aiQuery, setAiQuery] = useState('Correlate this with summer sea-surface salinity anomalies in Prydz Bay');
   const [citationCopied, setCitationCopied] = useState(false);
 
-  // Content Studio state
+  // Outreach Studio state
   const [sourceDoc, setSourceDoc] = useState('NCPOR-Pub-2024: Arctic Halogen Fluxes');
   const [targetFormat, setTargetFormat] = useState<'parliament' | 'school' | 'press' | 'visual'>('parliament');
   const [targetLang, setTargetLang] = useState<'hindi' | 'english' | 'bengali' | 'tamil'>('hindi');
@@ -87,9 +87,22 @@ export default function HomePage() {
       rawUrl: '/stations?id=himadri',
       reportUrl: '/repository?q=Himadri',
     },
+    himansh: {
+      name: 'Himansh Glaciological Station',
+      id: 'ID-HIM-01',
+      year: 'COMMISSIONED 2016',
+      location: 'Chandra Basin, Spiti Valley, Himalayas (32°24\'N, 77°37\'E)',
+      description: 'India’s remote high-altitude glaciological research observatory situated at 4,080m elevation in the Western Himalayas. Dedicated to monitoring Himalayan cryosphere changes, glacier mass balance, and runoff hydrology.',
+      winterCap: '12 Glaciologists / Climbers',
+      thermal: 'High-Altitude Insulated Alpine Enclosure',
+      satcom: 'ISRO Satellite Uplink Terminal',
+      harbour: 'Manali / Kaza Overland Route',
+      rawUrl: '/stations?id=himansh',
+      reportUrl: '/repository?q=Himansh',
+    },
   };
 
-  const currentStation = stationProfiles[selectedStation];
+  const currentStation = stationProfiles[selectedStation as keyof typeof stationProfiles] || stationProfiles.bharati;
 
   const handleCopyCitation = () => {
     const bibtex = `@article{ncpor_benthic_2024,
@@ -410,7 +423,7 @@ export default function HomePage() {
                 Arctic (Svalbard)
               </button>
               <button
-                onClick={() => { setActiveRegionTab('himalayas'); }}
+                onClick={() => { setActiveRegionTab('himalayas'); setSelectedStation('himansh'); }}
                 className={`px-3 py-1.5 rounded font-medium transition-all ${
                   activeRegionTab === 'himalayas'
                     ? 'bg-white dark:bg-[#007bb9] text-[#006194] dark:text-white shadow-sm font-semibold'
@@ -428,18 +441,34 @@ export default function HomePage() {
             <div className="lg:col-span-8 bg-[#dff0ff]/70 dark:bg-white/5 rounded-xl p-4 flex flex-col relative overflow-hidden shadow-sm border border-[#bfc7d2]/50 dark:border-white/10 min-h-[440px]">
               <div className="absolute inset-0 w-full h-full">
                 <img
-                  src={activeRegionTab === 'arctic' ? '/images/himadri-arctic.jpg' : '/images/antarctica-landscape.jpg'}
-                  alt="Polar map territory"
-                  className="w-full h-full object-cover filter brightness-70 contrast-110"
+                  src={
+                    activeRegionTab === 'arctic'
+                      ? '/images/himadri-arctic.jpg'
+                      : activeRegionTab === 'himalayas'
+                      ? '/images/himansh-himalayas.jpg'
+                      : '/images/antarctica-landscape.jpg'
+                  }
+                  alt={
+                    activeRegionTab === 'arctic'
+                      ? 'Himadri Arctic Research Station in Ny-Ålesund, Svalbard'
+                      : activeRegionTab === 'himalayas'
+                      ? 'Himansh High-Altitude Observatory in Spiti Valley, Himalayas'
+                      : 'Bharati and Maitri Indian Antarctic Research Stations'
+                  }
+                  className="w-full h-full object-cover filter brightness-80 contrast-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#f6faff] via-[#f6faff]/30 to-transparent dark:from-[#081525] dark:via-[#081525]/30 dark:to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#f6faff] via-[#f6faff]/20 to-transparent dark:from-[#081525] dark:via-[#081525]/30 dark:to-transparent" />
               </div>
 
               {/* Map UI Overlay */}
               <div className="relative z-10 flex flex-col justify-between h-full">
                 <div className="flex items-center justify-between">
                   <span className="px-3 py-1 bg-white/90 dark:bg-[#0a1628]/90 backdrop-blur-md rounded font-mono text-[11px] text-[#41617e] dark:text-sky-300 font-bold border border-[#bfc7d2]/40 dark:border-white/10">
-                    MAP_MODE: CRYOSPHERE_BATHYMETRY_V3
+                    {activeRegionTab === 'arctic'
+                      ? 'SECTOR: SVALBARD_HIGH_ARCTIC_79N'
+                      : activeRegionTab === 'himalayas'
+                      ? 'SECTOR: CHANDRA_BASIN_THIRD_POLE_4080M'
+                      : 'SECTOR: EAST_ANTARCTICA_POLAR_CONTINENT'}
                   </span>
                   <div className="flex items-center gap-1 bg-white/90 dark:bg-[#0a1628]/90 backdrop-blur-md p-1 rounded border border-[#bfc7d2]/40 dark:border-white/10">
                     <Link
@@ -507,7 +536,7 @@ export default function HomePage() {
                         </div>
                       </button>
                     </>
-                  ) : (
+                  ) : activeRegionTab === 'arctic' ? (
                     <>
                       {/* Pin: Himadri */}
                       <button
@@ -520,10 +549,54 @@ export default function HomePage() {
                             HIMADRI BASE
                           </span>
                           <span className="font-mono text-[10px] text-[#707881] dark:text-slate-400">
-                            78°55&apos;N, 11°56&apos;E · Ny-Ålesund
+                            78°55&apos;N, 11°56&apos;E · Ny-Ålesund, Svalbard
                           </span>
                         </div>
                       </button>
+
+                      {/* Pin: IndARC Mooring */}
+                      <div className="absolute top-1/3 left-2/3 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center opacity-85">
+                        <div className="w-3 h-3 rounded-full bg-[#00685f] ring-2 ring-white/60" />
+                        <div className="mt-1 px-2 py-0.5 bg-white/90 dark:bg-[#0a1628]/90 rounded text-center shadow-sm border border-[#00685f]/30">
+                          <span className="font-mono text-[10px] text-[#00685f] dark:text-teal-300 font-semibold block">
+                            IndARC MOORING
+                          </span>
+                          <span className="font-mono text-[9px] text-[#707881] dark:text-slate-400">
+                            Kongsfjorden Fjord
+                          </span>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Pin: Himansh */}
+                      <button
+                        onClick={() => setSelectedStation('himansh')}
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer group scale-110 z-20"
+                      >
+                        <div className="w-4 h-4 rounded-full bg-purple-600 ring-4 ring-purple-500/40 animate-pulse" />
+                        <div className="mt-1 px-3 py-1 bg-white/95 dark:bg-[#0a1628]/95 rounded text-center shadow-lg border border-purple-500/30">
+                          <span className="font-mono text-xs text-purple-700 dark:text-purple-300 font-bold block">
+                            HIMANSH OBSERVATORY
+                          </span>
+                          <span className="font-mono text-[10px] text-[#707881] dark:text-slate-400">
+                            32°24&apos;N, 77°37&apos;E · Chandra Basin (4,080m)
+                          </span>
+                        </div>
+                      </button>
+
+                      {/* Pin: Bara Shigri / Sutri Dhaka Glacier Post */}
+                      <div className="absolute top-1/3 left-1/3 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center opacity-85">
+                        <div className="w-3 h-3 rounded-full bg-indigo-500 ring-2 ring-white/60" />
+                        <div className="mt-1 px-2 py-0.5 bg-white/90 dark:bg-[#0a1628]/90 rounded text-center shadow-sm border border-indigo-500/30">
+                          <span className="font-mono text-[10px] text-indigo-700 dark:text-indigo-300 font-semibold block">
+                            SUTRI DHAKA POST
+                          </span>
+                          <span className="font-mono text-[9px] text-[#707881] dark:text-slate-400">
+                            Glacier Mass Balance
+                          </span>
+                        </div>
+                      </div>
                     </>
                   )}
                 </div>
@@ -1063,7 +1136,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── SECTION 8: CONTENT STUDIO & AI TRANSLATOR ─── */}
+      {/* ─── SECTION 8: OUTREACH STUDIO & AI TRANSLATOR ─── */}
       <section className="w-full bg-white dark:bg-[#081525] py-14 border-b border-[#bfc7d2]/40 dark:border-white/10 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-3">
@@ -1072,7 +1145,7 @@ export default function HomePage() {
                 NCPOR Public Science Dissemination
               </span>
               <h2 className="font-display text-2xl sm:text-3xl font-bold text-[#001e2e] dark:text-white">
-                Content Studio & AI Translator
+                Outreach Studio & AI Translator
               </h2>
             </div>
             <p className="text-xs sm:text-sm text-[#3f4850] dark:text-slate-400 max-w-md">

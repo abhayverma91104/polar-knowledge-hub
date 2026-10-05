@@ -17,7 +17,7 @@ const NAV_LINKS = [
   { href: '/stations', label: 'Stations' },
   { href: '/classroom', label: 'Polar Classroom' },
   { href: '/assistant', label: 'Polar AI', badge: 'AI' },
-  { href: '/content-studio', label: 'Content Studio', badge: 'AI' },
+  { href: '/content-studio', label: 'Outreach Studio', badge: 'AI' },
   { href: '/media', label: 'Media' },
   { href: '/about', label: 'About NCPOR' },
 ];
@@ -90,7 +90,7 @@ export function Navigation() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-[#06111F]/95 backdrop-blur-md shadow-sm border-b border-[#D7E7F0] dark:border-white/10 transition-colors">
+    <header className="fixed top-0 left-0 right-0 z-[9999] bg-white/95 dark:bg-[#06111F]/95 backdrop-blur-md shadow-sm border-b border-[#D7E7F0] dark:border-white/10 transition-colors">
       <div className="w-full flex flex-col">
         {/* National Tricolor Top Strip */}
         <div className="w-full h-1 bg-gradient-to-r from-[#FF9933] via-[#FFFFFF] to-[#138808]" />
@@ -214,13 +214,13 @@ export function Navigation() {
                   <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-[#0a1628] border border-[#bfc7d2]/50 dark:border-white/15 rounded-xl shadow-2xl z-50 py-1.5 overflow-hidden font-sans">
                     <div className="px-4 py-2.5 border-b border-[#ebf5ff] dark:border-white/10">
                       <div className="text-[#001e2e] dark:text-white font-semibold text-sm truncate">
-                        {user ? (user.full_name || 'Scientist') : 'NCPOR Administrator'}
+                        {user ? (user.full_name || 'Scientist') : 'NCPOR Scientist'}
                       </div>
                       <div className="text-[#707881] dark:text-slate-400 text-xs truncate">
-                        {user ? user.email : 'admin@ncpor.res.in'}
+                        {user ? user.email : 'scientist@ncpor.res.in'}
                       </div>
                       <span className="inline-block mt-1 px-2 py-0.5 bg-[#cce5ff] text-[#004b73] dark:bg-sky-950 dark:text-sky-200 text-[9px] font-mono rounded font-semibold uppercase">
-                        {user ? user.role : 'ADMIN'} · INCOIS/NCPOR VERIFIED
+                        {user ? user.role : 'RESEARCHER'} · INCOIS/NCPOR VERIFIED
                       </span>
                     </div>
                     {user && (user.role === 'admin' || user.role === 'editor') ? (
