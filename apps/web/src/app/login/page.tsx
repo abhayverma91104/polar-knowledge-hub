@@ -35,13 +35,13 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center px-4 pt-16 bg-surface text-on-surface transition-colors">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg bg-[#006194] text-white">
-            <Snowflake size={28} />
-          </div>
+          <img
+            src="/polarsetu-logo.png"
+            alt="PolarSetu Logo"
+            className="w-16 h-16 rounded-2xl mx-auto mb-4 shadow-lg object-contain"
+          />
           <h1 className="font-display font-bold text-2xl text-on-surface mb-1">Scientist Sign In</h1>
-          <p className="text-on-surface-variant text-sm">Polar Knowledge Hub · NCPOR (Govt. of India)</p>
-        </div>
+          <p className="text-on-surface-variant text-sm">PolarSetu · NCPOR (Govt. of India)</p>
 
         <div className="bg-white dark:bg-[#0a1628] border border-[#bfc7d2]/40 dark:border-white/10 rounded-2xl p-8 shadow-xl backdrop-blur-sm transition-colors">
           {error && (

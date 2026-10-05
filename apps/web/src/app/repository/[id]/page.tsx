@@ -83,7 +83,7 @@ ${doc.abstract || doc.description || 'No formal abstract provided.'}
 ${doc.authors && doc.authors.length > 0 ? doc.authors.join(', ') : 'NCPOR'} (${doc.year || '2024'}). "${doc.title}". *National Centre for Polar and Ocean Research Knowledge Repository*. Record ID: ${doc.id}.
 
 ---
-*Downloaded from Polar Knowledge Hub · Government of India*
+*Downloaded from PolarSetu · Government of India*
 `;
 
     const blob = new Blob([content], { type: 'text/markdown;charset=utf-8;' });

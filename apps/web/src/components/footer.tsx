@@ -9,14 +9,14 @@ export function Footer() {
           {/* Brand & Emergency SatCom Hotline */}
           <div className="lg:col-span-2 flex flex-col gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-[#006194] flex items-center justify-center text-white shadow-sm">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                </svg>
-              </div>
+              <img
+                src="/polarsetu-logo.png"
+                alt="PolarSetu Logo"
+                className="w-10 h-10 rounded-xl object-contain shadow-sm"
+              />
               <div className="flex flex-col">
                 <span className="font-display text-base font-bold uppercase tracking-tight text-[#001e2e] dark:text-white">
-                  Polar Knowledge Hub
+                  PolarSetu
                 </span>
                 <span className="font-mono text-[11px] text-[#41617e] dark:text-sky-300">
                   National Centre for Polar and Ocean Research

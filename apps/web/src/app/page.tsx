@@ -131,36 +131,178 @@ export default function HomePage() {
     router.push(`/repository?q=${encodeURIComponent(archiveSearch.trim())}`);
   };
 
-  const contentStudioPreviews: Record<string, { title: string; body: string; metric: string }> = {
-    hindi: {
-      title: 'आर्कटिक महासागर में हैलोजन गैसों का प्रभाव और भारतीय मानसून से इसका सीधा संबंध',
-      body: 'राष्ट्रीय ध्रुवीय एवं महासागर अनुसंधान केंद्र (एनसीपीओआर) के हिमाद्रि स्टेशन (स्वालबार्ड) द्वारा जुटाए गए 2024 के आंकड़ों से ज्ञात होता है कि ब्रोमीन और आयोडीन के चक्रों में आए बदलाव आर्कटिक की समुद्री बर्फ के क्षरण को तेज कर रहे हैं। यह प्रक्रिया ऊपरी वायुमंडल में जेट धाराओं को प्रभावित करती है, जिससे भारतीय ग्रीष्मकालीन मानसून के पूर्वानुमान मॉडल को अधिक सटीक बनाने में मदद मिलती है।',
-      metric: 'मुख्य निष्कर्ष: मानसून टेलीकनेक्शन पुष्टि (+14% मॉडल सटीकता)',
-    },
-    english: {
+  const getMultilingualContent = (doc: string, format: string, lang: string) => {
+    // 44th IAE: Dronning Maud Land Ice Core Stratigraphy
+    if (doc.includes('Dronning Maud Land')) {
+      if (format === 'school') {
+        if (lang === 'hindi') {
+          return {
+            title: 'अंटार्कटिका की बर्फ में छिपे पृथ्वी के 8,400 साल पुराने रहस्य!',
+            body: 'क्या आप जानते हैं कि अंटार्कटिका की बर्फ एक विशाल प्राकृतिक टाइम मशीन है? भारतीय वैज्ञानिकों ने मध्य ड्रोनिंग मौड लैंड में 180 मीटर गहरी बर्फ खोदी है। इसमें फंसी प्राचीन हवा की बूंदें हमें बताती हैं कि हजारों साल पहले पृथ्वी का वातावरण कैसा था और हमारी धरती का मौसम कैसे बदल रहा है।',
+            metric: 'कक्षा 8-10 विज्ञान गाइड: बर्फ क्रोड़ और पृथ्वी का इतिहास (+99.4% सटीक)',
+            authority: 'अनुमोदित: एनसीपीओआर ध्रुवीय शिक्षा प्रकोष्ठ',
+          };
+        }
+        if (lang === 'bengali') {
+          return {
+            title: 'অ্যান্টার্কটিকার বরফের স্তর ও পৃথিবীর ৮,৪০০ বছরের আবহাওয়া ইতিহাস!',
+            body: 'অ্যান্টার্কটিকার বরফ হলো পৃথিবীর এক প্রাকৃতিক ডায়েরি! ভারতীয় বিজ্ঞানীরা ড্রনিং মড ল্যান্ডে ১৮০ মিটার গভীর বরফের নমুনা সংগ্রহ করেছেন। এই বরফের ভেতরের ক্ষুদ্র বাতাসের বুদ্বুদগুলো আমাদের প্রাচীন পৃথিবীর আবহাওয়া এবং জলবায়ু পরিবর্তনের সঠিক তথ্য প্রদান করে।',
+            metric: 'স্কুল নির্দেশিকা: বরফের স্তর ও পৃথিবীর প্রাচীন জলবায়ু (+৯৯.৪% নির্ভুলতা)',
+            authority: 'অনুমোদিত: এনসিপিওআর শিক্ষা সেল',
+          };
+        }
+        if (lang === 'tamil') {
+          return {
+            title: 'பனிக்குள் ஒளிந்துள்ள பூமியின் 8,400 ஆண்டு கால வரலாற்று டைரி!',
+            body: 'அண்டார்டிகாவின் ஆழமான பனி அடுக்குகள் பூமியின் காலநிலை டைரியாக செயல்படுகின்றன! இந்திய விஞ்ஞானிகள் 180 மீட்டர் ஆழ பனி மாதிரிகளை எடுத்து, பண்டைய காலத்தில் பூமி எப்படி இருந்தது என்பதை ஆராய்ச்சி செய்துள்ளனர். இது பனி உருகும் வேகம் மற்றும் உலக வெப்பமயமாதலை விளக்குகிறது.',
+            metric: 'பள்ளி வழிகாட்டி: பனி மாதிரிகள் மற்றும் பூமி வரலாறு (+99.4% துல்லியம்)',
+            authority: 'அங்கீகரிக்கப்பட்டது: என்சிபிஓஆர் கல்விப் பிரிவு',
+          };
+        }
+        return {
+          title: 'Time Travel in Ice: Decoding Earth’s 8,400-Year Climate Diary in Antarctica',
+          body: 'Did you know that Antarctic ice acts as Earth’s giant freezer time-capsule? Indian scientists drilled 180 meters deep into the ice sheet at Dronning Maud Land. The trapped air bubbles show exactly what our planet’s atmosphere looked like thousands of years ago!',
+          metric: 'Grades 8-10 Explainer: Ice Cores & Paleoclimate (+99.4% Accuracy)',
+          authority: 'Approved: NCPOR Polar Education Cell',
+        };
+      }
+      if (format === 'press') {
+        if (lang === 'hindi') {
+          return {
+            title: 'प्रेस विज्ञप्ति: 44वें अंटार्कटिक अभियान में एनसीपीओआर वैज्ञानिकों ने पूर्ण की ऐतिहासिक बर्फ क्रोड़ ड्रिलिंग',
+            body: 'नई दिल्ली / गोवा — पृथ्वी विज्ञान मंत्रालय के अंतर्गत राष्ट्रीय ध्रुवीय एवं महासागर अनुसंधान केंद्र (एनसीपीओआर) के वैज्ञानिकों ने अंटार्कटिका में 180 मीटर गहरे अविरल बर्फ क्रोड़ सिलिंडर की पुनर्प्राप्ति सफलतापूर्वक पूर्ण कर ली है। यह भारतीय जलवायु इतिहास अध्ययन में एक युगांतरकारी उपलब्धि है।',
+            metric: 'पीआईबी रिलीज: 180 मीटर बर्फ क्रोड़ सफलतापूर्वक संरक्षित (एनसीपीओआर-2025)',
+            authority: 'अनुमोदित: पत्र सूचना कार्यालय (PIB) एवं MoES',
+          };
+        }
+        if (lang === 'bengali') {
+          return {
+            title: 'প্রেস বিজ্ঞপ্তি: অ্যান্টার্কটিকায় সফল গভীর বরফ খনন সম্পন্ন করল এনসিপিওআর',
+            body: 'নতুন দিল্লি / গোয়া — ভারত সরকারের ভূ-বিজ্ঞান মন্ত্রকের অধীন এনসিপিওআর অ্যান্টার্কটিকার ড্রনিং মড ল্যান্ডে ১৮০ মিটার গভীর বরফ খনন প্রক্রিয়া সাফল্যের সাথে শেষ করেছে। এই গবেষণা ভারতীয় মৌসুমী বায়ুর দীর্ঘমেয়াদী পূর্বাভাস উন্নত করতে সহায়তা করবে।',
+            metric: 'পিআইবি প্রেস বিজ্ঞপ্তি: ১৮০ মিটার বরফ স্তর সংগ্রহ সফল',
+            authority: 'অনুমোদিত: পিআইবি ও ভূ-বিজ্ঞান মন্ত্রক',
+          };
+        }
+        if (lang === 'tamil') {
+          return {
+            title: 'செய்தி அறிக்கை: அண்டார்டிகாவில் வரலாற்றுச் சிறப்புமிக்க பனிப் பாறை ஆய்வை முடித்த என்சிபிஓஆர்',
+            body: 'புது தில்லி / கோவா — மத்திய புவி அறிவியல் அமைச்சகத்தின் கீழ் இயங்கும் என்சிபிஓஆர் விஞ்ஞானிகள், அண்டார்டிகாவில் 180 மீட்டர் ஆழமான பனிப் பாறை மாதிரிகளை வெற்றிகரமாக எடுத்துள்ளனர். இது இந்தியாவின் நீண்டகால வானிலை ஆராய்ச்சிக்கு பெரும் பயனளிக்கும்.',
+            metric: 'செய்தி வெளியீடு: 180 மீட்டர் ஆழ பனிப் பாறை பதிவு (என்சிபிஓஆர்-2025)',
+            authority: 'அங்கீகரிக்கப்பட்டது: பிஐபி & புவி அறிவியல் அமைச்சகம்',
+          };
+        }
+        return {
+          title: 'Press Communiqué: NCPOR Recovers 180-Meter Ice Core in 44th Indian Antarctic Expedition',
+          body: 'NEW DELHI / GOA — Scientists at the National Centre for Polar and Ocean Research (NCPOR), Ministry of Earth Sciences, have successfully recovered continuous 180-meter ice core records from Central Dronning Maud Land. The recovered cores provide vital baseline datasets for international cryosphere modeling.',
+          metric: 'PIB Communiqué: 180m Ice Core Successfully Cataloged',
+          authority: 'Approved: Press Information Bureau & MoES',
+        };
+      }
+      if (format === 'visual') {
+        if (lang === 'hindi') {
+          return {
+            title: 'दृश्य विज्ञान कार्ड: बर्फ क्रोड़ से ग्रीनहाउस गैस और सौर विकिरण का पुरा-इतिहास',
+            body: 'एनसीपीओआर की बर्फ क्रोड़ प्रयोगशाला से संकलित इन्फोग्राफिक: स्तरित बर्फ में फंसी मीथेन और कार्बन डाइऑक्साइड के ऐतिहासिक आंकड़े दर्शाते हैं कि वर्तमान औद्योगिक युग में ग्रीनहाउस गैसों की वृद्धि पिछले 8,400 वर्षों में अभूतपूर्व है।',
+            metric: 'दृश्य मीट्रिक: 8,400 वर्ष आइसोटोपिक क्रोनोलॉजी (+99.4% सत्यापन)',
+            authority: 'अनुमोदित: एनसीपीओआर वैज्ञानिक समिति',
+          };
+        }
+        if (lang === 'bengali') {
+          return {
+            title: 'ভিজুয়াল কার্ড: বরফের বুদবুদ থেকে গ্রিনহাউস গ্যাসের অতীত ইতিহাস',
+            body: 'ইনফোগ্রাফিক কার্ড: ড্রনিং মড ল্যান্ডের বরফে বন্দি প্রাচীন বায়ুর রাসায়নিক বিশ্লেষণ স্পষ্টভাবে প্রমাণ করে যে আধুনিক যুগে কার্বন ডাই-অক্সাইডের বৃদ্ধি মানব ইতিহাসের যেকোনো সময়ের চেয়ে দ্রুত।',
+            metric: 'ভিজুয়াল মেট্রিক: ৮,৪০০ বছরের নির্ভুল স্তরবিন্যাস (+৯৯.৪%)',
+            authority: 'অনুমোদিত: এনসিপিওআর বৈজ্ঞানিক কমিটি',
+          };
+        }
+        if (lang === 'tamil') {
+          return {
+            title: 'காட்சி தகவல் அட்டை: பனி மாதிரிகள் காட்டும் பசுமைக்குடில் வாயுக்களின் வரலாறு',
+            body: 'அறிவியல் காட்சி அட்டை: பனிக்குள் உள்ள வாயு குமிழ்களை ஆய்வு செய்ததில், கடந்த 8,400 ஆண்டுகளில் இல்லாத அளவிற்கு தற்போதைய காலகட்டத்தில் கார்பன் டை ஆக்சைடு அதிகரித்துள்ளது உறுதியாகியுள்ளது.',
+            metric: 'காட்சி தரவு: 8,400 ஆண்டு கால பனி ஆய்வு (+99.4% துல்லியம்)',
+            authority: 'அங்கீகரிக்கப்பட்டது: என்சிபிஓஆர் அறிவியல் குழு',
+          };
+        }
+        return {
+          title: 'Science Visual Card: Ice Core Stratigraphy & Greenhouse Gas Paleo-Proxy',
+          body: 'High-resolution infographic compiled by NCPOR Ice Core Lab: Trapped bubbles of methane and carbon dioxide in stratified Antarctic ice confirm current anthropogenic greenhouse forcing exceeds all natural variations over the last 8,400 years.',
+          metric: 'Visual Metric: 8,400-Year Stratigraphic Chronology (+99.4% Validated)',
+          authority: 'Approved: NCPOR Scientific Committee',
+        };
+      }
+      // Default: parliament brief
+      if (lang === 'hindi') {
+        return {
+          title: 'संसदीय संक्षिप्त नोट: 44वें अंटार्कटिक अभियान में ड्रोनिंग मौड लैंड बर्फ क्रोड़ और पुरा-जलवायु आंकड़े',
+          body: 'केंद्रीय ड्रोनिंग मौड लैंड से प्राप्त 180 मीटर गहरे निरंतर बर्फ क्रोड़ के नमूनों ने पिछले 8,400 वर्षों के आइसोटोपिक संकेतकों (δ18O और δD) को प्रमाणित किया है। एनसीपीओआर की बर्फ क्रोड़ प्रयोगशाला में किए गए विश्लेषण से सिद्ध होता है कि अंटार्कटिक ध्रुवीय भंवर की स्थिरता का सीधा प्रभाव दक्षिण एशियाई शीतकालीन मौसमी चक्रों पर पड़ता है।',
+          metric: 'मुख्य निष्कर्ष: 8,400 वर्ष पुराना अविरल जलवायु रिकॉर्ड (+99.4% स्तर अखंडता)',
+          authority: 'अनुमोदित: एनसीपीओआर वैज्ञानिक समिति',
+        };
+      }
+      if (lang === 'bengali') {
+        return {
+          title: 'সংসদীয় সংক্ষিপ্ত ব্রিফ: ৪৪তম ভারতীয় অ্যান্টার্কটিকা অভিযান — ড্রনিং মড ল্যান্ড বরফ স্তর ও জলবায়ু গবেষণা',
+          body: 'মধ্য ড্রনিং মড ল্যান্ড থেকে সংগৃহীত ১৮০ মিটার দীর্ঘ বরফ স্তম্ভ গত ৮,৪০০ বছরের অবিচ্ছিন্ন জলবায়ু পরিবর্তনের নিখুঁত চিত্র উন্মোচন করেছে। এনসিপিওআর-এর আইস কোর ল্যাবরেটরির বিশ্লেষণ প্রমাণ করে যে অ্যান্টার্কটিকার বরফের পরিবর্তন ভারত মহাসাগরের পরিবেশ এবং ভারতীয় জলবায়ুর সাথে সরাসরি যুক্ত।',
+          metric: 'মূল তথ্য: ৮,৪০০ বছরের আবহাওয়া রেকর্ড (+৯৯.৪% তথ্য নির্ভুলতা)',
+          authority: 'অনুমোদিত: এনসিপিওআর বৈজ্ঞানিক কমিটি',
+        };
+      }
+      if (lang === 'tamil') {
+        return {
+          title: 'நாடாளுமன்ற சுருக்க அறிக்கை: 44வது இந்திய அண்டார்டிக் பயணம் — ட்ரோனிங் மாட் லேண்ட் பனி அடுக்கு ஆய்வு',
+          body: 'மத்திய ட்ரோனிங் மாட் லேண்ட் பகுதியில் எடுக்கப்பட்ட 180 மீட்டர் ஆழமான பனிப் பாறை மாதிரிகள், கடந்த 8,400 ஆண்டுகளின் காலநிலை வரலாற்றை துல்லியமாக வெளிப்படுத்துகின்றன. என்சிபிஓஆர் பனி ஆய்வகத்தின் முடிவுகள், அண்டார்டிக் துருவ காற்று சுழற்சிக்கும் இந்திய காலநிலைக்குமான ஆழமான தொடர்பை உறுதி செய்கின்றன.',
+          metric: 'முக்கிய கண்டுபிடிப்பு: 8,400 ஆண்டு தொடர் காலநிலை பதிவு (+99.4% துல்லியம்)',
+          authority: 'அங்கீகரிக்கப்பட்டது: என்சிபிஓஆர் அறிவியல் குழு',
+        };
+      }
+      return {
+        title: '44th IAE: Dronning Maud Land Ice Core Stratigraphy & Paleoclimate Record',
+        body: 'Continuous 180-meter ice core records retrieved from Central Dronning Maud Land reveal high-resolution isotopic proxies (δ18O and δD) spanning 8,400 years. Analysis conducted at NCPOR’s Ice Core Laboratory confirms multi-decadal teleconnections between Antarctic polar vortex stability and South Asian winter precipitation patterns.',
+        metric: 'Key Metric: 8,400-Year Continuous Record (+99.4% Stratigraphic Integrity)',
+        authority: 'Approved: NCPOR Scientific Committee',
+      };
+    }
+
+    // Default or Arctic Halogen Fluxes
+    if (lang === 'hindi') {
+      return {
+        title: 'संसदीय संक्षिप्त नोट: आर्कटिक हैलोजन गैसों का प्रभाव और भारतीय मानसून से इसका सीधा संबंध',
+        body: 'राष्ट्रीय ध्रुवीय एवं महासागर अनुसंधान केंद्र (एनसीपीओआर) के हिमाद्रि स्टेशन (स्वालबार्ड) द्वारा जुटाए गए 2024 के आंकड़ों से ज्ञात होता है कि ब्रोमीन और आयोडीन के चक्रों में आए बदलाव आर्कटिक की समुद्री बर्फ के क्षरण को तेज कर रहे हैं। यह प्रक्रिया ऊपरी वायुमंडल में जेट धाराओं को प्रभावित करती है, जिससे भारतीय ग्रीष्मकालीन मानसून के पूर्वानुमान मॉडल को अधिक सटीक बनाने में मदद मिलती है।',
+        metric: 'मुख्य निष्कर्ष: मानसून टेलीकनेक्शन पुष्टि (+14% मॉडल सटीकता)',
+        authority: 'अनुमोदित: एनसीपीओआर वैज्ञानिक समिति',
+      };
+    }
+    if (lang === 'bengali') {
+      return {
+        title: 'সংসদীয় ব্রিফ: আর্কটিক মহাসাগরে হ্যালোজেন গ্যাসের প্রভাব এবং ভারতীয় বর্ষার সাথে এর সম্পর্ক',
+        body: 'এনসিপিওআর-এর হিমাদ্রি স্টেশন (স্বালবার্ড) থেকে সংগৃহীত তথ্য প্রমাণ করে যে বায়ুমণ্ডলীয় ব্রোমিন ও আয়োডিন রাসায়নিক ক্ষয় প্রক্রিয়াকে দ্রুত করছে। এর ফলে জেট বায়ুর প্রবাহ পরিবর্তিত হয়ে ভারতীয় গ্রীষ্মকালীন মৌসুমি বায়ুর গতিপথ এবং পূর্বাভাসের নির্ভুলতাকে উল্লেখযোগ্যভাবে প্রভাবিত করে।',
+        metric: 'মূল তথ্য: মৌসুমি বায়ু টেলিকানেকশন নিশ্চিত (+১৪% পূর্বাভাস নির্ভুলতা)',
+        authority: 'অনুমোদিত: এনসিপিওআর বৈজ্ঞানিক কমিটি',
+      };
+    }
+    if (lang === 'tamil') {
+      return {
+        title: 'நாடாளுமன்ற அறிக்கை: ஆர்க்டிக் ஹாலஜன் வாயுக்களின் தாக்கம் மற்றும் இந்திய பருவமழை உடனான நேரடி தொடர்பு',
+        body: 'என்சிபிஓஆர்-இன் ஹிமாத்ரி நிலையத்தின் (ஸ்வால்பார்ட்) சமீபத்திய ஆய்வுகள், வளிமண்டல ப்ரோமின் மற்றும் அயோடின் சுழற்சிகள் கடல் பனி உருகுதலை விரைவுபடுத்துவதை உறுதி செய்கின்றன. இது இந்திய தென்மேற்கு பருவமழை சுழற்சிகளில் கணிசமான தாக்கத்தை ஏற்படுத்துகிறது.',
+        metric: 'முக்கிய கண்டுபிடிப்பு: பருவமழை தொலைதொடர்பு உறுதிப்படுத்தப்பட்டது (+14% துல்லியம்)',
+        authority: 'அங்கீகரிக்கப்பட்டது: என்சிபிஓஆர் அறிவியல் குழு',
+      };
+    }
+    return {
       title: 'Impact of Arctic Halogen Fluxes on Sea Ice Loss and Indian Monsoon Teleconnections',
       body: 'Continuous in-situ observations from NCPOR’s Himadri Station at Ny-Ålesund, Svalbard reveal accelerated photolytic release of reactive bromine and iodine. These boundary layer halogens drive rapid tropospheric ozone depletion events, altering mid-latitude planetary Rossby wave packets and modulating Indian summer monsoon predictability.',
       metric: 'Key Metric: Monsoon Teleconnection Confirmed (+14% Model Accuracy)',
-    },
-    bengali: {
-      title: 'আর্কটিক মহাসাগরে হ্যালোজেন গ্যাসের প্রভাব এবং ভারতীয় বর্ষার সাথে এর সম্পর্ক',
-      body: 'এনসিপিওআর-এর হিমাদ্রি স্টেশন (স্বালবার্ড) থেকে সংগৃহীত তথ্য প্রমাণ করে যে বায়ুমণ্ডলীয় ব্রোমিন ও আয়োডিন রাসায়নিক ক্ষয় প্রক্রিয়াকে দ্রুত করছে। এর ফলে জেট বায়ুর প্রবাহ পরিবর্তিত হয়ে ভারতীয় গ্রীষ্মকালীন মৌসুমি বায়ুর গতিপথ এবং পূর্বাভাসের নির্ভুলতাকে উল্লেখযোগ্যভাবে প্রভাবিত করে।',
-      metric: 'মূল তথ্য: মৌসুমি বায়ু টেলিকানেকশন নিশ্চিত (+১৪% পূর্বাভাস নির্ভুলতা)',
-    },
-    tamil: {
-      title: 'ஆர்க்டிக் ஹாலஜன் வாயுக்களின் தாக்கம் மற்றும் இந்திய பருவமழை உடனான நேரடி தொடர்பு',
-      body: 'என்சிபிஓஆர்-இன் ஹிமாத்ரி நிலையத்தின் (ஸ்வால்பார்ட்) சமீபத்திய ஆய்வுகள், வளிமண்டல ப்ரோமின் மற்றும் அயோடின் சுழற்சிகள் கடல் பனி உருகுதலை விரைவுபடுத்துவதை உறுதி செய்கின்றன. இது இந்திய தென்மேற்கு பருவமழை சுழற்சிகளில் கணிசமான தாக்கத்தை ஏற்படுத்துகிறது.',
-      metric: 'முக்கிய கண்டுபிடிப்பு: பருவமழை தொலைதொடர்பு உறுதிப்படுத்தப்பட்டது (+14% துல்லியம்)',
-    },
+      authority: 'Approved: NCPOR Scientific Committee',
+    };
   };
 
-  const previewContent = contentStudioPreviews[targetLang] || contentStudioPreviews.hindi;
+  const previewContent = getMultilingualContent(sourceDoc, targetFormat, targetLang);
 
   return (
-    <div className="w-full bg-[#f6faff] dark:bg-[#06111F] text-[#001e2e] dark:text-slate-100 font-sans transition-colors pt-24 sm:pt-28">
+    <div className="w-full bg-[#f6faff] dark:bg-[#06111F] text-[#001e2e] dark:text-slate-100 font-sans transition-colors pt-32 sm:pt-36">
 
       {/* ─── SECTION 1: POLAR HERO WITH PANORAMIC EXPEDITION BACKDROP ─── */}
-      <section className="relative w-full overflow-hidden bg-[#f6faff] dark:bg-[#06111F] -mt-24 sm:-mt-28 pt-28 pb-12 sm:pb-16 border-b border-[#bfc7d2]/40 dark:border-white/10">
+      <section className="relative w-full overflow-hidden bg-[#f6faff] dark:bg-[#06111F] -mt-32 sm:-mt-36 pt-36 pb-12 sm:pb-16 border-b border-[#bfc7d2]/40 dark:border-white/10">
         <div className="absolute inset-0 z-0">
           <img
             alt="Antarctic Scientific Expedition"
@@ -1273,16 +1415,16 @@ export default function HomePage() {
                   </span>
                 </div>
 
-                <div className="bg-white dark:bg-[#0a1628] p-5 rounded-xl flex flex-col gap-3 border border-[#bfc7d2]/30 dark:border-white/10 shadow-sm">
+                <div className="bg-white dark:bg-[#0a1628] p-5 rounded-xl flex flex-col gap-3 border border-[#bfc7d2]/30 dark:border-white/10 shadow-sm relative">
                   <h4 className="font-display text-base sm:text-lg font-bold text-[#001e2e] dark:text-white leading-snug">
                     {previewContent.title}
                   </h4>
-                  <p className="text-xs sm:text-sm text-[#3f4850] dark:text-slate-300 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#3f4850] dark:text-slate-300 leading-relaxed whitespace-pre-line">
                     {previewContent.body}
                   </p>
                   <div className="p-3 bg-[#ebf5ff] dark:bg-white/5 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-1 font-mono text-xs border border-[#bfc7d2]/30 dark:border-white/5">
                     <span className="text-[#006194] dark:text-sky-300 font-semibold">{previewContent.metric}</span>
-                    <span className="text-[#707881] dark:text-slate-400">अनुमोदित: एनसीपीओआर वैज्ञानिक समिति</span>
+                    <span className="text-[#707881] dark:text-slate-400">{previewContent.authority}</span>
                   </div>
                 </div>
               </div>
@@ -1291,12 +1433,21 @@ export default function HomePage() {
                 <span className="font-mono text-xs text-[#707881] dark:text-slate-400">
                   Ready for Official PIB & MoES Release
                 </span>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${previewContent.title}\n\n${previewContent.body}\n\n${previewContent.metric}`);
+                      alert(`Copied ${targetLang.toUpperCase()} translation to clipboard!`);
+                    }}
+                    className="px-3 py-1.5 bg-white dark:bg-white/10 hover:bg-[#ebf5ff] dark:hover:bg-white/20 text-[#001e2e] dark:text-white font-mono text-xs font-semibold rounded-lg border border-[#bfc7d2]/40 dark:border-white/10 transition-colors"
+                  >
+                    Copy Text
+                  </button>
                   <Link
                     href="/content-studio"
-                    className="px-4 py-1.5 bg-white dark:bg-white/10 hover:bg-[#ebf5ff] dark:hover:bg-white/20 text-[#001e2e] dark:text-white font-mono text-xs font-semibold rounded-lg border border-[#bfc7d2]/40 dark:border-white/10 transition-colors"
+                    className="px-3.5 py-1.5 bg-white dark:bg-white/10 hover:bg-[#ebf5ff] dark:hover:bg-white/20 text-[#001e2e] dark:text-white font-mono text-xs font-semibold rounded-lg border border-[#bfc7d2]/40 dark:border-white/10 transition-colors"
                   >
-                    Refine
+                    Open in Studio
                   </Link>
                   <Link
                     href="/media"

@@ -149,7 +149,7 @@ export default function StationsPage() {
   });
 
   return (
-    <div className="min-h-screen pt-20 pb-20 bg-surface text-on-surface transition-colors">
+    <div className="min-h-screen pt-32 sm:pt-36 pb-20 bg-surface text-on-surface transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header Banner */}

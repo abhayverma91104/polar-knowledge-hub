@@ -5,7 +5,7 @@ from typing import Optional
 
 class Settings(BaseSettings):
     # App
-    app_name: str = "Polar Knowledge Hub"
+    app_name: str = "PolarSetu"
     app_env: str = "development"
     app_debug: bool = True
     frontend_url: str = "http://localhost:3000"

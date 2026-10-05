@@ -51,6 +51,7 @@ export default function ContentStudioPage() {
   const [selectedDocId, setSelectedDocId] = useState('');
   const [selectedExpId, setSelectedExpId] = useState('');
   const [selectedContentTypes, setSelectedContentTypes] = useState<string[]>(['summary']);
+  const [selectedLanguage, setSelectedLanguage] = useState<'english' | 'hindi' | 'bengali' | 'tamil'>('english');
   const [generating, setGenerating] = useState(false);
   const [results, setResults] = useState<Record<string, { content: string; id: string; status: string }>>({});
   const [error, setError] = useState('');
@@ -85,6 +86,7 @@ export default function ContentStudioPage() {
           content_type: contentType,
           source_document_id: selectedSourceType === 'document' ? selectedDocId : undefined,
           source_expedition_id: selectedSourceType === 'expedition' ? selectedExpId : undefined,
+          language: selectedLanguage,
         });
         setResults(prev => ({
           ...prev,
@@ -130,7 +132,7 @@ export default function ContentStudioPage() {
     : expeditions.find(e => e.id === selectedExpId)?.title;
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface pt-20 transition-colors">
+    <div className="min-h-screen bg-surface text-on-surface pt-32 sm:pt-36 transition-colors">
       {/* Header */}
       <div className="py-14 bg-gradient-to-b from-[#ebf5ff] to-surface dark:from-[#0a1628] dark:to-[#06111F] border-b border-[#bfc7d2]/40 dark:border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -138,13 +140,13 @@ export default function ContentStudioPage() {
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#dff0ff] dark:bg-white/10 text-[#00685f] dark:text-teal-300 font-mono text-xs font-semibold uppercase tracking-wider mb-4 border border-[#bfc7d2]/40 dark:border-white/10">
                 <Sparkles size={12} />
-                NCPOR Public Science Dissemination · Outreach Studio
+                NCPOR Public Science Dissemination · Outreach Studio & AI Translator
               </div>
               <h1 className="font-display font-bold text-3xl sm:text-5xl text-[#001e2e] dark:text-white mb-3">
                 From Research to Outreach
               </h1>
               <p className="text-[#3f4850] dark:text-slate-300 text-base sm:text-lg max-w-2xl leading-relaxed">
-                Transform scientific knowledge into accessible public content — articles, social posts, student explanations, and quizzes.
+                Transform scientific knowledge into accessible multilingual public content — articles, social posts, parliamentary briefs, and educational explainers.
               </p>
             </div>
             {statusLoading ? (
@@ -258,10 +260,41 @@ export default function ContentStudioPage() {
               )}
             </div>
 
-            {/* Step 2: Content Types */}
+            {/* Step 2: Choose Language (Multilingual Support) */}
             <div className="card p-6">
               <h2 className="font-display font-bold text-lg text-polar-navy mb-4 flex items-center gap-2">
                 <span className="w-6 h-6 bg-polar-cyan rounded-full flex items-center justify-center text-white text-xs font-bold">2</span>
+                Translation Language
+              </h2>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { id: 'english', label: 'English', native: 'English' },
+                  { id: 'hindi', label: 'Hindi', native: 'हिंदी' },
+                  { id: 'bengali', label: 'Bengali', native: 'বাংলা' },
+                  { id: 'tamil', label: 'Tamil', native: 'தமிழ்' },
+                ].map((lang) => (
+                  <button
+                    key={lang.id}
+                    onClick={() => setSelectedLanguage(lang.id as any)}
+                    className={`p-2.5 rounded-xl border text-left transition-all ${
+                      selectedLanguage === lang.id
+                        ? 'bg-[#006194] text-white border-[#006194] shadow-sm'
+                        : 'border-slate-200 dark:border-white/10 hover:border-slate-300'
+                    }`}
+                  >
+                    <div className="text-xs font-bold">{lang.label}</div>
+                    <div className={`text-[11px] ${selectedLanguage === lang.id ? 'text-sky-200' : 'text-slate-400'}`}>
+                      {lang.native}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Step 3: Content Types */}
+            <div className="card p-6">
+              <h2 className="font-display font-bold text-lg text-polar-navy mb-4 flex items-center gap-2">
+                <span className="w-6 h-6 bg-polar-cyan rounded-full flex items-center justify-center text-white text-xs font-bold">3</span>
                 Select Output Types
               </h2>
               <div className="space-y-2">

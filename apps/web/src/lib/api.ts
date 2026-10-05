@@ -1,5 +1,5 @@
 /**
- * API client for Polar Knowledge Hub
+ * API client for PolarSetu
  * Handles all communication with FastAPI backend
  */
 import axios from 'axios';
@@ -120,6 +120,7 @@ export const contentApi = {
     source_document_id?: string;
     source_expedition_id?: string;
     source_dataset_id?: string;
+    language?: string;
   }) => api.post('/api/content/generate', data),
   list: (params?: Record<string, unknown>) => api.get('/api/content', { params }),
   approve: (id: string, status: 'approved' | 'rejected', review_notes?: string) =>

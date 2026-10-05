@@ -1,5 +1,5 @@
 """
-Polar Knowledge Hub - FastAPI Backend
+PolarSetu - FastAPI Backend
 Main application entry point with all routes
 """
 import asyncio
@@ -48,7 +48,7 @@ settings = get_settings()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("Starting Polar Knowledge Hub API")
+    logger.info("Starting PolarSetu API")
     if check_db_connection():
         init_db()
         logger.info("Database ready")
@@ -87,7 +87,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Polar Knowledge Hub API",
+    title="PolarSetu API",
     description="NCPOR Polar Science Knowledge Repository and Outreach Platform",
     version="1.0.0",
     lifespan=lifespan,
@@ -177,6 +177,7 @@ class GenerateContentRequest(BaseModel):
     source_document_id: Optional[str] = None
     source_expedition_id: Optional[str] = None
     source_dataset_id: Optional[str] = None
+    language: Optional[str] = "english"
 
 
 class CrawlRequest(BaseModel):
@@ -202,7 +203,7 @@ class ExplainTopicRequest(BaseModel):
 @app.get("/")
 async def root():
     return {
-        "app": "Polar Knowledge Hub API",
+        "app": "PolarSetu API",
         "version": "1.0.0",
         "status": "operational",
         "demo_mode": settings.demo_mode,
@@ -1367,6 +1368,7 @@ async def generate_content(
         req.content_type,
         source_text,
         source_title,
+        language=req.language or "english",
     )
     
     # Save to DB

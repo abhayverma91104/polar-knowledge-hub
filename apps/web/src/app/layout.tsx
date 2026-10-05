@@ -4,14 +4,22 @@ import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 
 export const metadata: Metadata = {
-  title: "Polar Knowledge Hub | NCPOR",
-  description: "India's integrated polar science knowledge, education, research discovery and outreach platform. Explore expeditions, scientific discoveries, datasets, publications and stories from the Arctic and Antarctic.",
-  keywords: "NCPOR, polar research, Antarctica, Arctic, Indian expedition, climate change, glaciology, oceanography",
-  authors: [{ name: "National Centre for Polar and Ocean Research" }],
+  title: "PolarSetu | NCPOR - National Centre for Polar and Ocean Research",
+  description: "PolarSetu - India's sovereign polar science knowledge, education, research discovery and outreach platform. Explore expeditions, scientific discoveries, datasets, publications and telemetry from Antarctica, Arctic, Southern Ocean and Himalayas.",
+  keywords: "PolarSetu, NCPOR, polar research, Antarctica, Arctic, Himadri, Maitri, Bharati, Himansh, Indian expedition, climate change, glaciology, oceanography",
+  authors: [{ name: "National Centre for Polar and Ocean Research, MoES, Govt. of India" }],
+  icons: {
+    icon: [
+      { url: '/polarsetu-logo.png?v=polarsetu', type: 'image/png' },
+      { url: '/favicon.ico?v=polarsetu', sizes: 'any' },
+    ],
+    apple: '/polarsetu-logo.png?v=polarsetu',
+  },
   openGraph: {
-    title: "Polar Knowledge Hub | NCPOR",
-    description: "India's polar science knowledge platform - Discover. Understand. Explore the Poles.",
+    title: "PolarSetu | NCPOR - Government of India",
+    description: "PolarSetu - India's sovereign polar knowledge platform. Discover. Understand. Explore the Poles.",
     type: "website",
+    images: [{ url: '/polarsetu-logo.png', width: 512, height: 512, alt: 'PolarSetu Logo' }],
   },
 };
 
@@ -41,6 +49,9 @@ export default function RootLayout({
             `,
           }}
         />
+        <link rel="icon" type="image/png" sizes="32x32" href="/polarsetu-logo.png?v=polarsetu" />
+        <link rel="icon" href="/favicon.ico?v=polarsetu" sizes="any" />
+        <link rel="apple-touch-icon" href="/polarsetu-logo.png?v=polarsetu" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link

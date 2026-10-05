@@ -278,7 +278,7 @@ export default function ExplorePage() {
   };
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface flex flex-col pt-20 transition-colors">
+    <div className="min-h-screen bg-surface text-on-surface flex flex-col pt-32 sm:pt-36 transition-colors">
       {/* Top Header Bar */}
       <div className="border-b border-[#bfc7d2]/40 dark:border-white/10 px-6 py-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-gradient-to-b from-[#ebf5ff] to-surface dark:from-[#0a1628] dark:to-[#06111F]">
         <div>

@@ -51,11 +51,13 @@ export default function RegisterPage() {
         
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4 bg-[#006194] text-white shadow-md">
-            <Snowflake size={24} />
-          </div>
+          <img
+            src="/polarsetu-logo.png"
+            alt="PolarSetu Logo"
+            className="w-16 h-16 rounded-2xl mx-auto mb-4 shadow-md object-contain"
+          />
           <h1 className="font-display font-extrabold text-2xl text-on-surface">Create Researcher Account</h1>
-          <p className="text-on-surface-variant text-xs mt-1">Join the NCPOR Polar Knowledge Network</p>
+          <p className="text-on-surface-variant text-xs mt-1">Join the PolarSetu · NCPOR Research Network</p>
         </div>
 
         {error && (

@@ -206,7 +206,7 @@ ${doc.source_url ? `- **Source URL**: ${doc.source_url}` : ''}
 ${doc.abstract || 'No abstract text available for this record.'}
 
 ---
-*Downloaded from Polar Knowledge Hub · Government of India*
+*Downloaded from PolarSetu · Government of India*
 `;
 
     const blob = new Blob([content], { type: 'text/markdown;charset=utf-8;' });
@@ -230,7 +230,7 @@ ${doc.abstract || 'No abstract text available for this record.'}
   const activeFilterCount = Object.values(filters).filter(Boolean).length;
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface pt-20 transition-colors">
+    <div className="min-h-screen bg-surface text-on-surface pt-32 sm:pt-36 transition-colors">
       {/* Header */}
       <div className="py-14 bg-gradient-to-b from-[#ebf5ff] to-surface dark:from-[#0a1628] dark:to-[#06111F] border-b border-[#bfc7d2]/40 dark:border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

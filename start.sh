@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ═══════════════════════════════════════════════════════
-#  Polar Knowledge Hub — Dev Server Startup Script
+#  PolarSetu — Dev Server Startup Script
 #  SIH 2026 · Problem Statement 26063 · NCPOR / MoES
 # ═══════════════════════════════════════════════════════
 
@@ -26,7 +26,7 @@ echo "  ██╔═══╝ ██║   ██║██║     ██╔══
 echo "  ██║     ╚██████╔╝███████╗██║  ██║██║  ██║"
 echo "  ╚═╝      ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝"
 echo -e "${NC}"
-echo -e "${BOLD}  Polar Knowledge Hub${NC} — Discover. Understand. Explore the Poles."
+echo -e "${BOLD}  PolarSetu${NC} — Discover. Understand. Explore the Poles."
 echo -e "  ${BLUE}NCPOR · Ministry of Earth Sciences · SIH 2026${NC}"
 echo ""
 
@@ -126,7 +126,7 @@ echo -e "${GREEN}  ✓ Frontend started (PID: $WEB_PID)${NC}"
 
 echo ""
 echo -e "${BOLD}${GREEN}═══════════════════════════════════════════════════${NC}"
-echo -e "${BOLD}  🌍 Polar Knowledge Hub is running!${NC}"
+echo -e "${BOLD}  🌍 PolarSetu is running!${NC}"
 echo -e ""
 echo -e "  Frontend:    ${CYAN}http://localhost:3000${NC}"
 echo -e "  API:         ${CYAN}http://localhost:8000${NC}"

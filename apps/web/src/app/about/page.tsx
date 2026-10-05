@@ -28,7 +28,7 @@ const DIVISIONS = [
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen pt-20 pb-20 bg-surface text-on-surface transition-colors">
+    <div className="min-h-screen pt-32 sm:pt-36 pb-20 bg-surface text-on-surface transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Hero Section */}
@@ -85,7 +85,7 @@ export default function AboutPage() {
               </li>
               <li className="flex items-start gap-2.5">
                 <CheckCircle2 size={16} className="text-[#006194] dark:text-sky-400 shrink-0 mt-1" />
-                <span>Foster polar education, open-science repositories, and public dissemination through the Polar Knowledge Hub.</span>
+                <span>Foster polar education, open-science repositories, and public dissemination through PolarSetu.</span>
               </li>
             </ul>
           </div>

@@ -84,7 +84,7 @@ export default function AdminPage() {
   // If user is a verified researcher or non-admin, render Researcher Workspace rather than dead-end error
   if (user && user.role !== 'admin' && user.role !== 'editor') {
     return (
-      <div className="min-h-screen bg-surface text-on-surface pt-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto py-12 transition-colors">
+      <div className="min-h-screen bg-surface text-on-surface pt-32 sm:pt-36 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto py-12 transition-colors">
         <div className="bg-white dark:bg-[#0a1628] border border-[#bfc7d2]/40 dark:border-white/10 rounded-3xl p-8 sm:p-10 shadow-xl mb-8">
           <div className="flex items-start justify-between flex-wrap gap-4 pb-6 border-b border-[#bfc7d2]/30 dark:border-white/10">
             <div>
@@ -171,7 +171,7 @@ export default function AdminPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-surface pt-20 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-surface pt-32 sm:pt-36 flex items-center justify-center px-4">
         <div className="bg-white dark:bg-[#0a1628] border border-[#bfc7d2]/40 dark:border-white/10 p-8 sm:p-10 rounded-2xl max-w-md text-center shadow-xl">
           <Shield size={40} className="text-amber-500 mx-auto mb-4" />
           <h2 className="font-display font-bold text-xl text-on-surface mb-2">Portal Authentication Required</h2>
@@ -201,7 +201,7 @@ export default function AdminPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface pt-16 transition-colors">
+    <div className="min-h-screen bg-surface text-on-surface pt-32 sm:pt-36 transition-colors">
       {/* Header */}
       <div className="py-12 bg-white dark:bg-[#0a1628] border-b border-[#bfc7d2]/40 dark:border-white/10 transition-colors">
         <div className="max-w-screen-xl mx-auto px-6 lg:px-8">

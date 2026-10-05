@@ -78,7 +78,7 @@ export default function ClassroomPage() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface pt-20 transition-colors">
+    <div className="min-h-screen bg-surface text-on-surface pt-32 sm:pt-36 transition-colors">
       {/* Header */}
       <div className="py-14 bg-gradient-to-b from-[#ebf5ff] to-surface dark:from-[#0a1628] dark:to-[#06111F] border-b border-[#bfc7d2]/40 dark:border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

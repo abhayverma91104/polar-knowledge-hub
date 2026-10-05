@@ -1,6 +1,6 @@
-# 🧊 Polar Knowledge Hub
+# 🧊 PolarSetu (ध्रुवसेतु)
 
-> **Integrated Polar Science Outreach, Knowledge Repository, and Media Dissemination Portal**  
+> **Integrated Polar Science Outreach, Sovereign Knowledge Repository, and Media Dissemination Portal**  
 > **Ministry:** Ministry of Earth Sciences (MoES), Government of India  
 > **Nodal Institution:** National Centre for Polar and Ocean Research (NCPOR), Goa, India  
 > **Mission Scope:** Antarctic Expeditions, Arctic Research, Southern Ocean Studies, and Himalayan Cryosphere  
@@ -16,7 +16,7 @@
 ## 🌟 Tagline
 > **“Discover. Understand. Explore the Poles.”**
 
-The **Polar Knowledge Hub** is an AI-powered scientific intelligence, public outreach, research discovery, and media dissemination portal. It centralizes institutional research from the **National Centre for Polar and Ocean Research (NCPOR)**, transforming over four decades of Indian polar expeditions across Antarctica, the Arctic, the Southern Ocean, and the Himalayan Cryosphere into an accessible, searchable, and interactive digital experience.
+**PolarSetu** is an AI-powered scientific intelligence, public outreach, research discovery, and media dissemination portal. It centralizes institutional research from the **National Centre for Polar and Ocean Research (NCPOR)**, transforming over four decades of Indian polar expeditions across Antarctica, the Arctic, the Southern Ocean, and the Himalayan Cryosphere into an accessible, searchable, and interactive digital experience.
 
 ---
 

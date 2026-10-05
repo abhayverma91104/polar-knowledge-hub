@@ -127,7 +127,7 @@ function AssistantContent() {
   };
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface flex flex-col pt-20 transition-colors">
+    <div className="min-h-screen bg-surface text-on-surface flex flex-col pt-32 sm:pt-36 transition-colors">
       {/* Header */}
       <div className="border-b border-[#bfc7d2]/40 dark:border-white/10 py-10 bg-gradient-to-b from-[#ebf5ff] to-surface dark:from-[#0a1628] dark:to-[#06111F]">
         <div className="max-w-4xl mx-auto px-6">
