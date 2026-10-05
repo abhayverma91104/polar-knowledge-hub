@@ -206,6 +206,27 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ─── Reusable Card Classes ─── */
+.card {
+  background-color: var(--surface-container-lowest);
+  border: 1px solid var(--outline-variant);
+  border-radius: 1rem;
+  transition: all 0.2s ease;
+}
+
+.input {
+  background-color: var(--surface-container-lowest);
+  color: var(--on-surface);
+  border: 1px solid var(--outline-variant);
+  border-radius: 0.75rem;
+  padding: 0.625rem 0.875rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 97, 148, 0.2);
+}
+
 .card-cryo {
   background: var(--surface-container-lowest);
   border: 1px solid var(--outline-variant);
@@ -227,3 +248,33 @@ h1, h2, h3, h4, h5, h6 {
 .text-polar-cyan { color: var(--primary) !important; }
 .border-polar-cyan { border-color: var(--primary) !important; }
 .bg-polar-cyan { background-color: var(--primary) !important; }
+
+/* ─── Button Utilities ─── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  background-color: #006194 !important;
+  background-image: linear-gradient(135deg, #006194 0%, #007bb9 50%, #0284c7 100%) !important;
+  color: #ffffff !important;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  border-radius: 0.75rem;
+  padding: 0.875rem 1.5rem;
+  border: 1px solid rgba(56, 189, 248, 0.45) !important;
+  box-shadow: 0 4px 16px rgba(0, 97, 148, 0.35);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.btn-primary:hover:not(:disabled) {
+  background-image: linear-gradient(135deg, #007bb9 0%, #0284c7 50%, #38bdf8 100%) !important;
+  box-shadow: 0 6px 24px rgba(0, 123, 185, 0.5);
+  transform: translateY(-1px);
+}
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+

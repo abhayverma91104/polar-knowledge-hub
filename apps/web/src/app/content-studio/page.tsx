@@ -131,6 +131,8 @@ export default function ContentStudioPage() {
     ? documents.find(d => d.id === selectedDocId)?.title
     : expeditions.find(e => e.id === selectedExpId)?.title;
 
+  const isSourceSelected = Boolean(selectedDocId || selectedExpId);
+
   return (
     <div className="min-h-screen bg-surface text-on-surface pt-32 sm:pt-36 transition-colors">
       {/* Header */}
@@ -191,6 +193,7 @@ export default function ContentStudioPage() {
 
               <div className="flex gap-2 mb-4">
                 <button
+                  type="button"
                   onClick={() => setSelectedSourceType('document')}
                   className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold border transition-all ${
                     selectedSourceType === 'document'
@@ -202,6 +205,7 @@ export default function ContentStudioPage() {
                   Document
                 </button>
                 <button
+                  type="button"
                   onClick={() => setSelectedSourceType('expedition')}
                   className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold border transition-all ${
                     selectedSourceType === 'expedition'
@@ -253,17 +257,17 @@ export default function ContentStudioPage() {
               )}
 
               {sourceTitle && (
-                <div className="mt-3 p-3 bg-polar-frost border border-polar-cyan/20 rounded-lg">
-                  <div className="text-xs text-polar-cyan font-semibold mb-1">Selected source:</div>
-                  <div className="text-sm text-polar-navy font-medium line-clamp-2">{sourceTitle}</div>
+                <div className="mt-3 p-3 bg-[#e8f4fd] dark:bg-sky-950/60 border border-[#0ea5e9]/30 rounded-lg">
+                  <div className="text-xs text-[#006194] dark:text-sky-400 font-semibold mb-1">Selected source:</div>
+                  <div className="text-sm text-[#001e2e] dark:text-white font-medium line-clamp-2">{sourceTitle}</div>
                 </div>
               )}
             </div>
 
             {/* Step 2: Choose Language (Multilingual Support) */}
-            <div className="card p-6">
-              <h2 className="font-display font-bold text-lg text-polar-navy mb-4 flex items-center gap-2">
-                <span className="w-6 h-6 bg-polar-cyan rounded-full flex items-center justify-center text-white text-xs font-bold">2</span>
+            <div className="bg-surface-container-lowest p-6 rounded-2xl border border-[#bfc7d2]/40 dark:border-white/10 shadow-sm">
+              <h2 className="font-display font-bold text-lg text-[#001e2e] dark:text-white mb-4 flex items-center gap-2">
+                <span className="w-6 h-6 bg-[#006194] rounded-full flex items-center justify-center text-white text-xs font-bold">2</span>
                 Translation Language
               </h2>
               <div className="grid grid-cols-2 gap-2">
@@ -275,11 +279,12 @@ export default function ContentStudioPage() {
                 ].map((lang) => (
                   <button
                     key={lang.id}
+                    type="button"
                     onClick={() => setSelectedLanguage(lang.id as any)}
                     className={`p-2.5 rounded-xl border text-left transition-all ${
                       selectedLanguage === lang.id
                         ? 'bg-[#006194] text-white border-[#006194] shadow-sm'
-                        : 'border-slate-200 dark:border-white/10 hover:border-slate-300'
+                        : 'border-slate-200 dark:border-white/10 hover:border-slate-300 text-on-surface'
                     }`}
                   >
                     <div className="text-xs font-bold">{lang.label}</div>
@@ -292,9 +297,9 @@ export default function ContentStudioPage() {
             </div>
 
             {/* Step 3: Content Types */}
-            <div className="card p-6">
-              <h2 className="font-display font-bold text-lg text-polar-navy mb-4 flex items-center gap-2">
-                <span className="w-6 h-6 bg-polar-cyan rounded-full flex items-center justify-center text-white text-xs font-bold">3</span>
+            <div className="bg-surface-container-lowest p-6 rounded-2xl border border-[#bfc7d2]/40 dark:border-white/10 shadow-sm">
+              <h2 className="font-display font-bold text-lg text-[#001e2e] dark:text-white mb-4 flex items-center gap-2">
+                <span className="w-6 h-6 bg-[#006194] rounded-full flex items-center justify-center text-white text-xs font-bold">3</span>
                 Select Output Types
               </h2>
               <div className="space-y-2">
@@ -304,22 +309,23 @@ export default function ContentStudioPage() {
                   return (
                     <button
                       key={ct.id}
+                      type="button"
                       onClick={() => toggleContentType(ct.id)}
                       className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${
                         selected
-                          ? 'border-polar-cyan/40 bg-polar-cyan/5'
-                          : 'border-slate-200 hover:border-slate-300'
+                          ? 'border-[#0ea5e9]/50 bg-[#0ea5e9]/10 dark:bg-sky-950/40'
+                          : 'border-slate-200 dark:border-white/10 hover:border-slate-300'
                       }`}
                     >
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${ct.color}`}>
                         <Icon size={15} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-semibold text-polar-navy">{ct.label}</div>
+                        <div className="text-sm font-semibold text-[#001e2e] dark:text-white">{ct.label}</div>
                         <div className="text-xs text-slate-400">{ct.description}</div>
                       </div>
                       <div className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 ${
-                        selected ? 'bg-polar-cyan border-polar-cyan' : 'border-slate-300'
+                        selected ? 'bg-[#0ea5e9] border-[#0ea5e9]' : 'border-slate-300 dark:border-slate-600'
                       }`}>
                         {selected && <Check size={10} className="text-white" />}
                       </div>
@@ -329,41 +335,81 @@ export default function ContentStudioPage() {
               </div>
             </div>
 
-            {/* Generate Button */}
-            <div>
+            {/* Step 4: Generate Action Card */}
+            <div className="bg-surface-container-lowest p-6 rounded-2xl border border-[#bfc7d2]/40 dark:border-white/10 shadow-sm space-y-4">
+              <h2 className="font-display font-bold text-lg text-[#001e2e] dark:text-white flex items-center gap-2">
+                <span className="w-6 h-6 bg-[#006194] rounded-full flex items-center justify-center text-white text-xs font-bold">4</span>
+                Generate Outreach
+              </h2>
+
               {error && (
-                <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm mb-3">
-                  <AlertCircle size={15} />
-                  {error}
+                <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-700 dark:text-red-300 text-sm">
+                  <AlertCircle size={16} className="shrink-0" />
+                  <span>{error}</span>
                 </div>
               )}
+
+              {!isSourceSelected && (
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-200 text-xs font-medium">
+                  <AlertCircle size={15} className="shrink-0 text-amber-600 dark:text-amber-400" />
+                  <span>Please select a research paper or expedition in <strong>Step 1</strong> to enable AI synthesis.</span>
+                </div>
+              )}
+
+              {isSourceSelected && (
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 text-xs font-medium">
+                  <Check size={14} className="shrink-0 text-emerald-600 dark:text-emerald-400" />
+                  <span className="truncate">Source ready: <strong>{sourceTitle}</strong></span>
+                </div>
+              )}
+
+              {/* Generate with Google Gemini Button */}
               <button
+                id="btn-generate-gemini"
+                type="button"
                 onClick={handleGenerate}
-                disabled={generating || (!selectedDocId && !selectedExpId)}
-                className="btn-primary w-full py-4 text-base justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={generating}
+                className="w-full py-4 px-6 text-base font-bold rounded-xl flex items-center justify-center gap-3 transition-all duration-200 cursor-pointer shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 text-white"
+                style={{
+                  backgroundColor: '#006194',
+                  backgroundImage: isSourceSelected && !generating
+                    ? 'linear-gradient(135deg, #006194 0%, #007bb9 50%, #0284c7 100%)'
+                    : 'linear-gradient(135deg, #004b73 0%, #006194 100%)',
+                  color: '#ffffff',
+                  border: '1px solid rgba(56, 189, 248, 0.45)',
+                  boxShadow: isSourceSelected && !generating
+                    ? '0 8px 24px -4px rgba(0, 97, 148, 0.5)'
+                    : '0 4px 14px rgba(0, 97, 148, 0.3)',
+                  minHeight: '54px',
+                }}
               >
                 {generating ? (
                   <>
-                    <Loader2 size={18} className="animate-spin" />
-                    Generating with {aiStatus?.has_key ? (aiStatus.model || 'Gemini') : 'Demo Engine'}...
+                    <Loader2 size={20} className="animate-spin text-white shrink-0" />
+                    <span className="tracking-wide">
+                      Generating with {aiStatus?.has_key ? (aiStatus.model || 'Gemini') : 'Demo Engine'}...
+                    </span>
                   </>
                 ) : (
                   <>
-                    <Zap size={18} />
-                    {aiStatus?.has_key ? 'Generate with Google Gemini' : 'Generate Content (Demo Mode)'}
+                    <Zap size={20} className="text-amber-300 fill-amber-300 animate-pulse shrink-0" />
+                    <span className="tracking-wide font-bold">
+                      {aiStatus?.has_key ? 'Generate with Google Gemini' : 'Generate Content (Demo Mode)'}
+                    </span>
                   </>
                 )}
               </button>
-              <p className="text-xs text-slate-400 text-center mt-2 flex items-center justify-center gap-1.5">
+
+              <p className="text-xs text-[#707881] dark:text-slate-400 text-center flex items-center justify-center gap-1.5 pt-1">
                 {aiStatus?.has_key ? (
                   <>
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    Live Gemini synthesis · Human review recommended
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse shrink-0" />
+                    <span>Live Gemini synthesis · Human review recommended</span>
                   </>
                 ) : (
                   <>
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                    Cached demo templates · Add API key for live generation
+                    <span className="w-2 h-2 rounded-full bg-amber-500 inline-block shrink-0" />
+                    <span>Cached demo templates · Add API key for live generation</span>
                   </>
                 )}
               </p>
@@ -373,28 +419,28 @@ export default function ContentStudioPage() {
           {/* Results Panel */}
           <div className="lg:col-span-2 space-y-5">
             {Object.keys(results).length === 0 && !generating && (
-              <div className="card p-16 text-center">
-                <Sparkles size={48} className="text-slate-300 mx-auto mb-4" />
-                <h3 className="font-display font-bold text-xl text-polar-navy mb-2">
+              <div className="bg-surface-container-lowest p-16 text-center rounded-2xl border border-[#bfc7d2]/40 dark:border-white/10 shadow-sm">
+                <Sparkles size={48} className="text-[#0ea5e9] mx-auto mb-4 opacity-75" />
+                <h3 className="font-display font-bold text-xl text-[#001e2e] dark:text-white mb-2">
                   Ready to Generate
                 </h3>
-                <p className="text-slate-500">
-                  Select a source and content types, then click Generate. AI will transform research into accessible content.
+                <p className="text-[#3f4850] dark:text-slate-300 max-w-md mx-auto text-sm leading-relaxed">
+                  Select a research source and output types, then click <strong>Generate with Google Gemini</strong>. AI will transform scientific knowledge into accessible outreach formats.
                 </p>
               </div>
             )}
 
             {/* Loading placeholders */}
             {generating && selectedContentTypes.filter(t => !results[t]).map((type) => (
-              <div key={type} className="card p-6">
+              <div key={type} className="bg-surface-container-lowest p-6 rounded-2xl border border-[#bfc7d2]/40 dark:border-white/10 shadow-sm">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-24 h-4 skeleton" />
-                  <Loader2 size={16} className="text-polar-cyan animate-spin ml-auto" />
+                  <div className="w-24 h-4 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
+                  <Loader2 size={16} className="text-[#0ea5e9] animate-spin ml-auto" />
                 </div>
                 <div className="space-y-2">
-                  <div className="w-full h-3 skeleton" />
-                  <div className="w-5/6 h-3 skeleton" />
-                  <div className="w-4/6 h-3 skeleton" />
+                  <div className="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
+                  <div className="w-5/6 h-3 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
+                  <div className="w-4/6 h-3 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
                 </div>
               </div>
             ))}
@@ -405,14 +451,14 @@ export default function ContentStudioPage() {
               const Icon = ct.icon;
 
               return (
-                <div key={ct.id} className={`card p-6 ${result.status === 'error' ? 'border-red-200' : ''}`}>
+                <div key={ct.id} className={`bg-surface-container-lowest p-6 rounded-2xl border ${result.status === 'error' ? 'border-red-400 dark:border-red-700' : 'border-[#bfc7d2]/40 dark:border-white/10'} shadow-sm`}>
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${ct.color}`}>
                         <Icon size={15} />
                       </div>
                       <div>
-                        <h3 className="font-display font-bold text-lg text-polar-navy">{ct.label}</h3>
+                        <h3 className="font-display font-bold text-lg text-[#001e2e] dark:text-white">{ct.label}</h3>
                         {sourceTitle && (
                           <p className="text-xs text-slate-400">Based on: {sourceTitle.slice(0, 50)}...</p>
                         )}
