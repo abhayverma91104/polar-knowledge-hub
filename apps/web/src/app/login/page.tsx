@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Snowflake, Loader2, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Snowflake, Loader2, Eye, EyeOff, AlertCircle, Shield, Sparkles, Check } from 'lucide-react';
 import { useAuth } from '@/lib/auth-store';
 
 export default function LoginPage() {
@@ -13,6 +13,15 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [filledRole, setFilledRole] = useState<string | null>(null);
+
+  const handleQuickFill = (fillEmail: string, fillPass: string, roleName: string) => {
+    setEmail(fillEmail);
+    setPassword(fillPass);
+    setError('');
+    setFilledRole(roleName);
+    setTimeout(() => setFilledRole(null), 2500);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,16 +43,77 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 pt-16 bg-surface text-on-surface transition-colors">
       <div className="w-full max-w-md">
-        {/* Logo */}
+        {/* Header */}
+        <div className="text-center mb-6">
           <img
             src="/polarsetu-logo.png"
             alt="PolarSetu Logo"
-            className="w-16 h-16 rounded-2xl mx-auto mb-4 shadow-lg object-contain"
+            className="w-16 h-16 rounded-2xl mx-auto mb-3 shadow-lg object-contain"
           />
           <h1 className="font-display font-bold text-2xl text-on-surface mb-1">Scientist Sign In</h1>
           <p className="text-on-surface-variant text-sm">PolarSetu · NCPOR (Govt. of India)</p>
+        </div>
 
-        <div className="bg-white dark:bg-[#0a1628] border border-[#bfc7d2]/40 dark:border-white/10 rounded-2xl p-8 shadow-xl backdrop-blur-sm transition-colors">
+        <div className="bg-white dark:bg-[#0a1628] border border-[#bfc7d2]/40 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-xl backdrop-blur-sm transition-colors">
+          
+          {/* Admin Credentials Card */}
+          <div className="mb-6 p-4 rounded-xl bg-gradient-to-r from-sky-500/10 via-blue-500/10 to-teal-500/10 border border-sky-500/30 dark:border-sky-400/20 shadow-sm">
+            <div className="flex items-center justify-between mb-2.5">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-[#006194] dark:text-sky-300 uppercase tracking-wider font-mono">
+                <Shield size={14} className="text-[#006194] dark:text-sky-400" />
+                <span>Admin Credentials (Demo)</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleQuickFill('admin@ncpor.res.in', 'PolarHub@2026', 'Admin')}
+                className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-[#006194] hover:bg-[#007bb9] text-white transition-colors cursor-pointer shadow-sm"
+              >
+                {filledRole === 'Admin' ? (
+                  <>
+                    <Check size={12} className="text-emerald-300" />
+                    <span>Filled!</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles size={11} />
+                    <span>Auto-Fill Admin</span>
+                  </>
+                )}
+              </button>
+            </div>
+            
+            <div className="space-y-1.5 text-xs font-mono">
+              <div className="flex items-center justify-between bg-white/70 dark:bg-[#0c1c30]/70 px-2.5 py-1.5 rounded-lg border border-[#bfc7d2]/30 dark:border-white/5">
+                <span className="text-on-surface-variant font-sans text-[11px] font-medium">Email:</span>
+                <code className="font-bold text-on-surface select-all text-[11px] sm:text-xs">admin@ncpor.res.in</code>
+              </div>
+              <div className="flex items-center justify-between bg-white/70 dark:bg-[#0c1c30]/70 px-2.5 py-1.5 rounded-lg border border-[#bfc7d2]/30 dark:border-white/5">
+                <span className="text-on-surface-variant font-sans text-[11px] font-medium">Password:</span>
+                <code className="font-bold text-on-surface select-all text-[11px] sm:text-xs">PolarHub@2026</code>
+              </div>
+            </div>
+
+            <div className="mt-2.5 pt-2 border-t border-sky-500/15 dark:border-white/5 flex items-center justify-between text-[11px] text-on-surface-variant">
+              <span>Quick-fill other roles:</span>
+              <div className="flex gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => handleQuickFill('editor@ncpor.res.in', 'PolarHub@2026', 'Editor')}
+                  className="px-2 py-0.5 rounded bg-surface border border-[#bfc7d2]/40 dark:border-white/10 hover:border-[#006194] text-xs font-medium transition-colors cursor-pointer"
+                >
+                  {filledRole === 'Editor' ? '✓ Editor' : 'Editor'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleQuickFill('researcher@ncpor.res.in', 'PolarHub@2026', 'Researcher')}
+                  className="px-2 py-0.5 rounded bg-surface border border-[#bfc7d2]/40 dark:border-white/10 hover:border-[#006194] text-xs font-medium transition-colors cursor-pointer"
+                >
+                  {filledRole === 'Researcher' ? '✓ Researcher' : 'Researcher'}
+                </button>
+              </div>
+            </div>
+          </div>
+
           {error && (
             <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-600 dark:text-red-400 text-sm mb-5">
               <AlertCircle size={15} />
